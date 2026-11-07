@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <title>Zyrë Kontrolli Sekrete (Admin Only)</title>
-    <!-- KORRIGJIMI: Ngarkimi i saktë i librarisë zyrtare Supabase -->
     <script src="https://jsdelivr.net"></script>
     <style>
         body { font-family: 'Segoe UI', sans-serif; background: #fff1f2; padding: 30px; color: #1e293b; }
@@ -21,8 +20,8 @@
 </head>
 <body>
     <div class="container">
-        <h2>💻 Serveri Qendror - Ankand® Premium AL/KS</h2>
-        <div class="counter-box">📊 Numri Total i Anëtarëve në Sistem: <span id="total-members-count">0</span> vetë</div>
+        <h2>💻 Serveri Qendror - Ankand® Premium Shqipëri Kosovë</h2>
+        <div class="counter-box">📊 Numri Total i Anëtarëve: <span id="total-members-count">0</span> vetë</div>
         <table>
             <thead>
                 <tr>
@@ -36,11 +35,11 @@
         </table>
     </div>
     <script>
-        // KORRIGJIMI OBLIGATIV: Vendos URL-në tënde dhe çelësin "sb_publishable_..." këtu poshtë:
-const _URL = "https://bhwidixijfuhylbanjuk.supabase.co"; 
-const _KEY = "sb_publishable_aTg_EeN9qT5C54_dRViJHQ_YJM9BW4B"; ;
+        // Adresat dhe çelësat e tu zyrtarë të integruar saktë
+        const _URL = "https://supabase.co";
+        const _KEY = "sb_publishable_aTg_EeN9qT5C54_dRViJHQ_YJM9BW4B";
         
-        const adminServer = Supabase.createClient("sb_publishable_aTg_EeN9qT5C54_dRViJHQ_YJM9BW4B");
+        const adminServer = Supabase.createClient(_URL, _KEY);
         window.onload = function() { fetchAllMembers(); syncRealtime(); };
 
         async function fetchAllMembers() {
