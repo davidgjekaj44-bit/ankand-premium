@@ -4,8 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ankand® Premium Shqipëri Kosovë</title>
-    <!-- KORRIGJIMI ABSOLUT: Ngarkimi përmes serverave super të shpejtë Cloudflare -->
-    <script src="https://cloudflare.com" integrity="sha512-Y3I7i8z9tTfNshB6wYI6zD9vV8BInF7v2f1v/3K6M3BExXyZtWc9fL1t/3K6M3BExXyZtWc9fL1t/3K6M3BExXyZtW==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cloudflare.com" integrity="sha512-Y3I7i8z9tTfNshB6wYI6zD9vV8BInF7v2f1v/3K6M3BExXyZtWc9fL1t/3K6M3BExXyZtW==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
         body { background-color: #f1f5f9; color: #1e293b; padding: 20px; }
@@ -16,7 +15,7 @@
         @media (max-width: 1000px) { .layout { grid-template-columns: 1fr; } }
         .card { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; margin-bottom: 20px; }
         .card h3 { margin-bottom: 15px; font-size: 18px; border-bottom: 2px solid #f1f5f9; padding-bottom: 8px; }
-        .price-notice { background-color: #fef9c3; border: 1px solid #fef08a; color: #713f12; padding: 12px; border-radius: 6px; font-size: 13px; font-weight: 600; margin-bottom: 15px; text-align: center; }
+        .welcome-notice { background-color: #e0f2fe; border: 1px solid #bae6fd; color: #0369a1; padding: 12px; border-radius: 6px; font-size: 13px; font-weight: 600; margin-bottom: 15px; text-align: center; }
         .form-group { margin-bottom: 12px; }
         label { display: block; font-size: 12px; font-weight: 600; margin-bottom: 4px; color: #475569; }
         input, select, textarea { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 14px; }
@@ -29,7 +28,6 @@
         .user-session-box { background: #f8fafc; border: 1px solid #cbd5e1; padding: 15px; border-radius: 8px; margin-bottom: 15px; }
         .badge { padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; text-transform: uppercase; }
         .badge-active { background: #dcfce7; color: #15803d; }
-        .badge-pending { background: #fef9c3; color: #a16207; }
         .thank-you-box { background: #f0fdf4; border: 2px solid #16a34a; padding: 20px; border-radius: 8px; color: #14532d; font-size: 14px; margin-top: 15px; display: none; }
         .reserve-status { font-size: 12px; font-weight: bold; padding: 4px 8px; border-radius: 4px; margin-top: 5px; display: inline-block; }
         .reserve-not-met { background: #fee2e2; color: #9f1239; }
@@ -42,7 +40,6 @@
         .prod-title { font-size: 15px; font-weight: bold; }
         .prod-category { font-size: 11px; background: #e2e8f0; padding: 2px 6px; border-radius: 4px; font-weight: bold; color: #475569; width: fit-content; margin-top: 3px; }
         .prod-price { font-size: 16px; font-weight: bold; margin: 8px 0; background: #f8fafc; padding: 6px; border-radius: 4px; text-align: center; border: 1px solid #f1f5f9; }
-        .locked-msg { font-size: 11px; color: #dc2626; font-weight: bold; text-align: center; margin-top: 8px; display: block; }
         .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); align-items: center; justify-content: center; padding: 20px; }
         .modal-content { background-color: white; padding: 25px; border-radius: 12px; max-width: 500px; width: 100%; }
     </style>
@@ -56,10 +53,10 @@
         <div>
             <div class="user-session-box" id="session-card" style="display: none;">
                 <h4>Mirëseerdhe, <span id="session-user-name">...</span>!</h4>
-                <p>Statusi: <span id="session-user-status" class="badge">Në Pritje</span></p>
+                <p>Statusi: <span id="session-user-status" class="badge badge-active">Aktiv</span></p>
                 <button class="btn btn-red" style="width:100%; margin-top:10px;" onclick="logout()">Logout</button>
             </div>
-            <div class="price-notice" id="price-alert-box">📢 SHËRBIM PREMIUM: Për të bërë oferta ose për të publikuar produkte për shitje, kërkohet abonim aktiv vjetor prej 120 Euro/Vit.</div>
+            <div class="welcome-notice" id="price-alert-box">🚀 MIRËSEVINI: Platforma është 100% FALAS për një kohë të limituar! Publikoni artikuj ose bëni oferta pa asnjë pagesë.</div>
             <div class="card" id="login-card">
                 <h3>🔑 Hyr në Llogari</h3>
                 <div class="form-group"><label>Numër Telefoni</label><input type="tel" id="login-phone" placeholder="069XXXXXXX ose 044XXXXXX"></div>
@@ -68,7 +65,7 @@
                 <span class="toggle-link" onclick="toggleForms('register')">Nuk keni llogari? Regjistrohuni këtu</span>
             </div>
             <div class="card" id="register-card" style="display: none;">
-                <h3>📝 Regjistrohu si Anëtar</h3>
+                <h3>📝 Regjistrohu Falas</h3>
                 <div class="form-group"><label>Emër</label><input type="text" id="u-name" placeholder="Agim"></div>
                 <div class="form-group"><label>Mbiemër</label><input type="text" id="u-surname" placeholder="Krasniqi"></div>
                 <div class="form-group"><label>Numër Telefoni (AL / KS)</label><input type="tel" id="u-phone" placeholder="p.sh. 069... ose +3834..."></div>
@@ -78,9 +75,9 @@
                 <span class="toggle-link" onclick="toggleForms('login')">Keni një llogari? Hyni këtu</span>
             </div>
             <div class="thank-you-box" id="thank-you-message">
-                <h3>🎉 Regjistrimi u dërgua!</h3>
-                <p>Faleminderit, do merrni një sms për pagesën. Në momentin që bëni pagesën do jeni aktiv për blerje ose shitje për 12 muaj.</p>
-                <button class="btn btn-blue" style="margin-top: 15px; width: 100%;" onclick="toggleForms('login')">Kthehu tek Hyrja</button>
+                <h3>🎉 Mirëseerdhe në Platformë!</h3>
+                <p>Llogaria juaj u krijua me sukses dhe është menjëherë AKTIVE. Tani mund të hyni për të bërë oferta ose për të shitur artikuj.</p>
+                <button class="btn btn-blue" style="margin-top: 15px; width: 100%;" onclick="toggleForms('login')">Hyr Tani</button>
             </div>
         </div>
         <div>
@@ -111,8 +108,12 @@
     <script>
         const _URL = "https://supabase.co";
         const _KEY = "sb_publishable_aTg_EeN9qT5C54_dRViJHQ_YJM9BW4B";
-        
-        // Ndryshimi i saktë i deklarimit për librarinë cdnjs
         const dbServer = supabase.createClient(_URL, _KEY);
         let loggedInUser = null; let intervalsTracker = [];
         window.onload = function() { checkSavedSession(); listenToMyStatusChanges(); fetchLiveProductsFromDb(); syncProductsRealtime(); };
+        function toggleForms(type) {
+            document.getElementById('login-card').style.display = type === 'login' ? 'block' : 'none';
+            document.getElementById('register-card').style.display = type === 'register' ? 'block' : 'none';
+            document.getElementById('thank-you-message').style.display = 'none';
+        }
+        function openProductModal() {
