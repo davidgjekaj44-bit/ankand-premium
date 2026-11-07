@@ -110,7 +110,6 @@
     <script>
         const _URL = "https://supabase.co";
         const _KEY = "sb_publishable_aTg_EeN9qT5C54_dRViJHQ_YJM9BW4B";
-        
         const dbServer = Supabase.createClient(_URL, _KEY);
         let loggedInUser = null; let intervalsTracker = [];
         window.onload = function() { checkSavedSession(); listenToMyStatusChanges(); fetchLiveProductsFromDb(); syncProductsRealtime(); };
