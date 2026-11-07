@@ -37,10 +37,10 @@
     </div>
     <script>
         // KORRIGJIMI: Çelësat tuaj zyrtarë dhe realë të integruar në mënyrë të pastër
-        const _URL = "https://bhwidixijfuhylbanjuk.supabase.co";
+        const _URL = "https://bhwidixijfuhylbanjuk.supabase.com";
         const _KEY = "sb_publishable_aTg_EeN9qT5C54_dRViJHQ_YJM9BW4B";
         
-        const adminServer = Supabase.createClient(_URL, _KEY);
+        const adminServer = Supabase.createClient(sb_publishable_aTg_EeN9qT5C54_dRViJHQ_YJM9BW4B);
         window.onload = function() { fetchAllMembers(); syncRealtime(); };
 
         async function fetchAllMembers() {
