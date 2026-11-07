@@ -108,14 +108,14 @@
         </div>
     </div>
     <script>
-        // KORRIGJIMI OBLIGATIV: Vendos URL-në tënde dhe çelësin "sb_publishable_..." këtu poshtë:
         const _URL = "https://supabase.co";
         const _KEY = "sb_publishable_aTg_EeN9qT5C54_dRViJHQ_YJM9BW4B";
         
         const dbServer = Supabase.createClient(_URL, _KEY);
-
         let loggedInUser = null; let intervalsTracker = [];
         window.onload = function() { checkSavedSession(); listenToMyStatusChanges(); fetchLiveProductsFromDb(); syncProductsRealtime(); };
         function toggleForms(type) {
             document.getElementById('login-card').style.display = type === 'login' ? 'block' : 'none';
             document.getElementById('register-card').style.display = type === 'register' ? 'block' : 'none';
+            document.getElementById('thank-you-message').style.display = 'none';
+        }
