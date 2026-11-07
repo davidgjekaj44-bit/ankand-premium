@@ -54,16 +54,16 @@
             </div>
             <div class="welcome-notice" id="price-alert-box">🚀 MIRËSEVINI: Platforma është 100% FALAS! Publikoni artikuj ose bëni oferta pa asnjë pagesë.</div>
             
-            <!-- FORMULAR I HYRJES (LOGIN) -->
+            <!-- FORMULAR I HYRJES -->
             <div class="card" id="login-card">
                 <h3>🔑 Hyr në Llogari</h3>
                 <div class="form-group"><label>Numër Telefoni</label><input type="tel" id="login-phone" placeholder="069XXXXXXX ose 044XXXXXX"></div>
                 <div class="form-group"><label>Fjalëkalimi</label><input type="password" id="login-pass" placeholder="******"></div>
                 <button class="btn btn-blue btn-block" onclick="processLogin()">Hyr</button>
-                <span class="toggle-link" onclick="toggleForms('register')">Nuk keni llogari? Regjistrohuni këtu</span>
+                <span class="toggle-link" onclick="openRegisterFormDirectly()">Nuk keni llogari? Regjistrohuni këtu</span>
             </div>
 
-            <!-- FORMULAR I REGJISTRIMIT (REGISTER) -->
+            <!-- FORMULAR I REGJISTRIMIT -->
             <div class="card" id="register-card" style="display: none;">
                 <h3>📝 Regjistrohu Falas</h3>
                 <div class="form-group"><label>Emër</label><input type="text" id="u-name" placeholder="Agim"></div>
@@ -72,14 +72,14 @@
                 <div class="form-group"><label>Qyteti</label><input type="text" id="u-city" placeholder="Prishtinë"></div>
                 <div class="form-group"><label>Krijo Fjalëkalim (Min. 6 karaktere)</label><input type="password" id="u-pass" placeholder="******"></div>
                 <button class="btn btn-green btn-block" onclick="processRegistration()">Regjistrohu</button>
-                <span class="toggle-link" onclick="toggleForms('login')">Keni një llogari? Hyni këtu</span>
+                <span class="toggle-link" onclick="openLoginFormDirectly()">Keni një llogari? Hyni këtu</span>
             </div>
 
-            <!-- KUTIA FALENDERUESE -->
+            <!-- MESSAZHI PAS REGJISTRIMIT -->
             <div class="thank-you-box" id="thank-you-message">
                 <h3>🎉 Mirëseerdhe në Platformë!</h3>
                 <p>Llogaria juaj u krijua me sukses. Tani mund të hyni për të bërë oferta ose për të shitur artikuj.</p>
-                <button class="btn btn-blue" style="margin-top: 15px; width: 100%;" onclick="toggleForms('login')">Hyr Tani</button>
+                <button class="btn btn-blue" style="margin-top: 15px; width: 100%;" onclick="openLoginFormDirectly()">Hyr Tani</button>
             </div>
         </div>
         <div>
@@ -91,7 +91,7 @@
         </div>
     </div>
 
-    <!-- DRITARJA POP-UP -->
+    <!-- DRITARJA POP-UP SHTO PRODUKT -->
     <div class="modal" id="productModal">
         <div class="modal-content">
             <h3 style="margin-bottom:15px;">➕ Nxirr një Artikull në Ankand</h3>
@@ -113,28 +113,19 @@
     <script>
         const _URL = "https://supabase.co";
         const _KEY = "sb_publishable_aTg_EeN9qT5C54_dRViJHQ_YJM9BW4B";
-        
-        let dbServer = null;
-        let loggedInUser = null; 
-        let intervalsTracker = [];
+        let dbServer = null; let loggedInUser = null; let intervalsTracker = [];
 
-        // KORRIGJIMI ABSOLUT: Lidhja me Supabase bëhet në sfond që të mos bllokojë asnjë buton vizual
-        try {
-            dbServer = supabase.createClient(_URL, _KEY);
-        } catch(e) {
-            console.log("Supabase nuk u ngarkua ende, por dritaret do punojnë!");
+        try { dbServer = supabase.createClient(_URL, _KEY); } catch(e) { console.log(e); }
+
+        window.onload = function() { checkSavedSession(); if(dbServer) { fetchLiveProductsFromDb(); syncProductsRealtime(); } };
+
+        // ZHBLOKIMI: Ndërrimi i dritareve bëhet në pajisje pa pritur serverin
+        function openRegisterFormDirectly() {
+            document.getElementById('login-card').style.display = 'none';
+            document.getElementById('register-card').style.setProperty('display', 'block', 'important');
+            document.getElementById('thank-you-message').style.display = 'none';
         }
 
-        window.onload = function() { 
-            checkSavedSession(); 
-            if(dbServer) {
-                listenToMyStatusChanges(); 
-                fetchLiveProductsFromDb(); 
-                syncProductsRealtime(); 
-            }
-        };
-
-        // KORRIGJIMI ASINKRON: Ndërrimi i dritareve tani bëhet i pavarur nga çdo gjë tjetër
-        function toggleForms(type) {
-            const loginCard = document.getElementById('login-card');
-            const registerCard = document.getElementById('register-card');
+        function openLoginFormDirectly() {
+            document.getElementById('login-card').style.setProperty('display', 'block', 'important');
+            document.getElementById('register-card').style.display = 'none';
