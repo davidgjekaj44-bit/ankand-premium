@@ -4,41 +4,34 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ankand Premium Shqipëri Kosovë</title>
-    <!-- Ngarkimi zyrtar i databazës Supabase -->
+    <!-- Ngarkimi i saktë dhe i shpejtë i Supabase -->
     <script src="https://jsdelivr.net"></script>
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
         body { background-color: #f1f5f9; color: #1e293b; padding: 20px; }
         header { background-color: #0f172a; color: white; padding: 30px; text-align: center; margin-bottom: 25px; border-radius: 8px; }
-        header h1 { font-size: 36px; font-weight: 800; }
-        header p { color: #94a3b8; font-size: 15px; margin-top: 6px; }
-        .layout { max-width: 1400px; margin: 0 auto; display: grid; grid-template-columns: 1fr 2fr; gap: 25px; }
-        @media (max-width: 900px) { .layout { grid-template-columns: 1fr; } }
-        .card { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; height: fit-content; }
-        .card h3 { margin-bottom: 15px; font-size: 18px; border-bottom: 2px solid #f1f5f9; padding-bottom: 8px; }
+        .layout { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1fr 2fr; gap: 25px; }
+        @media (max-width: 800px) { .layout { grid-template-columns: 1fr; } }
+        .card { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 20px; border: 1px solid #e2e8f0; }
+        .card h3 { margin-bottom: 15px; border-bottom: 2px solid #f1f5f9; padding-bottom: 8px; }
         .welcome-notice { background-color: #e0f2fe; border: 1px solid #bae6fd; color: #0369a1; padding: 12px; border-radius: 6px; font-size: 13px; font-weight: bold; margin-bottom: 15px; text-align: center; }
         .form-group { margin-bottom: 12px; }
-        label { display: block; font-size: 12px; font-weight: 600; margin-bottom: 4px; color: #475569; }
+        label { display: block; font-size: 12px; font-weight: bold; margin-bottom: 4px; color: #475569; }
         input, select, textarea { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 14px; background: white; }
         textarea { resize: vertical; height: 80px; }
-        .btn { padding: 10px 15px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 13px; text-align: center; transition: 0.2s; }
-        .btn-block { width: 100%; padding: 12px; font-size: 14px; }
+        .btn { padding: 10px 15px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; width: 100%; font-size: 14px; transition: 0.2s; }
         .btn-blue { background: #2563eb; color: white; }
         .btn-blue:hover { background: #1d4ed8; }
         .btn-green { background: #10b981; color: white; }
         .btn-green:hover { background: #059669; }
         .btn-red { background: #ef4444; color: white; }
-        .reserve-status { font-size: 11px; font-weight: bold; padding: 4px 6px; border-radius: 4px; margin-top: 5px; display: inline-block; }
-        .reserve-not-met { background: #fee2e2; color: #9f1239; }
-        .reserve-met { background: #dcfce7; color: #15803d; }
-        .timer-box { font-size: 12px; font-weight: bold; color: #dc2626; background: #fff5f5; border: 1px solid #fca5a5; padding: 4px 6px; border-radius: 4px; margin-top: 5px; display: inline-block; }
+        .toggle-link { display: block; text-align: center; margin-top: 15px; font-size: 13px; color: #2563eb; cursor: pointer; text-decoration: underline; }
+        .user-box { background: #f8fafc; border: 1px solid #cbd5e1; padding: 15px; border-radius: 8px; margin-bottom: 15px; }
+        .thank-you { background: #f0fdf4; border: 1px solid #16a34a; padding: 20px; border-radius: 8px; color: #14532d; display: none; }
         .public-feed { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; }
-        .product-card { background: white; border-radius: 10px; border: 1px solid #e2e8f0; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
-        .prod-img { height: 130px; background: #cbd5e1; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #475569; font-size: 12px; text-transform: uppercase; }
-        .prod-body { padding: 15px; flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between; }
-        .prod-title { font-size: 15px; font-weight: bold; }
-        .prod-category { font-size: 11px; background: #e2e8f0; padding: 2px 6px; border-radius: 4px; font-weight: bold; color: #475569; width: fit-content; margin-top: 3px; }
-        .prod-price { font-size: 16px; font-weight: bold; margin: 8px 0; background: #f8fafc; padding: 6px; border-radius: 4px; text-align: center; border: 1px solid #f1f5f9; }
+        .product-card { background: white; border-radius: 10px; border: 1px solid #e2e8f0; padding: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); display: flex; flex-direction: column; justify-content: space-between; }
+        .prod-title { font-size: 16px; font-weight: bold; margin-bottom: 5px; }
+        .prod-price { font-size: 16px; font-weight: bold; margin-top: 10px; color: #2563eb; background: #f8fafc; padding: 6px; border-radius: 4px; text-align: center; border: 1px solid #f1f5f9; }
     </style>
 </head>
 <body>
@@ -49,9 +42,9 @@
     </header>
 
     <div class="layout">
-        <!-- MAJTA: KRIJIMI I NJË ANKANDI TË RI -->
+        <!-- MAJTA: KRIJIMI I ANKANDIT -->
         <div>
-            <div class="welcome-notice">🚀 MIRËSEVINI: Platforma është 100% FALAS dhe e hapur! Publikoni artikuj ose bëni oferta pa asnjë pagesë apo regjistrim.</div>
+            <div class="welcome-notice">🚀 MIRËSEVINI: Platforma është 100% FALAS! Publikoni artikuj ose bëni oferta pa asnjë pagesë apo regjistrim.</div>
             
             <div class="card">
                 <h3>➕ Nxirr një Artikull në Ankand</h3>
@@ -66,17 +59,17 @@
                     </select>
                 </div>
                 <div class="form-group"><label>Emri i Artikullit</label><input type="text" id="p-title" placeholder="p.sh. Golf 7 S-Line"></div>
-                <div class="form-group"><label>Përshkrimi i Detajuar</label><textarea id="p-desc" placeholder="Shkruani gjendjen, vitin, lokacionin ose kontaktin tuaj..."></textarea></div>
+                <div class="form-group"><label>Përshkrimi i Detajuar</label><textarea id="p-desc" placeholder="Shkruani vitin, lokacionin, gjendjen dhe kontaktin tuaj..."></textarea></div>
                 <div class="form-group"><label>🔒 Çmimi Rezervë i Fshehur (€)</label><input type="number" id="p-reserve" placeholder="Shifra minimale që pranoni"></div>
-                <button class="btn btn-green btn-block" onclick="saveProductToDatabase()">NISI ANKANDIN (7 DITË)</button>
+                <button class="btn btn-green" onclick="saveProductToDatabase()">NISI ANKANDIN (7 DITË)</button>
             </div>
         </div>
 
-        <!-- DJATHTA: FEED-I LIVE I PRODUKTEVE -->
+        <!-- DJATHTA: PRODUKTET LIVE -->
         <div>
             <h2 style="font-size: 18px; margin-bottom: 15px;">🛒 Artikujt Aktivë në Ankand</h2>
             <div class="public-feed" id="products-container-list">
-                <!-- Ngarkohen automatikisht -->
+                <!-- Ngarkohen live në kohë reale -->
             </div>
         </div>
     </div>
@@ -85,7 +78,6 @@
         const _URL = "https://supabase.co";
         const _KEY = "sb_publishable_aTg_EeN9qT5C54_dRViJHQ_YJM9BW4B";
         const dbServer = supabase.createClient(_URL, _KEY);
-        let intervalsTracker = [];
 
         window.onload = function() { fetchLiveProductsFromDb(); syncProductsRealtime(); };
 
@@ -99,28 +91,22 @@
             let endDate = new Date(); endDate.setDate(endDate.getDate() + 7);
 
             const { error } = await dbServer.from('products').insert([{ title, category, description, reserve_price, current_price: 0, end_date: endDate.toISOString() }]);
-            if (error) alert(error.message);
-            else { 
-                alert("🎉 Ankandi juaj u hap me sukses për 7 ditë!"); 
-                document.getElementById('p-title').value = ""; 
-                document.getElementById('p-desc').value = ""; 
-                document.getElementById('p-reserve').value = ""; 
-                fetchLiveProductsFromDb(); 
+            if (error) {
+                alert(error.message);
+            } else {
+                alert("🎉 Ankandi juaj u hap me sukses!");
+                document.getElementById('p-title').value = "";
+                document.getElementById('p-desc').value = "";
+                document.getElementById('p-reserve').value = "";
+                fetchLiveProductsFromDb();
             }
         }
 
         async function fetchLiveProductsFromDb() {
             const { data: products } = await dbServer.from('products').select('*').order('created_at', { ascending: false });
-            if (!products) return;
-
             let container = document.getElementById('products-container-list'); container.innerHTML = "";
-            intervalsTracker.forEach(clearInterval); intervalsTracker = [];
-
-            if(products.length === 0) {
-                container.innerHTML = `<p style="color:#64748b; font-style:italic; padding:20px;">Nuk ka asnjë artikull për momentin.</p>`;
-                return;
-            }
-
+            if(!products || products.length === 0) { container.innerHTML = `<p style="color:#64748b; font-style:italic; padding:20px;">Nuk ka artikuj në ankand aktualisht.</p>`; return; }
+            
             products.forEach(p => {
                 let card = document.createElement('div'); card.className = 'product-card';
                 let ikona = "📦"; 
@@ -131,24 +117,30 @@
                 else if(p.category === "Telefon") ikona = "📱";
 
                 card.innerHTML = `
-                    <div class="prod-img">${ikona} ${p.title}</div>
-                    <div class="prod-body">
-                        <div>
-                            <div class="prod-title">${p.title}</div>
-                            <span class="prod-category">${p.category}</span>
-                            <p style="font-size:12px; color:#475569; margin-top:8px; line-height:1.4;">${p.description}</p>
-                            <br>
-                            <span class="reserve-status reserve-not-met" id="res-label-${p.id}">❌ Çmimi rezervë nuk është arritur</span>
-                            <br>
-                            <div class="timer-box" id="timer-${p.id}">Duke llogaritur...</div>
-                        </div>
-                        <div class="prod-price">Oferta Aktuale: <span id="price-val-${p.id}">${p.current_price}</span> €</div>
-                        <div style="display:flex; gap:5px; margin-top:5px;">
-                            <input type="number" id="input-val-${p.id}" placeholder="Shifra në €..." style="padding:6px; font-size:13px;">
+                    <div>
+                        <div class="prod-title">${ikona} ${p.title}</div>
+                        <p style="font-size:13px; color:#475569; margin-top:5px; line-height:1.4;">${p.description}</p>
+                    </div>
+                    <div>
+                        <div class="prod-price">Oferta Aktuale: ${p.current_price} €</div>
+                        <div style="display:flex; gap:5px; margin-top:8px;">
+                            <input type="number" id="input-val-${p.id}" placeholder="€..." style="padding:6px; font-size:13px;">
                             <button class="btn btn-blue" style="padding:6px 12px; width:auto;" onclick="executeLiveBidOnProduct('${p.id}', ${p.current_price})">OFERTO</button>
                         </div>
                     </div>
                 `;
                 container.appendChild(card);
-                if(p.current_price >= p.reserve_price) { 
-                    let resLabel = document.getElementById(`res-label-${p.id}`);
+            });
+        }
+
+        async function executeLiveBidOnProduct(prodId, currentPrice) {
+            let userBid = parseInt(document.getElementById(`input-val-${prodId}`).value);
+            if(isNaN(userBid) || userBid <= currentPrice) { alert("Oferta duhet të jetë më e lartë!"); return; }
+            await dbServer.from('products').update({ current_price: userBid }).eq('id', prodId);
+            fetchLiveProductsFromDb();
+        }
+
+        function syncProductsRealtime() { dbServer.channel('products-sync').on('postgres_changes', { event: '*', schema: 'public', table: 'products' }, () => { fetchLiveProductsFromDb(); }).subscribe(); }
+    </script>
+</body>
+</html>
