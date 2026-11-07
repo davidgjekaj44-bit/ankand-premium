@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ankand® Premium Shqipëri Kosovë</title>
+    <!-- Ngarkimi super i shpejtë i Supabase nga Cloudflare -->
     <script src="https://cloudflare.com" integrity="sha512-Y3I7i8z9tTfNshB6wYI6zD9vV8BInF7v2f1v/3K6M3BExXyZtWc9fL1t/3K6M3BExXyZtWc9fL1t/3K6M3BExXyZtW==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
@@ -24,10 +25,9 @@
         .btn-blue { background: #2563eb; color: white; }
         .btn-green { background: #10b981; color: white; }
         .btn-red { background: #ef4444; color: white; }
-        .toggle-link { display: block; text-align: center; margin-top: 12px; font-size: 13px; color: #2563eb; cursor: pointer; }
+        .toggle-link { display: block; text-align: center; margin-top: 12px; font-size: 13px; color: #2563eb; cursor: pointer; text-decoration: underline; }
         .user-session-box { background: #f8fafc; border: 1px solid #cbd5e1; padding: 15px; border-radius: 8px; margin-bottom: 15px; }
-        .badge { padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; text-transform: uppercase; }
-        .badge-active { background: #dcfce7; color: #15803d; }
+        .badge-active { background: #dcfce7; color: #15803d; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; }
         .thank-you-box { background: #f0fdf4; border: 2px solid #16a34a; padding: 20px; border-radius: 8px; color: #14532d; font-size: 14px; margin-top: 15px; display: none; }
         .reserve-status { font-size: 12px; font-weight: bold; padding: 4px 8px; border-radius: 4px; margin-top: 5px; display: inline-block; }
         .reserve-not-met { background: #fee2e2; color: #9f1239; }
@@ -53,10 +53,12 @@
         <div>
             <div class="user-session-box" id="session-card" style="display: none;">
                 <h4>Mirëseerdhe, <span id="session-user-name">...</span>!</h4>
-                <p>Statusi: <span id="session-user-status" class="badge badge-active">Aktiv</span></p>
+                <p>Statusi: <span class="badge-active">Aktiv</span></p>
                 <button class="btn btn-red" style="width:100%; margin-top:10px;" onclick="logout()">Logout</button>
             </div>
             <div class="welcome-notice" id="price-alert-box">🚀 MIRËSEVINI: Platforma është 100% FALAS! Publikoni artikuj ose bëni oferta pa asnjë pagesë.</div>
+            
+            <!-- FORMULAR I HYRJES (LOGIN) -->
             <div class="card" id="login-card">
                 <h3>🔑 Hyr në Llogari</h3>
                 <div class="form-group"><label>Numër Telefoni</label><input type="tel" id="login-phone" placeholder="069XXXXXXX ose 044XXXXXX"></div>
@@ -64,6 +66,8 @@
                 <button class="btn btn-blue btn-block" onclick="processLogin()">Hyr</button>
                 <span class="toggle-link" onclick="toggleForms('register')">Nuk keni llogari? Regjistrohuni këtu</span>
             </div>
+
+            <!-- FORMULAR I REGJISTRIMIT (REGISTER) -->
             <div class="card" id="register-card" style="display: none;">
                 <h3>📝 Regjistrohu Falas</h3>
                 <div class="form-group"><label>Emër</label><input type="text" id="u-name" placeholder="Agim"></div>
@@ -74,6 +78,8 @@
                 <button class="btn btn-green btn-block" onclick="processRegistration()">Regjistrohu</button>
                 <span class="toggle-link" onclick="toggleForms('login')">Keni një llogari? Hyni këtu</span>
             </div>
+
+            <!-- KUTIA FALENDERUESE -->
             <div class="thank-you-box" id="thank-you-message">
                 <h3>🎉 Mirëseerdhe në Platformë!</h3>
                 <p>Llogaria juaj u krijua me sukses dhe është menjëherë AKTIVE. Tani mund të hyni për të bërë oferta ose për të shitur artikuj.</p>
@@ -88,6 +94,8 @@
             <div class="public-feed" id="products-container-list"></div>
         </div>
     </div>
+
+    <!-- DRITARJA POP-UP -->
     <div class="modal" id="productModal">
         <div class="modal-content">
             <h3 style="margin-bottom:15px;">➕ Nxirr një Artikull në Ankand</h3>
@@ -105,15 +113,15 @@
             <button class="btn btn-red btn-block" style="margin-top:5px;" onclick="closeProductModal()">Anulo</button>
         </div>
     </div>
+
     <script>
         const _URL = "https://supabase.co";
         const _KEY = "sb_publishable_aTg_EeN9qT5C54_dRViJHQ_YJM9BW4B";
         const dbServer = supabase.createClient(_URL, _KEY);
         let loggedInUser = null; let intervalsTracker = [];
+
         window.onload = function() { checkSavedSession(); listenToMyStatusChanges(); fetchLiveProductsFromDb(); syncProductsRealtime(); };
+
+        // Funksioni kryesor që rregullon ndërrimin e formave në sekondë
         function toggleForms(type) {
-            document.getElementById('login-card').style.display = type === 'login' ? 'block' : 'none';
-            document.getElementById('register-card').style.display = type === 'register' ? 'block' : 'none';
-            document.getElementById('thank-you-message').style.display = 'none';
-        }
-        function openProductModal() {
+            if (type === 'login') {
