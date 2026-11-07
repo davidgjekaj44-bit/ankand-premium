@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ankand® Premium Shqipëri Kosovë</title>
-    <script src="https://cloudflare.com" integrity="sha512-Y3I7i8z9tTfNshB6wYI6zD9vV8BInF7v2f1v/3K6M3BExXyZtWc9fL1t/3K6M3BExXyZtWc9fL1t/3K6M3BExXyZtW==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <!-- Ngarkimi super i shpejtë i Supabase nga Cloudflare -->
+    <script src="https://cloudflare.com" integrity="sha512-Y3I7i8z9tTfNshB6wYI6zD9vV8BInF7v2f1v/3K6M3BExXyZtWc9fL1t/3K6M3BExXyZtW==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
         body { background-color: #f1f5f9; color: #1e293b; padding: 20px; }
@@ -57,6 +58,7 @@
             </div>
             <div class="welcome-notice" id="price-alert-box">🚀 MIRËSEVINI: Platforma është 100% FALAS! Publikoni artikuj ose bëni oferta pa asnjë pagesë.</div>
             
+            <!-- FORMULAR I HYRJES (LOGIN) -->
             <div class="card" id="login-card">
                 <h3>🔑 Hyr në Llogari</h3>
                 <div class="form-group"><label>Numër Telefoni</label><input type="tel" id="login-phone" placeholder="069XXXXXXX ose 044XXXXXX"></div>
@@ -65,6 +67,7 @@
                 <span class="toggle-link" onclick="toggleForms('register')">Nuk keni llogari? Regjistrohuni këtu</span>
             </div>
 
+            <!-- FORMULAR I REGJISTRIMIT (REGISTER) -->
             <div class="card" id="register-card" style="display: none;">
                 <h3>📝 Regjistrohu Falas</h3>
                 <div class="form-group"><label>Emër</label><input type="text" id="u-name" placeholder="Agim"></div>
@@ -76,6 +79,7 @@
                 <span class="toggle-link" onclick="toggleForms('login')">Keni një llogari? Hyni këtu</span>
             </div>
 
+            <!-- KUTIA FALENDERUESE -->
             <div class="thank-you-box" id="thank-you-message">
                 <h3>🎉 Mirëseerdhe në Platformë!</h3>
                 <p>Llogaria juaj u krijua me sukses dhe është menjëherë AKTIVE. Tani mund të hyni për të bërë oferta ose për të shitur artikuj.</p>
@@ -91,6 +95,7 @@
         </div>
     </div>
 
+    <!-- DRITARJA POP-UP -->
     <div class="modal" id="productModal">
         <div class="modal-content">
             <h3 style="margin-bottom:15px;">➕ Nxirr një Artikull në Ankand</h3>
@@ -117,9 +122,6 @@
 
         window.onload = function() { checkSavedSession(); listenToMyStatusChanges(); fetchLiveProductsFromDb(); syncProductsRealtime(); };
 
+        // Funksioni kryesor që rregullon ndërrimin e formave në sekondë
         function toggleForms(type) {
             if (type === 'login') {
-                document.getElementById('login-card').style.display = 'block';
-                document.getElementById('register-card').style.display = 'none';
-            } else if (type === 'register') {
-                document.getElementById('login-card').style.display = 'none';
