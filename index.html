@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="sq">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ankand® Premium Shqipëri Kosovë</title>
+    <!-- Ngarkimi super i shpejtë i Supabase nga Cloudflare -->
+    <script src="https://cloudflare.com" integrity="sha512-Y3I7i8z9tTfNshB6wYI6zD9vV8BInF7v2f1v/3K6M3BExXyZtWc9fL1t/3K6M3BExXyZtW==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: #f1f5f9; color: #1e293b; padding: 20px; }
+        
+        header { background-color: #0f172a; color: white; padding: 35px 25px; text-align: center; margin-bottom: 25px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+        header h1 { font-size: 38px; font-weight: 800; letter-spacing: -0.5px; }
+        header p { color: #94a3b8; font-size: 16px; margin-top: 8px; font-weight: 500; }
+        
+        .layout { max-width: 1400px; margin: 0 auto; display: grid; grid-template-columns: 1fr 2fr; gap: 25px; }
+        @media (max-width: 1000px) { .layout { grid-template-columns: 1fr; } }
+        
+        .card { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; height: fit-content; margin-bottom: 20px; }
+        .card h3 { margin-bottom: 15px; font-size: 18px; border-bottom: 2px solid #f1f5f9; padding-bottom: 8px; }
+        
+        .price-notice { background-color: #fef9c3; border: 1px solid #fef08a; color: #713f12; padding: 12px; border-radius: 6px; font-size: 13px; font-weight: 600; margin-bottom: 15px; line-height: 1.4; text-align: center; }
+        .form-group { margin-bottom: 12px; }
+        label { display: block; font-size: 12px; font-weight: 600; margin-bottom: 4px; color: #475569; }
+        input, select, textarea { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 14px; background: white; }
+        textarea { resize: vertical; height: 80px; }
+        
+        .btn { padding: 10px 15px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 13px; text-align: center; transition: 0.2s; }
+        .btn-block { width: 100%; padding: 12px; font-size: 14px; }
+        .btn-blue { background: #2563eb; color: white; }
+        .btn-blue:hover { background: #1d4ed8; }
+        .btn-green { background: #10b981; color: white; }
+        .btn-green:hover { background: #059669; }
+        .btn-red { background: #ef4444; color: white; }
+        
+        .toggle-link { display: block; text-align: center; margin-top: 12px; font-size: 13px; color: #2563eb; cursor: pointer; text-decoration: underline; }
+        .user-session-box { background: #f8fafc; border: 1px solid #cbd5e1; padding: 15px; border-radius: 8px; margin-bottom: 15px; }
+        .badge { padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; text-transform: uppercase; }
+        .badge-active { background: #dcfce7; color: #15803d; }
+        .badge-pending { background: #fef9c3; color: #a16207; }
+        
+        .thank-you-box { background: #f0fdf4; border: 2px solid #16a34a; padding: 20px; border-radius: 8px; color: #14532d; font-size: 14px; line-height: 1.6; margin-top: 15px; display: none; }
+        
+        .reserve-status { font-size: 12px; font-weight: bold; padding: 4px 8px; border-radius: 4px; margin-top: 5px; display: inline-block; }
+        .reserve-not-met { background: #fee2e2; color: #9f1239; }
+        .reserve-met { background: #dcfce7; color: #15803d; }
+        .timer-box { font-size: 13px; font-weight: bold; color: #dc2626; background: #fff5f5; border: 1px solid #fca5a5; padding: 4px 8px; border-radius: 4px; margin-top: 5px; display: inline-block; }
+
+        .public-feed { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+        .product-card { background: white; border-radius: 10px; border: 1px solid #e2e8f0; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
+        .prod-img { height: 140px; background: #cbd5e1; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #475569; font-size: 12px; text-transform: uppercase; }
+        .prod-body { padding: 15px; flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between; }
+        .prod-title { font-size: 15px; font-weight: bold; }
+        .prod-category { font-size: 11px; background: #e2e8f0; padding: 2px 6px; border-radius: 4px; font-weight: bold; color: #475569; width: fit-content; margin-top: 3px; }
+        .prod-price { font-size: 16px; font-weight: bold; margin: 8px 0; background: #f8fafc; padding: 6px; border-radius: 4px; text-align: center; border: 1px solid #f1f5f9; }
+        .locked-msg { font-size: 11px; color: #dc2626; font-weight: bold; text-align: center; margin-top: 8px; display: block; }
+
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); align-items: center; justify-content: center; padding: 20px; }
+        .modal-content { background-color: white; padding: 25px; border-radius: 12px; max-width: 500px; width: 100%; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Ankand® Premium Shqipëri Kosovë</h1>
+        <p>Sistemi Inteligjent i Ankandeve me Çmim Rezervë të Fshehur 🔒</p>
+    </header>
+
+    <div class="layout">
+        <div>
+            <div class="user-session-box" id="session-card" style="display: none;">
+                <h4>Mirëseerdhe, <span id="session-user-name">...</span>!</h4>
+                <p style="font-size: 13px; margin: 5px 0;">Statusi: <span id="session-user-status" class="badge">Në Pritje</span></p>
+                <button class="btn btn-red" style="width:100%; margin-top:10px;" onclick="logout()">Dil nga Llogaria (Logout)</button>
+            </div>
+
+            <div class="price-notice" id="price-alert-box">
+                📢 SHËRBIM PREMIUM: Për të bërë oferta ose për të publikuar produkte për shitje, kërkohet abonim aktiv vjetor prej 120 Euro/Vit.
+            </div>
+
+            <div class="card" id="login-card">
+                <h3>🔑 Hyr në Llogari</h3>
+                <div class="form-group"><label>Numër Telefoni</label><input type="tel" id="login-phone" placeholder="069XXXXXXX ose 044XXXXXX"></div>
+                <div class="form-group"><label>Fjalëkalimi</label><input type="password" id="login-pass" placeholder="******"></div>
+                <button class="btn btn-blue btn-block" onclick="processLogin()">Hyr</button>
+                <span class="toggle-link" onclick="openRegisterFormDirectly()">Nuk keni llogari? Regjistrohuni këtu</span>
+            </div>
+
+            <div class="card" id="register-card" style="display: none;">
+                <h3>📝 Regjistrohu si Anëtar</h3>
+                <div class="form-group"><label>Emër</label><input type="text" id="u-name" placeholder="Agim"></div>
+                <div class="form-group"><label>Mbiemër</label><input type="text" id="u-surname" placeholder="Krasniqi"></div>
+                <div class="form-group"><label>Numër Telefoni (AL / KS)</label><input type="tel" id="u-phone" placeholder="p.sh. 069... ose +3834..."></div>
+                <div class="form-group"><label>Qyteti</label><input type="text" id="u-city" placeholder="Prishtinë"></div>
+                <div class="form-group"><label>Krijo Fjalëkalim (Min. 6 karaktere)</label><input type="password" id="u-pass" placeholder="******"></div>
+                <button class="btn btn-green btn-block" onclick="processRegistration()">Regjistrohu</button>
+                <span class="toggle-link" onclick="openLoginFormDirectly()">Keni një llogari? Hyni këtu</span>
+            </div>
+
+            <div class="thank-you-box" id="thank-you-message">
+                <h3>🎉 Regjistrimi u dërgua!</h3>
+                <p>Faleminderit, do merrni një sms për pagesën. Në momentin që bëni pagesën do jeni aktiv për blerje ose shitje për 12 muaj.</p>
+                <button class="btn btn-blue" style="margin-top: 15px; width: 100%;" onclick="openLoginFormDirectly()">Kthehu tek Hyrja</button>
+            </div>
+        </div>
+
+        <div>
+            <div style="margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center;">
+                <h2 style="font-size: 18px;">🛒 Artikujt e Postuar (Nga 0 €)</h2>
+                <button class="btn btn-blue" onclick="openProductModal()">➕ SHTO PRODUKT</button>
+            </div>
+            <div class="public-feed" id="products-container-list"></div>
+        </div>
+    </div>
+
+    <!-- DRITARJA MODALE -->
+    <div class="modal" id="productModal">
+        <div class="modal-content">
+            <h3 style="margin-bottom:15px;">➕ Nxirr një Artikull në Ankand</h3>
+            <div class="form-group">
+                <label>Kategoria</label>
+                <select id="p-category">
+                    <option value="Makinë">Makinë</option><option value="Traktor">Traktor</option><option value="Eskavator">Eskavator</option>
+                    <option value="Shtëpi">Shtëpi</option><option value="Dyqan">Dyqan</option><option value="Motorr">Motorr</option><option value="Telefon">Telefon</option>
+                </select>
+            </div>
+            <div class="form-group"><label>Emri i Artikullit</label><input type="text" id="p-title"></div>
+            <div class="form-group"><label>Përshkrimi</label><textarea id="p-desc"></textarea></div>
+            <div class="form-group"><label>🔒 Çmimi Rezervë i Fshehur (€)</label><input type="number" id="p-reserve"></div>
+            <button class="btn btn-green btn-block" onclick="saveProductToDatabase()">NISI ANKANDIN (7 DITË)</button>
