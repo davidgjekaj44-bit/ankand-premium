@@ -7,33 +7,49 @@
     <script src="https://jsdelivr.net"></script>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
-        body { background-color: #f1f5f9; color: #1e293b; padding: 20px; }
-        header { background-color: #0f172a; color: white; padding: 30px; text-align: center; margin-bottom: 25px; border-radius: 8px; }
-        header h1 { font-size: 36px; font-weight: 800; }
+        
+        /* SFONDI ME FLAMURIN SHQIPTAR DUKE VALËVITUR */
+        body { 
+            background: linear-gradient(rgba(241, 245, 249, 0.88), rgba(241, 245, 249, 0.88)), 
+                        url('https://wikimedia.org');
+            background-size: cover;
+            background-attachment: fixed;
+            background-position: center;
+            color: #1e293b; 
+            padding: 20px; 
+        }
+        
+        header { background-color: #0f172a; color: white; padding: 30px; text-align: center; margin-bottom: 25px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.15); }
+        header h1 { font-size: 36px; font-weight: 800; letter-spacing: -0.5px; }
         header p { color: #94a3b8; font-size: 15px; margin-top: 6px; }
+        
         .layout { max-width: 1400px; margin: 0 auto; display: grid; grid-template-columns: 1fr 2fr; gap: 25px; }
         @media (max-width: 900px) { .layout { grid-template-columns: 1fr; } }
-        .card { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; height: fit-content; }
-        .card h3 { margin-bottom: 15px; font-size: 18px; border-bottom: 2px solid #f1f5f9; padding-bottom: 8px; }
-        .welcome-notice { background-color: #e0f2fe; border: 1px solid #bae6fd; color: #0369a1; padding: 12px; border-radius: 6px; font-size: 13px; font-weight: bold; margin-bottom: 15px; text-align: center; }
+        
+        .card { background: rgba(255, 255, 255, 0.96); padding: 20px; border-radius: 10px; box-shadow: 0 6px 12px rgba(0,0,0,0.08); border: 1px solid #e2e8f0; height: fit-content; }
+        .card h3 { margin-bottom: 15px; font-size: 18px; border-bottom: 2px solid #f1f5f9; padding-bottom: 8px; color: #0f172a; }
+        .welcome-notice { background-color: #ef4444; border: 1px solid #dc2626; color: white; padding: 12px; border-radius: 6px; font-size: 13px; font-weight: bold; margin-bottom: 15px; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        
         .form-group { margin-bottom: 12px; }
         label { display: block; font-size: 12px; font-weight: 600; margin-bottom: 4px; color: #475569; }
         input, select, textarea { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 14px; background: white; }
         textarea { resize: vertical; height: 80px; }
+        
         .btn { padding: 10px 15px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 13px; text-align: center; transition: 0.2s; }
         .btn-block { width: 100%; padding: 12px; font-size: 14px; }
         .btn-blue { background: #2563eb; color: white; }
         .btn-blue:hover { background: #1d4ed8; }
         .btn-green { background: #10b981; color: white; }
         .btn-green:hover { background: #059669; }
+        
         .timer-box { font-size: 12px; font-weight: bold; color: #dc2626; background: #fff5f5; border: 1px solid #fca5a5; padding: 4px 6px; border-radius: 4px; margin-top: 5px; display: inline-block; }
         .public-feed { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
-        .product-card { background: white; border-radius: 10px; border: 1px solid #e2e8f0; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
+        .product-card { background: rgba(255, 255, 255, 0.96); border-radius: 10px; border: 1px solid #e2e8f0; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 4px 8px rgba(0,0,0,0.05); }
         .prod-img-box { height: 180px; background: #cbd5e1; background-size: cover; background-position: center; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #475569; font-size: 12px; text-transform: uppercase; }
         .prod-body { padding: 15px; flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between; }
-        .prod-title { font-size: 16px; font-weight: bold; }
+        .prod-title { font-size: 16px; font-weight: bold; color: #0f172a; }
         .prod-category { font-size: 11px; background: #e2e8f0; padding: 2px 6px; border-radius: 4px; font-weight: bold; color: #475569; width: fit-content; margin-top: 3px; }
-        .prod-price { font-size: 16px; font-weight: bold; margin: 8px 0; background: #f8fafc; padding: 6px; border-radius: 4px; text-align: center; border: 1px solid #f1f5f9; }
+        .prod-price { font-size: 16px; font-weight: bold; margin: 8px 0; background: #fff5f5; padding: 8px; border-radius: 4px; text-align: center; border: 1px solid #fee2e2; color: #dc2626; }
     </style>
 </head>
 <body>
@@ -46,7 +62,7 @@
     <div class="layout">
         <!-- FORMULAR SHTIMI -->
         <div>
-            <div class="welcome-notice">🚀 MIRËSEVINI: Ngarkoni artikuj me foto reale dhe bëni oferta në kohë reale pa asnjë llogari!</div>
+            <div class="welcome-notice">🇦🇱 MIRËSEVINI: Çdo ankand i ri fillon automatikisht nga 0 Euro! Publikoni falas pa regjistrim.</div>
             
             <div class="card">
                 <h3>➕ Nxirr një Artikull në Ankand</h3>
@@ -61,7 +77,7 @@
                     </select>
                 </div>
                 <div class="form-group"><label>Emri i Artikullit</label><input type="text" id="p-title" placeholder="p.sh. Golf 7 S-Line"></div>
-                <div class="form-group"><label>Përshkrimi i Detajuar</label><textarea id="p-desc" placeholder="Gjendja, viti, kontakti juaj..."></textarea></div>
+                <div class="form-group"><label>Përshkrimi i Detajuar</label><textarea id="p-desc" placeholder="Shkruani vitin, lokacionin, gjendjen dhe kontaktin tuaj..."></textarea></div>
                 <div class="form-group"><label>📸 Ngarko Foto nga Pajisja</label><input type="file" id="p-image" accept="image/*"></div>
                 <button class="btn btn-green btn-block" onclick="saveProductToDatabase()">NISI ANKANDIN (7 DITË)</button>
             </div>
@@ -69,7 +85,7 @@
 
         <!-- FEED-I LIVE -->
         <div>
-            <h2 style="font-size: 18px; margin-bottom: 15px;">🛒 Artikujt Aktivë në Ankand</h2>
+            <h2 style="font-size: 18px; margin-bottom: 15px; color: #0f172a; text-shadow: 0 1px 2px rgba(255,255,255,0.8);">🛒 Artikujt Aktivë në Ankand</h2>
             <div class="public-feed" id="products-container-list"></div>
         </div>
     </div>
@@ -95,14 +111,14 @@
             let title = document.getElementById('p-title').value.trim();
             let category = document.getElementById('p-category').value;
             let description = document.getElementById('p-desc').value.trim();
-            let imageFiles = document.getElementById('p-image').files;
+            let imageInput = document.getElementById('p-image');
 
             if(!title || !description) { alert("Ju lutem plotësoni të gjitha fushat!"); return; }
             
             let base64Image = null;
-            if(imageFiles.length > 0) {
+            if(imageInput.files.length > 0) {
                 try {
-                    base64Image = await convertImageToBase64(imageFiles[0]);
+                    base64Image = await convertImageToBase64(imageInput.files[0]);
                 } catch(e) {
                     alert("Gabim gjatë leximit të fotos."); return;
                 }
@@ -110,17 +126,18 @@
             
             let endDate = new Date(); endDate.setDate(endDate.getDate() + 7);
 
+            // KORRIGJIMI: Çdo produkt i ri fillon zyrtarisht me vlerën 0 Euro
             const { error } = await dbServer.from('products').insert([{ 
                 title, category, description, current_price: 0, 
-                end_date: endDate.toISOString(), image_data: base64Image 
+                end_date: endDate.toISOString(), image_data: base64Image, reserve_price: 0
             }]);
             
             if (error) alert(error.message);
             else { 
-                alert("🎉 Ankandi juaj u hap me sukses me foton e ngarkuar!"); 
+                alert("🎉 Ankandi juaj nisi me sukses nga 0 €!"); 
                 document.getElementById('p-title').value = ""; 
                 document.getElementById('p-desc').value = ""; 
-                document.getElementById('p-image').value = "";
+                imageInput.value = "";
                 fetchLiveProductsFromDb(); 
             }
         }
@@ -133,7 +150,7 @@
             intervalsTracker.forEach(clearInterval); intervalsTracker = [];
 
             if(products.length === 0) {
-                container.innerHTML = `<p style="color:#64748b; font-style:italic; padding:20px;">Nuk ka asnjë artikull për momentin.</p>`;
+                container.innerHTML = `<p style="color:#64748b; font-style:italic; padding:20px; background:white; border-radius:8px;">Nuk ka asnjë artikull për momentin.</p>`;
                 return;
             }
 
@@ -153,16 +170,3 @@
                             <br>
                             <div class="timer-box" id="timer-${p.id}">Duke llogaritur...</div>
                         </div>
-                        <div class="prod-price">Oferta Aktuale: <span id="price-val-${p.id}">${p.current_price}</span> €</div>
-                        <div style="display:flex; gap:5px; margin-top:5px;">
-                            <input type="number" id="input-val-${p.id}" placeholder="€..." style="padding:6px; font-size:13px;">
-                            <button class="btn btn-blue" style="padding:6px 12px; width:auto;" onclick="executeLiveBidOnProduct('${p.id}', ${p.current_price})">OFERTO</button>
-                        </div>
-                    </div>
-                `;
-                container.appendChild(card);
-
-                let tInterval = setInterval(() => {
-                    let diferenca = new Date(p.end_date).getTime() - new Date().getTime();
-                    let tBox = document.getElementById(`timer-${p.id}`);
-                    if(!tBox) return;
