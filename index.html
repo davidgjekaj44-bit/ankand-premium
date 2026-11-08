@@ -1,123 +1,178 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="sq">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ankand® Premium Shqipëri Kosovë</title>
-    <script src="https://cloudflare.com" integrity="sha512-Y3I7i8z9tTfNshB6wYI6zD9vV8BInF7v2f1v/3K6M3BExXyZtWc9fL1t/3K6M3BExXyZtW==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
-        body { background-color: #f1f5f9; color: #1e293b; padding: 20px; }
-        header { background-color: #0f172a; color: white; padding: 35px 25px; text-align: center; margin-bottom: 25px; border-radius: 8px; }
-        header h1 { font-size: 38px; font-weight: 800; }
-        header p { color: #94a3b8; font-size: 16px; margin-top: 8px; }
-        .layout { max-width: 1400px; margin: 0 auto; display: grid; grid-template-columns: 1fr 2fr; gap: 25px; }
-        @media (max-width: 1000px) { .layout { grid-template-columns: 1fr; } }
-        .card { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; margin-bottom: 20px; }
-        .card h3 { margin-bottom: 15px; font-size: 18px; border-bottom: 2px solid #f1f5f9; padding-bottom: 8px; }
-        .price-notice { background-color: #fef9c3; border: 1px solid #fef08a; color: #713f12; padding: 12px; border-radius: 6px; font-size: 13px; font-weight: 600; margin-bottom: 15px; text-align: center; }
-        .form-group { margin-bottom: 12px; }
-        label { display: block; font-size: 12px; font-weight: 600; margin-bottom: 4px; color: #475569; }
-        input, select, textarea { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 14px; }
-        .btn { padding: 10px 15px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 13px; text-align: center; }
-        .btn-block { width: 100%; padding: 12px; font-size: 14px; }
-        .btn-blue { background: #2563eb; color: white; }
-        .btn-green { background: #10b981; color: white; }
-        .btn-red { background: #ef4444; color: white; }
-        .toggle-link { display: block; text-align: center; margin-top: 12px; font-size: 13px; color: #2563eb; cursor: pointer; text-decoration: underline; }
-        .user-session-box { background: #f8fafc; border: 1px solid #cbd5e1; padding: 15px; border-radius: 8px; margin-bottom: 15px; }
-        .badge { padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; text-transform: uppercase; }
-        .badge-active { background: #dcfce7; color: #15803d; }
-        .badge-pending { background: #fef9c3; color: #a16207; }
-        .thank-you-box { background: #f0fdf4; border: 2px solid #16a34a; padding: 20px; border-radius: 8px; color: #14532d; font-size: 14px; margin-top: 15px; display: none; }
-        .timer-box { font-size: 13px; font-weight: bold; color: #dc2626; background: #fff5f5; border: 1px solid #fca5a5; padding: 4px 8px; border-radius: 4px; margin-top: 5px; display: inline-block; }
-        .public-feed { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
-        .product-card { background: white; border-radius: 10px; border: 1px solid #e2e8f0; overflow: hidden; display: flex; flex-direction: column; }
-        .prod-img { height: 140px; background: #cbd5e1; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #475569; font-size: 12px; text-transform: uppercase; }
-        .prod-body { padding: 15px; flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between; }
-        .prod-title { font-size: 15px; font-weight: bold; }
-        .prod-category { font-size: 11px; background: #e2e8f0; padding: 2px 6px; border-radius: 4px; font-weight: bold; color: #475569; width: fit-content; margin-top: 3px; }
-        .prod-price { font-size: 16px; font-weight: bold; margin: 8px 0; background: #f8fafc; padding: 6px; border-radius: 4px; text-align: center; border: 1px solid #f1f5f9; }
-        .locked-msg { font-size: 11px; color: #dc2626; font-weight: bold; text-align: center; margin-top: 8px; display: block; }
-        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); align-items: center; justify-content: center; padding: 20px; }
-        .modal-content { background-color: white; padding: 25px; border-radius: 12px; max-width: 500px; width: 100%; }
-    </style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Ankand® Premium Shqipëri – Kosovë</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    :root{--navy:#0f172a;--blue:#2563eb;--green:#059669;--bg:#f1f5f9;--line:#e2e8f0}
+    *{box-sizing:border-box}body{margin:0;background:var(--bg);color:#1e293b;font:15px system-ui,Segoe UI,sans-serif}
+    header{background:var(--navy);color:white;padding:30px 18px;text-align:center}header h1{margin:0;font-size:clamp(25px,4vw,38px)}header p{color:#cbd5e1;margin:8px 0 0}
+    main{max-width:1200px;margin:24px auto;padding:0 16px}.notice{padding:12px 14px;background:#fffbeb;border:1px solid #fde68a;border-radius:9px;margin-bottom:18px;color:#78350f}
+    .layout{display:grid;grid-template-columns:330px 1fr;gap:20px}.panel,.product{background:white;border:1px solid var(--line);border-radius:12px;padding:18px;box-shadow:0 3px 12px #0f172a08}
+    h2,h3{margin:0 0 14px}.field{margin:11px 0}.field label{display:block;font-size:13px;font-weight:650;margin-bottom:5px}
+    input,select,textarea{width:100%;padding:11px;border:1px solid #cbd5e1;border-radius:8px;font:inherit;background:white}textarea{min-height:80px;resize:vertical}
+    button{border:0;border-radius:8px;padding:11px 14px;font-weight:700;cursor:pointer;background:var(--blue);color:white}button.secondary{background:#e2e8f0;color:#1e293b}button.green{background:var(--green)}button.danger{background:#dc2626}button:disabled{opacity:.55;cursor:not-allowed}
+    .wide{width:100%}.muted{color:#64748b;font-size:13px}.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.tabs{display:flex;gap:8px;margin-bottom:12px}.tabs button{flex:1}
+    .hidden{display:none!important}.status{padding:3px 8px;border-radius:99px;background:#dcfce7;color:#166534;font-size:12px;font-weight:700}
+    .feed-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:0 0 14px}.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(245px,1fr));gap:15px}
+    .product{padding:0;overflow:hidden}.product img{width:100%;height:165px;object-fit:cover;background:#e2e8f0}.product-body{padding:15px}.product h3{margin:0 0 5px}.price{font-size:19px;font-weight:800;margin:10px 0}.meta{font-size:12px;color:#64748b}.bidrow{display:flex;gap:7px;margin-top:10px}.bidrow input{min-width:0}.bidrow button{white-space:nowrap}
+    .message{margin-top:10px;font-size:13px;min-height:18px}.error{color:#b91c1c}.success{color:#047857}.userbar{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px}
+    dialog{border:0;border-radius:14px;padding:22px;width:min(520px,calc(100% - 24px));box-shadow:0 20px 70px #0004}dialog::backdrop{background:#0f172a99}.foot{margin:24px 0;color:#64748b;font-size:12px;text-align:center}
+    @media(max-width:850px){.layout{grid-template-columns:1fr}.feed-head{align-items:flex-start;flex-direction:column}}
+  </style>
 </head>
 <body>
-    <header>
-        <h1>Ankand® Premium Shqipëri Kosovë</h1>
-        <p>Sistemi Inteligjent i Ankandeve me Çmim Rezervë të Fshehur 🔒</p>
-    </header>
-    <div class="layout">
-        <div>
-            <div class="user-session-box" id="session-card" style="display: none;">
-                <h4>Mirëseerdhe, <span id="session-user-name">...</span>!</h4>
-                <p>Statusi: <span id="session-user-status" class="badge">Në Pritje</span></p>
-                <button class="btn btn-red" style="width:100%; margin-top:10px;" onclick="logout()">Logout</button>
-            </div>
-            <div class="price-notice" id="price-alert-box">📢 SHËRBIM PREMIUM: Për të bërë oferta ose për të publikuar produkte për shitje, kërkohet abonim aktiv vjetor prej 120 Euro/Vit.</div>
-            
-            <div class="card" id="login-card">
-                <h3>🔑 Hyr në Llogari</h3>
-                <div class="form-group"><label>Numër Telefoni</label><input type="tel" id="login-phone" placeholder="069XXXXXXX"></div>
-                <div class="form-group"><label>Fjalëkalimi</label><input type="password" id="login-pass" placeholder="******"></div>
-                <button class="btn btn-blue btn-block" onclick="processLogin()">Hyr</button>
-                <span class="toggle-link" onclick="toggleForms('register')">Nuk keni llogari? Regjistrohuni këtu</span>
-            </div>
+<header><h1>Ankand® Premium Shqipëri – Kosovë</h1><p>Ankande demonstrative me oferta virtuale • 7 ditë</p></header>
+<main>
+  <div class="notice"><strong>Version demonstrues:</strong> nuk kryhen pagesa, shitje apo transaksione reale. Ofertat janë virtuale. Mos vendosni të dhëna bankare ose fjalëkalime që përdorni në shërbime të tjera.</div>
+  <div class="layout">
+    <aside>
+      <section class="panel" id="authPanel">
+        <div class="tabs"><button id="showLogin" type="button">Hyr</button><button class="secondary" id="showRegister" type="button">Regjistrohu</button></div>
+        <form id="loginForm">
+          <h2>Hyr në llogari</h2>
+          <div class="field"><label>Email</label><input id="loginEmail" type="email" required autocomplete="email"></div>
+          <div class="field"><label>Fjalëkalimi</label><input id="loginPassword" type="password" required autocomplete="current-password"></div>
+          <button class="wide">Hyr</button>
+        </form>
+        <form id="registerForm" class="hidden">
+          <h2>Krijo llogari</h2>
+          <div class="field"><label>Emër dhe mbiemër</label><input id="regName" required maxlength="80"></div>
+          <div class="field"><label>Email</label><input id="regEmail" type="email" required autocomplete="email"></div>
+          <div class="field"><label>Telefon (opsional)</label><input id="regPhone" type="tel" maxlength="30"></div>
+          <div class="field"><label>Qyteti</label><input id="regCity" maxlength="80"></div>
+          <div class="field"><label>Fjalëkalimi (minimumi 8 karaktere)</label><input id="regPassword" type="password" minlength="8" required autocomplete="new-password"></div>
+          <button class="wide green">Regjistrohu</button>
+          <p class="muted">Supabase mund të kërkojë konfirmim të emailit, në varësi të konfigurimit të projektit.</p>
+        </form>
+        <div id="authMessage" class="message" role="status"></div>
+      </section>
+      <section class="panel hidden" id="userPanel" style="margin-top:14px">
+        <div class="userbar"><div><strong id="userName"></strong><div class="muted" id="userEmail"></div></div><span class="status">Anëtar testues</span></div>
+        <button class="secondary wide" id="logoutBtn">Dil nga llogaria</button>
+      </section>
+      <section class="panel" style="margin-top:14px">
+        <h3>Rreth demonstrimit</h3>
+        <p class="muted">Regjistrimi përdor Supabase Auth. Produktet dhe ofertat ruhen në databazën tënde. Çmimi rezervë mbahet në tabelë private dhe nuk shfaqet në kartat publike.</p>
+      </section>
+    </aside>
+    <section>
+      <div class="feed-head"><div><h2>Artikujt në ankand</h2><div class="muted">Oferta dhe çmime demonstrative në EUR</div></div><button id="addProductBtn" disabled>+ Shto produkt</button></div>
+      <div id="feed" class="grid"><p class="muted">Duke ngarkuar produktet…</p></div>
+      <div id="pageMessage" class="message" role="status"></div>
+    </section>
+  </div>
+  <p class="foot">Ankand® Premium • Mjedis demonstrues • Nuk përpunon pagesa reale</p>
+</main>
 
-            <div class="card" id="register-card" style="display: none;">
-                <h3>📝 Regjistrohu si Anëtar</h3>
-                <div class="form-group"><label>Emër</label><input type="text" id="u-name" placeholder="Agim"></div>
-                <div class="form-group"><label>Mbiemër</label><input type="text" id="u-surname" placeholder="Krasniqi"></div>
-                <div class="form-group"><label>Numër Telefoni (AL / KS)</label><input type="tel" id="u-phone" placeholder="p.sh. 069..."></div>
-                <div class="form-group"><label>Qyteti</label><input type="text" id="u-city" placeholder="Prishtinë"></div>
-                <div class="form-group"><label>Krijo Fjalëkalim (Min. 6 karaktere)</label><input type="password" id="u-pass" placeholder="******"></div>
-                <button class="btn btn-green btn-block" onclick="processRegistration()">Regjistrohu</button>
-                <span class="toggle-link" onclick="toggleForms('login')">Keni një llogari? Hyni këtu</span>
-            </div>
+<dialog id="productDialog">
+  <form id="productForm">
+    <h2>Publiko produkt demonstrues</h2>
+    <div class="field"><label>Kategoria</label><select id="pCategory"><option>Makinë</option><option>Traktor</option><option>Eskavator</option><option>Shtëpi</option><option>Dyqan</option><option>Motor</option><option>Telefon</option><option>Tjetër</option></select></div>
+    <div class="field"><label>Emri i artikullit</label><input id="pTitle" maxlength="100" required></div>
+    <div class="field"><label>Përshkrimi</label><textarea id="pDescription" maxlength="1500"></textarea></div>
+    <div class="field"><label>Foto (URL publike, opsionale)</label><input id="pImage" type="url" placeholder="https://…"></div>
+    <div class="field"><label>Çmimi fillestar virtual (€)</label><input id="pStart" type="number" min="0.01" step="0.01" required></div>
+    <div class="field"><label>Rezerva private (€) – nuk shfaqet publikisht</label><input id="pReserve" type="number" min="0" step="0.01" required></div>
+    <div class="row"><button class="green">Publiko për 7 ditë</button><button type="button" class="secondary" id="cancelProduct">Anulo</button></div>
+    <p class="muted">Vetëm për demonstrim; mos përdor oferta ose çmime për transaksione reale.</p>
+  </form>
+</dialog>
 
-            <div class="thank-you-box" id="thank-you-message">
-                <h3>🎉 Regjistrimi u dërgua!</h3>
-                <p>Faleminderit, do merrni një sms për pagesën. Në momentin që bëni pagesën do jeni aktiv për blerje ose shitje për 12 muaj.</p>
-                <button class="btn btn-blue" style="margin-top: 15px; width: 100%;" onclick="toggleForms('login')">Hyr Tani</button>
-            </div>
-        </div>
-        <div>
-            <div style="margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center;">
-                <h2 style="font-size: 18px;">🛒 Artikujt e Postuar (Nga 0 €)</h2>
-                <button class="btn btn-blue" onclick="openProductModal()">➕ SHTO PRODUKT</button>
-            </div>
-            <div class="public-feed" id="products-container-list"></div>
-        </div>
-    </div>
-    <div class="modal" id="productModal">
-        <div class="modal-content">
-            <h3 style="margin-bottom:15px;">➕ Nxirr një Artikull në Ankand</h3>
-            <div class="form-group">
-                <label>Kategoria</label>
-                <select id="p-category">
-                    <option value="Makinë">Makinë</option><option value="Traktor">Traktor</option><option value="Eskavator">Eskavator</option>
-                    <option value="Shtëpi">Shtëpi</option><option value="Dyqan">Dyqan</option><option value="Motorr">Motorr</option><option value="Telefon">Telefon</option>
-                </select>
-            </div>
-            <div class="form-group"><label>Emri i Artikullit</label><input type="text" id="p-title"></div>
-            <div class="form-group"><label>Përshkrimi</label><textarea id="p-desc"></textarea></div>
-            <div class="form-group"><label>🔒 Çmimi Rezervë i Fshehur (€)</label><input type="number" id="p-reserve"></div>
-            <button class="btn btn-green btn-block" onclick="saveProductToDatabase()">NISI ANKANDIN (7 DITË)</button>
-            <button class="btn btn-red btn-block" style="margin-top:5px;" onclick="closeProductModal()">Anulo</button>
-        </div>
-    </div>
-    <script>
-        const _URL = "https://supabase.co";
-        const _KEY = "sb_publishable_aTg_EeN9qT5C54_dRViJHQ_YJM9BW4B";
-        const dbServer = supabase.createClient(_URL, _KEY);
-        let loggedInUser = null; let intervalsTracker = [];
-        window.onload = function() { checkSavedSession(); fetchLiveProductsFromDb(); syncProductsRealtime(); };
-        
-        // KORRIGJIMI: Unifikimi i plotë i funksionit toggleForms për të dy butonat
-        function toggleForms(type) {
-            document.getElementById('login-card').style.display = type === 'login' ? 'block' : 'none';
-            document.getElementById('register-card').style.display = type === 'register' ? 'block' : 'none';
-            document.getElementById('thank-you-message').style.display = 'none';
-        }
-        function openProductModal() {
+<script>
+(() => {
+  const SUPABASE_URL = "https://bhwidixijfuhylbanjuk.supabase.co";
+  const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_aTg_EeN9qT5C54_dRViJHQ_YJM9BW4B";
+  const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+  const $ = id => document.getElementById(id);
+  let currentUser = null;
+  let channel = null;
+
+  const money = n => new Intl.NumberFormat("sq-AL",{style:"currency",currency:"EUR"}).format(Number(n || 0));
+  const safe = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+  const message = (id, text, kind="") => { $(id).textContent=text; $(id).className="message "+kind; };
+  const showAuthMode = mode => {
+    $("loginForm").classList.toggle("hidden",mode!=="login");
+    $("registerForm").classList.toggle("hidden",mode!=="register");
+    $("showLogin").className=mode==="login"?"":"secondary";
+    $("showRegister").className=mode==="register"?"":"secondary";
+    message("authMessage","");
+  };
+  $("showLogin").onclick=()=>showAuthMode("login");
+  $("showRegister").onclick=()=>showAuthMode("register");
+
+  async function refreshSession() {
+    const {data:{session}} = await db.auth.getSession();
+    currentUser=session?.user ?? null;
+    $("authPanel").classList.toggle("hidden",!!currentUser);
+    $("userPanel").classList.toggle("hidden",!currentUser);
+    $("addProductBtn").disabled=!currentUser;
+    if(currentUser){
+      $("userEmail").textContent=currentUser.email || "";
+      const {data:profile}=await db.from("profiles").select("full_name").eq("id",currentUser.id).maybeSingle();
+      $("userName").textContent=profile?.full_name || "Anëtar";
+    }
+  }
+  $("registerForm").addEventListener("submit",async e=>{
+    e.preventDefault(); message("authMessage","Duke krijuar llogarinë…");
+    const email=$("regEmail").value.trim(), password=$("regPassword").value;
+    const {data,error}=await db.auth.signUp({email,password,options:{data:{full_name:$("regName").value.trim(),phone:$("regPhone").value.trim(),city:$("regCity").value.trim()}}});
+    if(error){message("authMessage",error.message,"error");return;}
+    if(data.session){message("authMessage","Llogaria u krijua dhe je kyçur.","success");}
+    else{message("authMessage","Regjistrimi u dërgua. Kontrollo emailin për konfirmim, nëse kërkohet.","success");}
+    await refreshSession();
+  });
+  $("loginForm").addEventListener("submit",async e=>{
+    e.preventDefault(); message("authMessage","Duke hyrë…");
+    const {error}=await db.auth.signInWithPassword({email:$("loginEmail").value.trim(),password:$("loginPassword").value});
+    if(error){message("authMessage",error.message,"error");return;}
+    message("authMessage","Hyrja u krye.","success"); await refreshSession(); await loadProducts();
+  });
+  $("logoutBtn").onclick=async()=>{await db.auth.signOut();await refreshSession();await loadProducts();};
+  db.auth.onAuthStateChange(()=>{setTimeout(refreshSession,0);});
+
+  async function loadProducts(){
+    const {data,error}=await db.from("products").select("id,seller_id,title,description,category,image_url,starting_price,current_price,status,ends_at,created_at").order("created_at",{ascending:false});
+    if(error){$("feed").innerHTML='<p class="muted">Nuk u ngarkuan produktet. Kontrollo instalimin e SQL dhe politikat RLS.</p>';message("pageMessage",error.message,"error");return;}
+    if(!data?.length){$("feed").innerHTML='<p class="muted">Nuk ka ende produkte. Hyr në llogari për të shtuar një produkt demonstrues.</p>';return;}
+    $("feed").innerHTML=data.map(p=>{
+      const ended=new Date(p.ends_at).getTime()<=Date.now() || p.status!=="active";
+      const img=p.image_url ? `<img src="${safe(p.image_url)}" alt="${safe(p.title)}" loading="lazy" onerror="this.style.display='none'">` : `<div style="height:165px;background:#e2e8f0;display:grid;place-items:center;color:#64748b">Pa fotografi</div>`;
+      return `<article class="product">${img}<div class="product-body"><div><span class="meta">${safe(p.category)}</span><h3>${safe(p.title)}</h3><p class="muted">${safe(p.description || "")}</p><div class="price">${money(p.current_price)}</div><div class="meta">Mbyllet: ${new Date(p.ends_at).toLocaleString("sq-AL")}</div><p class="meta">${ended?"Ankandi ka përfunduar":"Ankand aktiv"}</p></div><div class="bidrow"><input type="number" min="${Number(p.current_price)+0.01}" step="0.01" placeholder="Oferta (€)" aria-label="Oferta për ${safe(p.title)}" ${!currentUser||ended?"disabled":""}><button data-bid="${p.id}" ${!currentUser||ended?"disabled":""}>Oferto</button></div><div class="message" id="bid-${p.id}"></div></div></article>`;
+    }).join("");
+    document.querySelectorAll("[data-bid]").forEach(btn=>btn.onclick=()=>placeBid(btn.dataset.bid,btn.previousElementSibling.value));
+  }
+  async function placeBid(productId,amount){
+    if(!currentUser){message("pageMessage","Duhet të hysh për të bërë ofertë.","error");return;}
+    const value=Number(amount);
+    if(!Number.isFinite(value)||value<=0){message("pageMessage","Vendos një ofertë të vlefshme.","error");return;}
+    const {error}=await db.rpc("place_demo_bid",{p_product_id:productId,p_amount:value});
+    if(error){message("bid-"+productId,error.message,"error");return;}
+    message("bid-"+productId,"Oferta virtuale u regjistrua.","success"); await loadProducts();
+  }
+  $("addProductBtn").onclick=()=>{if(currentUser)$("productDialog").showModal();};
+  $("cancelProduct").onclick=()=>$("productDialog").close();
+  $("productForm").addEventListener("submit",async e=>{
+    e.preventDefault();
+    if(!currentUser)return;
+    const start=Number($("pStart").value), reserve=Number($("pReserve").value);
+    if(!Number.isFinite(start)||start<=0||!Number.isFinite(reserve)||reserve<0){alert("Kontrollo çmimet.");return;}
+    const payload={seller_id:currentUser.id,title:$("pTitle").value.trim(),description:$("pDescription").value.trim(),category:$("pCategory").value,image_url:$("pImage").value.trim()||null,starting_price:start,current_price:start,ends_at:new Date(Date.now()+7*24*60*60*1000).toISOString(),status:"active"};
+    const {data,error}=await db.from("products").insert(payload).select("id").single();
+    if(error){message("pageMessage",error.message,"error");return;}
+    const {error:secretError}=await db.from("product_private").insert({product_id:data.id,seller_id:currentUser.id,reserve_price:reserve});
+    if(secretError){message("pageMessage","Produkti u krijua, por ruajtja e rezervës dështoi. Kontakto administratorin.","error");return;}
+    $("productForm").reset();$("productDialog").close();message("pageMessage","Produkti demonstrues u publikua.","success");await loadProducts();
+  });
+  function subscribe(){
+    if(channel)db.removeChannel(channel);
+    channel=db.channel("demo-auction-changes").on("postgres_changes",{event:"*",schema:"public",table:"products"},loadProducts).on("postgres_changes",{event:"*",schema:"public",table:"bids"},loadProducts).subscribe();
+  }
+  async function init(){await refreshSession();await loadProducts();subscribe();}
+  init();
+})();
+</script>
+</body>
+</html>
