@@ -1,45 +1,123 @@
-<!doctype html><html lang="sq"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Ankand® Premium Shqipëri – Kosovë</title><style>
-:root{font-family:system-ui,Arial,sans-serif;color:#17233a;background:#f3f6fb}*{box-sizing:border-box}body{margin:0}header{background:linear-gradient(120deg,#0a1830,#173d70);color:white;padding:32px max(18px,calc((100vw - 1100px)/2))}header h1{margin:0;font-size:clamp(22px,3vw,33px)}header p{margin:6px 0 0;color:#cbd5e1}main{max-width:1100px;margin:28px auto;padding:0 16px}.panel,.auction{background:white;border:1px solid #dfe6ef;border-radius:16px;padding:22px;margin-bottom:18px;box-shadow:0 8px 28px #17233a0b}.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}.between{justify-content:space-between}.grow{flex:1}h2{font-size:21px;margin:0 0 14px}h3{margin:0 0 10px}label{display:block;font-size:13px;font-weight:650;margin:10px 0 5px}input,textarea,select{width:100%;border:1px solid #cbd5e1;border-radius:9px;padding:11px;font:inherit;background:white}textarea{min-height:85px}button{background:#1556cb;color:white;border:0;border-radius:9px;padding:11px 16px;font-weight:650;cursor:pointer}button:disabled{opacity:.5;cursor:not-allowed}.secondary{background:#e9eef8;color:#1e3558}.danger{background:#a52222}.muted{color:#64748b;font-size:13px}.status{display:inline-block;padding:4px 9px;background:#e9f5ed;border-radius:99px;font-size:12px;font-weight:650}.error{color:#a52222}.success{color:#087a41}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(285px,1fr));gap:16px}.photos{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:10px 0}.photos img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:7px;background:#e2e8f0}.bids{padding:0;list-style:none;max-height:210px;overflow:auto}.bids li{border-bottom:1px solid #edf0f5;padding:7px 0;display:flex;justify-content:space-between;gap:8px}.hidden{display:none!important}.two{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}footer{text-align:center;padding:24px 16px;color:#677387;font-size:12px;max-width:950px;margin:auto}.note{padding:11px;background:#fef9e7;border-radius:9px;font-size:13px;margin:12px 0}.pill{background:#edf2fc;padding:4px 8px;border-radius:8px;font-size:12px}#message{position:sticky;top:0;z-index:4;padding:10px 16px;background:#e9f5ed;border-bottom:1px solid #d5e5dc;display:none}#message.bad{background:#feeaea;color:#922}.wide{width:100%}small{font-size:12px}
-@media(max-width:650px){header{padding:25px 18px}.panel,.auction{padding:16px}.row{gap:8px}button{min-height:43px}}button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid #93c5fd;outline-offset:2px}</style></head><body><header><h1>Ankand® Premium Shqipëri – Kosovë</h1><p>Ankande 7-ditore · Shiko pa u regjistruar · Pilot publik</p></header><div id="message" role="status"></div><main><div class="note"><strong>PILOT PUBLIK FALAS:</strong> Mund të shikoni ankandet pa llogari. Për të postuar ose ofertuar në këtë fazë përdoret emaili dhe fjalëkalimi. Ofertat janë testuese dhe nuk krijojnë detyrim shitblerjeje. Nuk ka pagesa, abonime apo SMS; mos publikoni informacione të ndjeshme.</div>
-<section class="panel" id="authPanel"><div class="row between"><h2>Llogaria</h2><span id="authState" class="pill">Vizitor</span></div><div id="guestArea"><div class="two"><div><label>Email për hyrje</label><input id="email" type="email" autocomplete="email" placeholder="emri@example.com"></div><div><label>Fjalëkalimi</label><input id="password" type="password" autocomplete="current-password" placeholder="Të paktën 6 karaktere"></div></div><div class="row" style="margin-top:12px"><button id="signIn">Hyr</button><button class="secondary" id="signUp">Regjistrohu</button></div><p class="muted">Nëse kërkohet konfirmimi i emailit, ndiqni mesazhin e Supabase.</p></div><div id="memberArea" class="hidden"><p id="accountEmail"></p><div class="two"><div><label>Emri</label><input id="first" maxlength="60"></div><div><label>Mbiemri (privat)</label><input id="last" maxlength="60"></div><div><label>Qyteti</label><input id="city" maxlength="80"></div><div><label>Telefoni (privat, i paverifikuar)</label><input id="phone" type="tel" maxlength="24" placeholder="+355..."></div></div><p class="muted">Gjatë ankandit shfaqen vetëm emri, qyteti dhe një pjesë e telefonit. Në mbyllje, informacionet e kontaktit mund të shfaqen vetëm te palët përkatëse në njoftimet demonstrative. Nuk kërkohet adresa e shtëpisë.</p><div class="row"><button id="saveProfile">Ruaj profilin</button><button class="secondary" id="signOut">Dil</button></div></div></section>
-<section id="createPanel" class="panel hidden"><h2>+ Shto produkt në ankand</h2><p class="muted">Vetëm një ankand aktiv për shitës. Pas publikimit nuk lejohet modifikimi. Fshirja lejohet në 60 minutat e para, përveçse kur oferta ka arritur rezervën.</p><div class="two"><div><label>Titulli</label><input id="title" maxlength="100" placeholder="P.sh. Biçikletë malore"></div><div><label>Kategoria</label><select id="category"><option>Elektronikë</option><option>Automjete</option><option>Mobilje</option><option>Sport</option><option>Veshje</option><option>Libra</option><option>Art</option><option>Tjetër</option></select></div></div><label>Përshkrimi</label><textarea id="description" maxlength="3000"></textarea><div class="two"><div><label>Çmimi fillestar</label><input value="0 € (automatik)" disabled></div><div><label>Çmimi rezervë (€) — vetëm për shitësin</label><input id="reserve" type="number" min="0" step="0.01" value="0"></div></div><label>Deri në 4 fotografi (JPG/PNG/WebP, deri 5 MB secila)</label><input id="images" type="file" accept="image/jpeg,image/png,image/webp" multiple><p class="muted">Ndalohet publikimi i artikujve të paligjshëm ose të rrezikshëm.</p><button id="publish">Publiko për 7 ditë</button></section>
-<section class="panel"><div class="row between"><h2>Ankandet publike</h2><button class="secondary" id="refresh">Rifresko</button></div><p class="muted">Të gjithë mund të shohin produktet dhe ofertat, të renditura nga më e vogla te më e madhja. Oferta fillestare është 0 €.</p><div id="auctions" class="grid"><p>Po lidhemi me Supabase…</p></div><p id="connectionStatus" class="muted" role="status">Duke kontrolluar lidhjen…</p><p class="muted" id="diagnostic">Nëse shfaqet gabim, kopjoni tekstin e tij. Nëse faqja ngec, hapni F12 → Console. Mos vendosni të dhëna reale gjatë testimit.</p></section><section id="notificationsPanel" class="panel hidden"><h2>Njoftime në llogari pas përfundimit</h2><p class="muted">Këto njoftime shfaqen brenda llogarisë; SMS nuk është aktivizuar ende.</p><div id="notifications"></div></section></main><footer><strong>Njoftim për përgjegjësinë</strong><p>Ankand® Premium Shqipëri – Kosovë shërben si platformë ndërmjetësuese për lidhjen e shitësve me ofertuesit. Marrëveshja përfundimtare, pagesa, dorëzimi dhe gjendja e produktit janë përgjegjësi e palëve të përfshira. Platforma nuk garanton realizimin e shitblerjes pas përfundimit të ankandit.</p><p>Pilot publik falas: ofertat nuk janë detyruese. Njoftimi nuk përjashton përgjegjësitë e detyrueshme ligjore.</p></footer>
-<script>
-const URL='https://bhwidixijfuhylbanjuk.supabase.co', KEY='sb_publishable_aTg_EeN9qT5C54_dRViJHQ_YJM9BW4B';
-let db=null,user=null,profile=null,auctions=[];
-const $=id=>document.getElementById(id), escapeHTML=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-function msg(s,bad=false){const e=$('message');e.textContent=s;e.className=bad?'bad':'';e.style.display='block';setTimeout(()=>{e.style.display='none'},7500)}
-async function call(fn,args={}){if(!db)throw Error('Libraria Supabase nuk u ngarkua. Kontrolloni internetin dhe rifreskoni faqen.');const request=db.rpc(fn,args);const timeout=new Promise((_,reject)=>setTimeout(()=>reject(Error('Supabase nuk u përgjigj brenda 15 sekondave. Kontrolloni lidhjen, projektin dhe Console (F12).')),15000));const {data,error}=await Promise.race([request,timeout]);if(error)throw Error(fn+': '+error.message+(error.code?' ['+error.code+']':''));return data}
-function date(s){return new Date(s).toLocaleString('sq-AL')}
-async function authRefresh(){if(!db)return;const {data,error}=await Promise.race([db.auth.getSession(),new Promise((_,reject)=>setTimeout(()=>reject(Error('Verifikimi i hyrjes nuk u përgjigj brenda 15 sekondave')),15000))]);if(error && error.name!=='AuthSessionMissingError')console.warn('Auth:',error.message);user=data?.session?.user||null;$('guestArea').classList.toggle('hidden',!!user);$('memberArea').classList.toggle('hidden',!user);$('createPanel').classList.toggle('hidden',!user);$('notificationsPanel').classList.toggle('hidden',!user);$('authState').textContent=user?'I identifikuar':'Vizitor';$('accountEmail').textContent=user?.email||'';profile=null;if(user){try{profile=await call('ap_my_profile');if(profile){$('first').value=profile.first_name;$('last').value=profile.last_name;$('city').value=profile.city;$('phone').value=profile.phone}}catch(e){msg(e.message,true)}await loadNotifications()}await loadAuctions()}
-$('signUp').onclick=async()=>{try{if(!db)throw Error('Lidhja me Supabase nuk është gati');if(!$('email').value.trim()||$('password').value.length<6)throw Error('Shkruani email të vlefshëm dhe fjalëkalim me të paktën 6 karaktere');const {data,error}=await db.auth.signUp({email:$('email').value.trim(),password:$('password').value});if(error)throw error;msg(data.session?'Llogaria u krijua. Plotësoni profilin.':'Kërkesa u dërgua. Kontrolloni emailin nëse kërkohet konfirmim.');await authRefresh()}catch(e){msg(e.message,true)}};
-$('signIn').onclick=async()=>{try{if(!db)throw Error('Lidhja me Supabase nuk është gati');if(!$('email').value.trim()||!$('password').value)throw Error('Shkruani email dhe fjalëkalim');const {error}=await db.auth.signInWithPassword({email:$('email').value.trim(),password:$('password').value});if(error)throw error;await authRefresh();msg('Hyrja u krye')}catch(e){msg(e.message,true)}};
-$('signOut').onclick=async()=>{await db.auth.signOut();await authRefresh()};
-$('saveProfile').onclick=async()=>{try{await call('ap_save_profile',{p_first:$('first').value,p_last:$('last').value,p_city:$('city').value,p_phone:$('phone').value});profile=await call('ap_my_profile');msg('Profili u ruajt');await loadAuctions()}catch(e){msg(e.message,true)}};
-function imageUrl(path){return db.storage.from('ap-auction-photos').getPublicUrl(path).data.publicUrl}
-$('publish').onclick=async()=>{const btn=$('publish');btn.disabled=true;let uploaded=[];try{if(!profile)throw Error('Së pari ruani profilin');const files=[...$('images').files];if(files.length>4)throw Error('Maksimumi 4 fotografi');for(const file of files){if(!['image/jpeg','image/png','image/webp'].includes(file.type)||file.size>5242880)throw Error('Foto e pavlefshme ose mbi 5 MB');const ext=file.type==='image/jpeg'?'jpg':file.type==='image/png'?'png':'webp';const path=`${user.id}/${crypto.randomUUID()}.${ext}`;const {error}=await db.storage.from('ap-auction-photos').upload(path,file,{contentType:file.type,upsert:false});if(error)throw error;uploaded.push(path)}await call('ap_create_auction',{p_title:$('title').value,p_description:$('description').value,p_category:$('category').value,p_reserve:Number($('reserve').value),p_images:uploaded});$('title').value='';$('description').value='';$('images').value='';msg('Ankandi u publikua për 7 ditë');await loadAuctions()}catch(e){for(const path of uploaded)await db.storage.from('ap-auction-photos').remove([path]);msg(e.message,true)}finally{btn.disabled=false}};
-async function loadAuctions(){try{$('connectionStatus').textContent='Duke kërkuar ankandet…';auctions=await call('ap_list_auctions')||[];$('connectionStatus').textContent='Supabase u përgjigj. Ankandet u ngarkuan me sukses.';const target=$('auctions');target.replaceChildren();if(!auctions.length){target.textContent='Nuk ka ankande për momentin.';return}for(const a of auctions){const el=document.createElement('article');el.className='auction';const imgs=(a.image_paths||[]).map(path=>`<img loading="lazy" src="${escapeHTML(imageUrl(path))}" alt="Foto produkti">`).join('');el.innerHTML=`<div class="row between"><h3>${escapeHTML(a.title)}</h3><span class="status">${a.status==='closed'?'Përfunduar':'Aktiv'}</span></div><div class="photos">${imgs}</div><p>${escapeHTML(a.description)}</p><p class="muted">${escapeHTML(a.category)} · Shitësi: ${escapeHTML(a.first_name)} · ${escapeHTML(a.city)} · ${escapeHTML(a.phone_mask)}</p><p><strong>Oferta më e lartë: ${Number(a.current_price).toFixed(2)} €</strong> · ${a.bid_count} oferta</p><p class="muted">Mbyllet: ${date(a.ends_at)}</p><p class="muted">${a.status==='closed'?(a.reserve_reached?'Rezerva u arrit.':'Rezerva nuk u arrit.'):'Rezerva është private gjatë ankandit.'}</p><div id="bids-${a.id}" class="muted">Po ngarkohen ofertat…</div><div class="row" style="margin-top:12px">${a.status==='active'&&new Date(a.ends_at)>new Date()&&!a.is_mine?`<input style="max-width:150px" type="number" min="0.01" step="0.01" id="amount-${a.id}" placeholder="Oferta (€)"><button data-bid="${a.id}" ${user&&profile?'':'disabled'}>Oferto</button>`:''}${a.can_delete?`<button class="danger" data-del="${a.id}">Fshi ankandin</button>`:''}${a.is_mine?`<button class="secondary" data-reserve="${a.id}">Shiko rezervën private</button>`:''}</div>`;target.appendChild(el);loadBids(a.id)}target.querySelectorAll('[data-bid]').forEach(b=>b.onclick=()=>bid(b.dataset.bid));target.querySelectorAll('[data-del]').forEach(b=>b.onclick=()=>removeAuction(b.dataset.del));target.querySelectorAll('[data-reserve]').forEach(b=>b.onclick=()=>showReserve(b.dataset.reserve))}catch(e){$('connectionStatus').textContent='Gabim: '+e.message;$('auctions').textContent='Gabim gjatë ngarkimit: '+e.message;console.error('ap_list_auctions:',e)}}
-async function loadBids(id){try{const bids=await call('ap_list_bids',{p_auction:id});const box=$('bids-'+id);if(!box)return;if(!bids?.length){box.textContent='Ende pa oferta';return}const ul=document.createElement('ul');ul.className='bids';for(const b of bids){const li=document.createElement('li');li.textContent=`${b.first_name} · ${b.city}`;const strong=document.createElement('strong');strong.textContent=Number(b.amount).toFixed(2)+' €';li.appendChild(strong);ul.appendChild(li)}box.replaceChildren(ul)}catch(e){const box=$('bids-'+id);if(box)box.textContent=e.message}}
-async function bid(id){try{if(!user||!profile)throw Error('Hyni dhe ruani profilin');const amount=Number($('amount-'+id).value);if(!Number.isFinite(amount)||amount<=0)throw Error('Vendosni ofertë më të madhe se 0 €');await call('ap_place_bid',{p_auction:id,p_amount:amount});msg('Oferta testuese u regjistrua');await loadAuctions()}catch(e){msg(e.message,true)}}
-async function showReserve(id){try{const n=await call('ap_my_reserve',{p_auction:id});msg('Rezerva private e ankandit tuaj: '+Number(n).toFixed(2)+' €')}catch(e){msg(e.message,true)}}
-async function removeAuction(id){if(!confirm('Ta fshini këtë ankand? Fshirja nuk mund të zhbëhet.'))return;try{await call('ap_delete_early',{p_auction:id});msg('Ankandi u fshi. Fotografitë mund të kërkojnë pastrim nga administratori.');await loadAuctions()}catch(e){msg(e.message,true)}}
-async function loadNotifications(){try{const notes=await call('ap_my_notifications')||[];const target=$('notifications');target.replaceChildren();if(!notes.length){target.textContent='Nuk ka njoftime.';return}for(const n of notes){const p=document.createElement('p');p.className='note';p.textContent=date(n.created_at)+' — '+n.message;target.appendChild(p)}}catch(e){$('notifications').textContent=e.message}}
-$('refresh').onclick=async()=>{await loadAuctions();if(user)await loadNotifications()};
-window.addEventListener('error',e=>{console.error('Gabim JavaScript:',e.error||e.message);if($('connectionStatus'))$('connectionStatus').textContent='Gabim JavaScript: '+e.message});
-window.addEventListener('unhandledrejection',e=>{console.error('Gabim asinkron:',e.reason);if($('connectionStatus'))$('connectionStatus').textContent='Gabim: '+(e.reason?.message||String(e.reason))});
-async function loadSupabaseLibrary(){
-  if(window.supabase?.createClient)return;
-  for(const url of ['https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js','https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.min.js']){
-    try{await new Promise((resolve,reject)=>{const s=document.createElement('script');s.src=url;s.onload=()=>{clearTimeout(timer);resolve()};s.onerror=()=>{clearTimeout(timer);reject(Error('CDN i paarritshëm'))};const timer=setTimeout(()=>{s.remove();reject(Error('CDN nuk u përgjigj brenda 8 sekondave'))},8000);document.head.appendChild(s)});if(window.supabase?.createClient)return}catch(e){console.warn(url,e)}
-  }
-  throw Error('Nuk u ngarkua biblioteka Supabase nga asnjëri server. Kontrolloni lidhjen me internetin ose bllokimin e CDN.');
-}
-async function boot(){try{
-  await loadSupabaseLibrary();
-  db=window.supabase.createClient(URL,KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
-  db.auth.onAuthStateChange(()=>{setTimeout(()=>authRefresh().catch(e=>msg(e.message,true)),0)});
-  await loadAuctions();
-  await authRefresh();
-}catch(e){console.error('Nisja e faqes:',e);$('connectionStatus').textContent='Gabim në nisje: '+e.message;$('auctions').textContent='Nuk u arrit lidhja. '+e.message;msg(e.message,true)}}
-boot();
-</script></body></html>
+<!DOCTYPE html>
+<html lang="sq">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ankand® Premium Shqipëri Kosovë</title>
+    <script src="https://cloudflare.com" integrity="sha512-Y3I7i8z9tTfNshB6wYI6zD9vV8BInF7v2f1v/3K6M3BExXyZtWc9fL1t/3K6M3BExXyZtW==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
+        body { background-color: #f1f5f9; color: #1e293b; padding: 20px; }
+        header { background-color: #0f172a; color: white; padding: 35px 25px; text-align: center; margin-bottom: 25px; border-radius: 8px; }
+        header h1 { font-size: 38px; font-weight: 800; }
+        header p { color: #94a3b8; font-size: 16px; margin-top: 8px; }
+        .layout { max-width: 1400px; margin: 0 auto; display: grid; grid-template-columns: 1fr 2fr; gap: 25px; }
+        @media (max-width: 1000px) { .layout { grid-template-columns: 1fr; } }
+        .card { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; margin-bottom: 20px; }
+        .card h3 { margin-bottom: 15px; font-size: 18px; border-bottom: 2px solid #f1f5f9; padding-bottom: 8px; }
+        .price-notice { background-color: #fef9c3; border: 1px solid #fef08a; color: #713f12; padding: 12px; border-radius: 6px; font-size: 13px; font-weight: 600; margin-bottom: 15px; text-align: center; }
+        .form-group { margin-bottom: 12px; }
+        label { display: block; font-size: 12px; font-weight: 600; margin-bottom: 4px; color: #475569; }
+        input, select, textarea { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 14px; }
+        .btn { padding: 10px 15px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 13px; text-align: center; }
+        .btn-block { width: 100%; padding: 12px; font-size: 14px; }
+        .btn-blue { background: #2563eb; color: white; }
+        .btn-green { background: #10b981; color: white; }
+        .btn-red { background: #ef4444; color: white; }
+        .toggle-link { display: block; text-align: center; margin-top: 12px; font-size: 13px; color: #2563eb; cursor: pointer; text-decoration: underline; }
+        .user-session-box { background: #f8fafc; border: 1px solid #cbd5e1; padding: 15px; border-radius: 8px; margin-bottom: 15px; }
+        .badge { padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; text-transform: uppercase; }
+        .badge-active { background: #dcfce7; color: #15803d; }
+        .badge-pending { background: #fef9c3; color: #a16207; }
+        .thank-you-box { background: #f0fdf4; border: 2px solid #16a34a; padding: 20px; border-radius: 8px; color: #14532d; font-size: 14px; margin-top: 15px; display: none; }
+        .timer-box { font-size: 13px; font-weight: bold; color: #dc2626; background: #fff5f5; border: 1px solid #fca5a5; padding: 4px 8px; border-radius: 4px; margin-top: 5px; display: inline-block; }
+        .public-feed { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+        .product-card { background: white; border-radius: 10px; border: 1px solid #e2e8f0; overflow: hidden; display: flex; flex-direction: column; }
+        .prod-img { height: 140px; background: #cbd5e1; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #475569; font-size: 12px; text-transform: uppercase; }
+        .prod-body { padding: 15px; flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between; }
+        .prod-title { font-size: 15px; font-weight: bold; }
+        .prod-category { font-size: 11px; background: #e2e8f0; padding: 2px 6px; border-radius: 4px; font-weight: bold; color: #475569; width: fit-content; margin-top: 3px; }
+        .prod-price { font-size: 16px; font-weight: bold; margin: 8px 0; background: #f8fafc; padding: 6px; border-radius: 4px; text-align: center; border: 1px solid #f1f5f9; }
+        .locked-msg { font-size: 11px; color: #dc2626; font-weight: bold; text-align: center; margin-top: 8px; display: block; }
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); align-items: center; justify-content: center; padding: 20px; }
+        .modal-content { background-color: white; padding: 25px; border-radius: 12px; max-width: 500px; width: 100%; }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Ankand® Premium Shqipëri Kosovë</h1>
+        <p>Sistemi Inteligjent i Ankandeve me Çmim Rezervë të Fshehur 🔒</p>
+    </header>
+    <div class="layout">
+        <div>
+            <div class="user-session-box" id="session-card" style="display: none;">
+                <h4>Mirëseerdhe, <span id="session-user-name">...</span>!</h4>
+                <p>Statusi: <span id="session-user-status" class="badge">Në Pritje</span></p>
+                <button class="btn btn-red" style="width:100%; margin-top:10px;" onclick="logout()">Logout</button>
+            </div>
+            <div class="price-notice" id="price-alert-box">📢 SHËRBIM PREMIUM: Për të bërë oferta ose për të publikuar produkte për shitje, kërkohet abonim aktiv vjetor prej 120 Euro/Vit.</div>
+            
+            <div class="card" id="login-card">
+                <h3>🔑 Hyr në Llogari</h3>
+                <div class="form-group"><label>Numër Telefoni</label><input type="tel" id="login-phone" placeholder="069XXXXXXX"></div>
+                <div class="form-group"><label>Fjalëkalimi</label><input type="password" id="login-pass" placeholder="******"></div>
+                <button class="btn btn-blue btn-block" onclick="processLogin()">Hyr</button>
+                <span class="toggle-link" onclick="toggleForms('register')">Nuk keni llogari? Regjistrohuni këtu</span>
+            </div>
+
+            <div class="card" id="register-card" style="display: none;">
+                <h3>📝 Regjistrohu si Anëtar</h3>
+                <div class="form-group"><label>Emër</label><input type="text" id="u-name" placeholder="Agim"></div>
+                <div class="form-group"><label>Mbiemër</label><input type="text" id="u-surname" placeholder="Krasniqi"></div>
+                <div class="form-group"><label>Numër Telefoni (AL / KS)</label><input type="tel" id="u-phone" placeholder="p.sh. 069..."></div>
+                <div class="form-group"><label>Qyteti</label><input type="text" id="u-city" placeholder="Prishtinë"></div>
+                <div class="form-group"><label>Krijo Fjalëkalim (Min. 6 karaktere)</label><input type="password" id="u-pass" placeholder="******"></div>
+                <button class="btn btn-green btn-block" onclick="processRegistration()">Regjistrohu</button>
+                <span class="toggle-link" onclick="toggleForms('login')">Keni një llogari? Hyni këtu</span>
+            </div>
+
+            <div class="thank-you-box" id="thank-you-message">
+                <h3>🎉 Regjistrimi u dërgua!</h3>
+                <p>Faleminderit, do merrni një sms për pagesën. Në momentin që bëni pagesën do jeni aktiv për blerje ose shitje për 12 muaj.</p>
+                <button class="btn btn-blue" style="margin-top: 15px; width: 100%;" onclick="toggleForms('login')">Hyr Tani</button>
+            </div>
+        </div>
+        <div>
+            <div style="margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center;">
+                <h2 style="font-size: 18px;">🛒 Artikujt e Postuar (Nga 0 €)</h2>
+                <button class="btn btn-blue" onclick="openProductModal()">➕ SHTO PRODUKT</button>
+            </div>
+            <div class="public-feed" id="products-container-list"></div>
+        </div>
+    </div>
+    <div class="modal" id="productModal">
+        <div class="modal-content">
+            <h3 style="margin-bottom:15px;">➕ Nxirr një Artikull në Ankand</h3>
+            <div class="form-group">
+                <label>Kategoria</label>
+                <select id="p-category">
+                    <option value="Makinë">Makinë</option><option value="Traktor">Traktor</option><option value="Eskavator">Eskavator</option>
+                    <option value="Shtëpi">Shtëpi</option><option value="Dyqan">Dyqan</option><option value="Motorr">Motorr</option><option value="Telefon">Telefon</option>
+                </select>
+            </div>
+            <div class="form-group"><label>Emri i Artikullit</label><input type="text" id="p-title"></div>
+            <div class="form-group"><label>Përshkrimi</label><textarea id="p-desc"></textarea></div>
+            <div class="form-group"><label>🔒 Çmimi Rezervë i Fshehur (€)</label><input type="number" id="p-reserve"></div>
+            <button class="btn btn-green btn-block" onclick="saveProductToDatabase()">NISI ANKANDIN (7 DITË)</button>
+            <button class="btn btn-red btn-block" style="margin-top:5px;" onclick="closeProductModal()">Anulo</button>
+        </div>
+    </div>
+    <script>
+        const _URL = "https://supabase.co";
+        const _KEY = "sb_publishable_aTg_EeN9qT5C54_dRViJHQ_YJM9BW4B";
+        const dbServer = supabase.createClient(_URL, _KEY);
+        let loggedInUser = null; let intervalsTracker = [];
+        window.onload = function() { checkSavedSession(); fetchLiveProductsFromDb(); syncProductsRealtime(); };
+        
+        // KORRIGJIMI: Unifikimi i plotë i funksionit toggleForms për të dy butonat
+        function toggleForms(type) {
+            document.getElementById('login-card').style.display = type === 'login' ? 'block' : 'none';
+            document.getElementById('register-card').style.display = type === 'register' ? 'block' : 'none';
+            document.getElementById('thank-you-message').style.display = 'none';
+        }
+        function openProductModal() {
