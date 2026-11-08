@@ -1,45 +1,844 @@
-<!doctype html><html lang="sq"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Ankand® Premium Shqipëri – Kosovë</title><style>
-:root{font-family:system-ui,Arial,sans-serif;color:#17233a;background:#f3f6fb}*{box-sizing:border-box}body{margin:0}header{background:#0f172a;color:white;padding:32px max(18px,calc((100vw - 1100px)/2))}header h1{margin:0;font-size:clamp(22px,3vw,33px)}header p{margin:6px 0 0;color:#cbd5e1}main{max-width:1400px;margin:26px auto;padding:0 20px}.site-layout{display:grid;grid-template-columns:minmax(290px,1fr) minmax(0,2fr);gap:24px;align-items:start}.side,.content{min-width:0}.panel,.auction{background:white;border:1px solid #dfe6ef;border-radius:10px;padding:20px;margin-bottom:20px;box-shadow:0 4px 8px #17233a0d}.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}.between{justify-content:space-between}.grow{flex:1}h2{font-size:21px;margin:0 0 14px}h3{margin:0 0 10px}label{display:block;font-size:13px;font-weight:650;margin:10px 0 5px}input,textarea,select{width:100%;border:1px solid #cbd5e1;border-radius:9px;padding:11px;font:inherit;background:white}textarea{min-height:85px}button{background:#1556cb;color:white;border:0;border-radius:9px;padding:11px 16px;font-weight:650;cursor:pointer}button:disabled{opacity:.5;cursor:not-allowed}.secondary{background:#e9eef8;color:#1e3558}.danger{background:#a52222}.muted{color:#64748b;font-size:13px}.status{display:inline-block;padding:4px 9px;background:#e9f5ed;border-radius:99px;font-size:12px;font-weight:650}.error{color:#a52222}.success{color:#087a41}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(285px,1fr));gap:16px}.photos{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:10px 0}.photos img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:7px;background:#e2e8f0}.bids{padding:0;list-style:none;max-height:210px;overflow:auto}.bids li{border-bottom:1px solid #edf0f5;padding:7px 0;display:flex;justify-content:space-between;gap:8px}.hidden{display:none!important}.two{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}footer{text-align:center;padding:24px 16px;color:#677387;font-size:12px;max-width:950px;margin:auto}.note{padding:11px;background:#fef9e7;border-radius:9px;font-size:13px;margin:12px 0}.pill{background:#edf2fc;padding:4px 8px;border-radius:8px;font-size:12px}#message{position:sticky;top:0;z-index:4;padding:10px 16px;background:#e9f5ed;border-bottom:1px solid #d5e5dc;display:none}#message.bad{background:#feeaea;color:#922}.wide{width:100%}small{font-size:12px}
-@media(max-width:950px){.site-layout{grid-template-columns:1fr}}@media(max-width:650px){header{padding:25px 18px}.panel,.auction{padding:16px}.row{gap:8px}button{min-height:43px}}button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid #93c5fd;outline-offset:2px}</style></head><body><header><h1>Ankand® Premium Shqipëri – Kosovë</h1><p>Sistemi i Ankandeve me Çmim Rezervë të Fshehur 🔒</p></header><div id="message" role="status"></div><main><div class="note"><strong>7 DITË QASJE PROVË:</strong> Mund të shikoni ankandet pa llogari. Për të postuar ose ofertuar në këtë fazë përdoret emaili dhe fjalëkalimi. Ofertat janë jo detyruese dhe nuk përbëjnë marrëveshje shitblerjeje. Pas provës statusi kalon në pritje; nuk ka pagesa apo SMS të integruara; mos publikoni informacione të ndjeshme.</div>
-<div class="site-layout"><div class="side"><section class="panel" id="authPanel"><div class="row between"><h2>🔑 Hyr / Regjistrohu</h2><span id="authState" class="pill">Vizitor</span></div><div id="guestArea"><div class="two"><div><label>Email për hyrje</label><input id="email" type="email" autocomplete="email" placeholder="emri@example.com"></div><div><label>Fjalëkalimi</label><input id="password" type="password" autocomplete="current-password" placeholder="Të paktën 6 karaktere"></div></div><div class="row" style="margin-top:12px"><button id="signIn">Hyr</button><button class="secondary" id="signUp">Regjistrohu</button></div><p class="muted">Nëse kërkohet konfirmimi i emailit, ndiqni mesazhin e Supabase.</p></div><div id="memberArea" class="hidden"><p id="accountEmail"></p><div class="two"><div><label>Emri</label><input id="first" maxlength="60"></div><div><label>Mbiemri (privat)</label><input id="last" maxlength="60"></div><div><label>Qyteti</label><input id="city" maxlength="80"></div><div><label>Telefoni (privat, i paverifikuar)</label><input id="phone" type="tel" maxlength="24" placeholder="+355..."></div></div><p class="muted">Gjatë ankandit shfaqen vetëm emri, qyteti dhe një pjesë e telefonit. Në mbyllje, informacionet e kontaktit mund të shfaqen vetëm te palët përkatëse në njoftimet e llogarisë. Nuk kërkohet adresa e shtëpisë.</p><div class="row"><button id="saveProfile">Ruaj profilin</button><button class="secondary" id="signOut">Dil</button></div></div><p id="accessState" class="note hidden" role="status"></p></section>
-<section id="createPanel" class="panel hidden"><h2>➕ Nxirr artikull në ankand</h2><p class="muted">Vetëm një ankand aktiv për shitës. Pas publikimit nuk lejohet modifikimi. Fshirja lejohet në 60 minutat e para, përveçse kur oferta ka arritur rezervën.</p><div class="two"><div><label>Titulli</label><input id="title" maxlength="100" placeholder="P.sh. Biçikletë malore"></div><div><label>Kategoria</label><select id="category"><option>Elektronikë</option><option>Automjete</option><option>Mobilje</option><option>Sport</option><option>Veshje</option><option>Libra</option><option>Art</option><option>Tjetër</option></select></div></div><label>Përshkrimi</label><textarea id="description" maxlength="3000"></textarea><div class="two"><div><label>Çmimi fillestar</label><input value="0 € (automatik)" disabled></div><div><label>Çmimi rezervë (€) — vetëm për shitësin</label><input id="reserve" type="number" min="0" step="0.01" value="0"></div></div><label>Deri në 4 fotografi (JPG/PNG/WebP, deri 5 MB secila)</label><input id="images" type="file" accept="image/jpeg,image/png,image/webp" multiple><p class="muted">Ndalohet publikimi i artikujve të paligjshëm ose të rrezikshëm.</p><button id="publish">Publiko për 7 ditë</button></section></div><div class="content"><section class="panel"><div class="row between"><h2>🛒 Artikujt e postuar (nga 0 €)</h2><button class="secondary" id="refresh">Rifresko</button></div><p class="muted">Të gjithë mund të shohin produktet dhe ofertat, të renditura nga më e vogla te më e madhja. Oferta fillestare është 0 €.</p><div id="auctions" class="grid"><p>Po lidhemi me Supabase…</p></div><p id="connectionStatus" class="muted" role="status">Duke kontrolluar lidhjen…</p><p class="muted" id="diagnostic">Nëse shfaqet gabim, kopjoni tekstin e tij. Nëse faqja ngec, hapni F12 → Console. Nëse ka gabim, kontrolloni mesazhin dhe Console (F12).</p></section><section id="notificationsPanel" class="panel hidden"><h2>Njoftime në llogari pas përfundimit</h2><p class="muted">Këto njoftime shfaqen brenda llogarisë; SMS nuk është aktivizuar ende.</p><div id="notifications"></div></section></div></div></main><footer><strong>Njoftim për përgjegjësinë</strong><p>Ankand® Premium Shqipëri – Kosovë shërben si platformë ndërmjetësuese për lidhjen e shitësve me ofertuesit. Marrëveshja përfundimtare, pagesa, dorëzimi dhe gjendja e produktit janë përgjegjësi e palëve të përfshira. Platforma nuk garanton realizimin e shitblerjes pas përfundimit të ankandit.</p><p>Ofertat janë jo detyruese. Anëtarësimi këtu nuk përpunon pagesa. Njoftimi nuk përjashton përgjegjësitë e detyrueshme ligjore.</p></footer>
+
+<!DOCTYPE html>
+<html lang="sq">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ankand® Premium Shqipëri – Kosovë</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#f1f5f9;color:#1e293b;font-family:Segoe UI,Arial,sans-serif}
+header{background:#0f172a;color:white;padding:36px 20px;text-align:center}
+header h1{font-size:clamp(24px,4vw,38px);margin:0}
+header p{color:#cbd5e1;margin:10px 0 0}
+main{max-width:1400px;margin:25px auto;padding:0 20px}
+.layout{display:grid;grid-template-columns:1fr 2fr;gap:25px;align-items:start}
+.card,.product{background:white;padding:20px;border:1px solid #e2e8f0;border-radius:10px;box-shadow:0 4px 8px #00000008;margin-bottom:20px}
+h2,h3{margin:0 0 15px}
+label{display:block;margin:12px 0 5px;font-size:13px;font-weight:600}
+input,select,textarea{width:100%;padding:11px;border:1px solid #cbd5e1;border-radius:7px;font:inherit}
+textarea{min-height:90px}
+button{background:#2563eb;color:white;border:0;padding:11px 16px;border-radius:7px;font-weight:700;cursor:pointer}
+button:disabled{opacity:.5;cursor:not-allowed}
+.green{background:#059669}
+.red{background:#dc2626}
+.gray{background:#e2e8f0;color:#334155}
+.row{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}
+.notice{padding:14px;background:#fef9c3;border:1px solid #fef08a;border-radius:8px;margin-bottom:20px;font-size:13px}
+.muted{color:#64748b;font-size:13px}
+.status{background:#dcfce7;color:#166534;padding:5px 9px;border-radius:20px;font-size:12px;font-weight:700}
+.photos{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin:12px 0}
+.photos img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:6px}
+.product h3{font-size:18px}
+.product p{line-height:1.5}
+.bidlist{list-style:none;padding:0;max-height:200px;overflow:auto}
+.bidlist li{display:flex;justify-content:space-between;border-bottom:1px solid #eee;padding:7px 0}
+.hidden{display:none!important}
+.message{padding:12px 20px;background:#dcfce7;color:#166534;display:none}
+.message.error{background:#fee2e2;color:#991b1b}
+footer{text-align:center;padding:25px;max-width:1000px;margin:auto;color:#64748b;font-size:12px;line-height:1.6}
+@media(max-width:950px){.layout{grid-template-columns:1fr}}
+@media(max-width:600px){main{padding:0 12px}.card,.product{padding:15px}}
+</style>
+</head>
+<body>
+
+<header>
+<h1>Ankand® Premium Shqipëri – Kosovë</h1>
+<p>Sistemi i Ankandeve me Çmim Rezervë të Fshehur 🔒</p>
+</header>
+
+<div id="message" class="message" role="status"></div>
+
+<main>
+<div class="notice">
+<strong>7 DITË QASJE FALAS</strong>
+— Shikoni ankandet pa regjistrim. Për publikim ose ofertim,
+regjistrohuni dhe plotësoni profilin.
+Ofertat janë virtuale dhe jo detyruese.
+Nuk përpunohen pagesa apo SMS.
+</div>
+
+<div class="layout">
+
+<div>
+<section class="card">
+<div class="row">
+<h2>🔑 Hyr / Regjistrohu</h2>
+<span id="authStatus" class="status">Vizitor</span>
+</div>
+
+<div id="guest">
+<label>Email</label>
+<input id="email" type="email" placeholder="emri@example.com" autocomplete="email">
+
+<label>Fjalëkalimi</label>
+<input id="password" type="password" placeholder="Minimumi 6 karaktere" autocomplete="current-password">
+
+<div class="row" style="margin-top:15px;justify-content:flex-start">
+<button id="loginBtn">Hyr</button>
+<button id="registerBtn" class="green">Regjistrohu</button>
+</div>
+<p class="muted">Mund të kërkohet konfirmimi i emailit.</p>
+</div>
+
+<div id="member" class="hidden">
+<p id="memberEmail"></p>
+
+<label>Emri</label>
+<input id="first" maxlength="60">
+
+<label>Mbiemri (privat)</label>
+<input id="last" maxlength="60">
+
+<label>Qyteti</label>
+<input id="city" maxlength="80">
+
+<label>Telefoni (privat)</label>
+<input id="phone" type="tel" maxlength="24">
+
+<p class="muted">
+Gjatë ankandit shfaqen vetëm emri, qyteti dhe telefoni i maskuar.
+Të dhënat e plota të kontaktit shfaqen vetëm te palët përkatëse
+pas përfundimit, sipas rregullave të ankandit.
+</p>
+
+<div class="row">
+<button id="saveProfile" class="green">Ruaj profilin</button>
+<button id="logoutBtn" class="red">Dil</button>
+</div>
+
+<p id="accessStatus" class="notice"></p>
+</div>
+</section>
+
+<section id="createPanel" class="card hidden">
+<h2>➕ Nxirr artikull në ankand</h2>
+<p class="muted">
+Një ankand aktiv për shitës. Kohëzgjatja 7 ditë.
+Pas publikimit nuk mund të modifikohet.
+Fshirja lejohet brenda 60 minutave vetëm në kushtet e përcaktuara.
+</p>
+
+<label>Emri i artikullit</label>
+<input id="title" maxlength="100">
+
+<label>Kategoria</label>
+<select id="category">
+<option>Automjete</option>
+<option>Makineri bujqësore</option>
+<option>Elektronikë</option>
+<option>Prona</option>
+<option>Mobilje</option>
+<option>Sport</option>
+<option>Veshje</option>
+<option>Libra</option>
+<option>Art</option>
+<option>Tjetër</option>
+</select>
+
+<label>Përshkrimi</label>
+<textarea id="description" maxlength="3000"></textarea>
+
+<label>Çmimi fillestar</label>
+<input value="0 € (automatik)" disabled>
+
+<label>🔒 Çmimi rezervë privat (€)</label>
+<input id="reserve" type="number" min="0" step="0.01" value="0">
+
+<label>Deri në 4 fotografi (JPG, PNG, WebP; 5 MB secila)</label>
+<input id="images" type="file" accept="image/jpeg,image/png,image/webp" multiple>
+
+<p class="muted">Nuk lejohen artikuj të paligjshëm ose të rrezikshëm.</p>
+<button id="publishBtn" class="green">NISI ANKANDIN (7 DITË)</button>
+</section>
+</div>
+
+<div>
+<section class="card">
+<div class="row">
+<h2>🛒 Artikujt e postuar (nga 0 €)</h2>
+<button id="refreshBtn" class="gray">Rifresko</button>
+</div>
+
+<p class="muted">
+Ankandet dhe ofertat janë publike.
+Ofertat shfaqen nga më e vogla te më e madhja.
+</p>
+
+<div id="auctions" class="grid">
+<p>Po ngarkohen ankandet...</p>
+</div>
+
+<p id="connection" class="muted">Duke kontrolluar Supabase...</p>
+</section>
+
+<section id="notificationsPanel" class="card hidden">
+<h2>🔔 Njoftimet e mia</h2>
+<p class="muted">
+Pas mbylljes së ankandit, informacionet përkatëse
+shfaqen privatisht brenda llogarisë.
+</p>
+<div id="notifications"></div>
+</section>
+</div>
+
+</div>
+</main>
+
+<footer>
+<strong>Njoftim për përgjegjësinë</strong>
+<p>
+Ankand® Premium Shqipëri – Kosovë shërben si platformë ndërmjetësuese
+për lidhjen e shitësve me ofertuesit.
+Marrëveshja përfundimtare, pagesa, dorëzimi dhe gjendja e produktit
+janë përgjegjësi e palëve të përfshira.
+Platforma nuk garanton realizimin e shitblerjes pas përfundimit të ankandit.
+</p>
+<p>
+Ofertat janë jo detyruese. Platforma nuk përpunon pagesa.
+Ky njoftim nuk përjashton detyrimet ligjore.
+</p>
+</footer>
+
 <script>
-const URL='https://bhwidixijfuhylbanjuk.supabase.co', KEY='sb_publishable_aTg_EeN9qT5C54_dRViJHQ_YJM9BW4B';
-let db=null,user=null,profile=null,auctions=[],access=null;
-const $=id=>document.getElementById(id), escapeHTML=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-function msg(s,bad=false){const e=$('message');e.textContent=s;e.className=bad?'bad':'';e.style.display='block';setTimeout(()=>{e.style.display='none'},7500)}
-async function call(fn,args={}){if(!db)throw Error('Libraria Supabase nuk u ngarkua. Kontrolloni internetin dhe rifreskoni faqen.');const request=db.rpc(fn,args);const timeout=new Promise((_,reject)=>setTimeout(()=>reject(Error('Supabase nuk u përgjigj brenda 15 sekondave. Kontrolloni lidhjen, projektin dhe Console (F12).')),15000));const {data,error}=await Promise.race([request,timeout]);if(error)throw Error(fn+': '+error.message+(error.code?' ['+error.code+']':''));return data}
-function date(s){return new Date(s).toLocaleString('sq-AL')}
-async function authRefresh(){if(!db)return;const {data,error}=await Promise.race([db.auth.getSession(),new Promise((_,reject)=>setTimeout(()=>reject(Error('Verifikimi i hyrjes nuk u përgjigj brenda 15 sekondave')),15000))]);if(error && error.name!=='AuthSessionMissingError')console.warn('Auth:',error.message);user=data?.session?.user||null;$('guestArea').classList.toggle('hidden',!!user);$('memberArea').classList.toggle('hidden',!user);$('createPanel').classList.toggle('hidden',!user);$('notificationsPanel').classList.toggle('hidden',!user);$('authState').textContent=user?'I identifikuar':'Vizitor';$('accountEmail').textContent=user?.email||'';profile=null;access=null;$('accessState').classList.add('hidden');if(user){try{profile=await call('ap_my_profile');if(profile){$('first').value=profile.first_name;$('last').value=profile.last_name;$('city').value=profile.city;$('phone').value=profile.phone}access=await call('ap_access_state');renderAccess()}catch(e){msg(e.message,true)}await loadNotifications()}await loadAuctions()}
-$('signUp').onclick=async()=>{try{if(!db)throw Error('Lidhja me Supabase nuk është gati');if(!$('email').value.trim()||$('password').value.length<6)throw Error('Shkruani email të vlefshëm dhe fjalëkalim me të paktën 6 karaktere');const {data,error}=await db.auth.signUp({email:$('email').value.trim(),password:$('password').value});if(error)throw error;msg(data.session?'Llogaria u krijua. Plotësoni profilin.':'Kërkesa u dërgua. Kontrolloni emailin nëse kërkohet konfirmim.');await authRefresh()}catch(e){msg(e.message,true)}};
-$('signIn').onclick=async()=>{try{if(!db)throw Error('Lidhja me Supabase nuk është gati');if(!$('email').value.trim()||!$('password').value)throw Error('Shkruani email dhe fjalëkalim');const {error}=await db.auth.signInWithPassword({email:$('email').value.trim(),password:$('password').value});if(error)throw error;await authRefresh();msg('Hyrja u krye')}catch(e){msg(e.message,true)}};
-$('signOut').onclick=async()=>{await db.auth.signOut();await authRefresh()};
-$('saveProfile').onclick=async()=>{try{await call('ap_save_profile',{p_first:$('first').value,p_last:$('last').value,p_city:$('city').value,p_phone:$('phone').value});profile=await call('ap_my_profile');access=await call('ap_access_state');renderAccess();msg('Profili u ruajt');await loadAuctions()}catch(e){msg(e.message,true)}};
-function renderAccess(){const el=$('accessState');if(!user||!profile){el.classList.add('hidden');return}el.classList.remove('hidden');const active=access?.status==='active'||access?.status==='trial';el.textContent=access?.status==='trial'?'Provë falas deri më '+date(access.trial_ends_at):access?.status==='active'?'Qasje aktive '+(access.unlimited_access?'pa afat':'deri më '+date(access.complimentary_until)):'Në pritje — periudha 7-ditore ka përfunduar. Publikimi dhe ofertimi janë të çaktivizuar.';$('publish').disabled=!active;}
-function imageUrl(path){return db.storage.from('ap-auction-photos').getPublicUrl(path).data.publicUrl}
-$('publish').onclick=async()=>{const btn=$('publish');btn.disabled=true;let uploaded=[];try{if(!profile)throw Error('Së pari ruani profilin');if(!access||access.status==='pending')throw Error('Qasja është në pritje');if(!$('title').value.trim())throw Error('Vendosni titullin e produktit');const files=[...$('images').files];if(files.length>4)throw Error('Maksimumi 4 fotografi');for(const file of files){if(!['image/jpeg','image/png','image/webp'].includes(file.type)||file.size>5242880)throw Error('Foto e pavlefshme ose mbi 5 MB');const ext=file.type==='image/jpeg'?'jpg':file.type==='image/png'?'png':'webp';const path=`${user.id}/${crypto.randomUUID()}.${ext}`;const {error}=await db.storage.from('ap-auction-photos').upload(path,file,{contentType:file.type,upsert:false});if(error)throw error;uploaded.push(path)}await call('ap_create_auction',{p_title:$('title').value,p_description:$('description').value,p_category:$('category').value,p_reserve:Number($('reserve').value),p_images:uploaded});$('title').value='';$('description').value='';$('images').value='';msg('Ankandi u publikua për 7 ditë');await loadAuctions()}catch(e){for(const path of uploaded)await db.storage.from('ap-auction-photos').remove([path]);msg(e.message,true)}finally{btn.disabled=false}};
-async function loadAuctions(){try{$('connectionStatus').textContent='Duke kërkuar ankandet…';auctions=await call('ap_list_auctions')||[];$('connectionStatus').textContent='Lidhja me Supabase është aktive · '+auctions.length+' ankande në listë.';const target=$('auctions');target.replaceChildren();if(!auctions.length){target.textContent='Nuk ka ankande për momentin.';return}for(const a of auctions){const el=document.createElement('article');el.className='auction';const imgs=(a.image_paths||[]).map(path=>`<img loading="lazy" src="${escapeHTML(imageUrl(path))}" alt="Foto produkti">`).join('');el.innerHTML=`<div class="row between"><h3>${escapeHTML(a.title)}</h3><span class="status">${a.status==='closed'?'Përfunduar':'Aktiv'}</span></div><div class="photos">${imgs}</div><p>${escapeHTML(a.description)}</p><p class="muted">${escapeHTML(a.category)} · Shitësi: ${escapeHTML(a.first_name)} · ${escapeHTML(a.city)} · ${escapeHTML(a.phone_mask)}</p><p><strong>Oferta më e lartë: ${Number(a.current_price).toFixed(2)} €</strong> · ${a.bid_count} oferta</p><p class="muted">Mbyllet: ${date(a.ends_at)}</p><p class="muted">${a.status==='closed'?(a.reserve_reached?'Rezerva u arrit.':'Rezerva nuk u arrit.'):'Rezerva është private gjatë ankandit.'}</p><div id="bids-${a.id}" class="muted">Po ngarkohen ofertat…</div><div class="row" style="margin-top:12px">${a.status==='active'&&new Date(a.ends_at)>new Date()&&!a.is_mine?`<input style="max-width:150px" type="number" min="0.01" step="0.01" id="amount-${a.id}" placeholder="Oferta (€)"><button data-bid="${a.id}" ${user&&profile&&access?.status!=='pending'?'':'disabled'}>Oferto</button>`:''}${a.can_delete?`<button class="danger" data-del="${a.id}">Fshi ankandin</button>`:''}${a.is_mine?`<button class="secondary" data-reserve="${a.id}">Shiko rezervën private</button>`:''}</div>`;target.appendChild(el);loadBids(a.id)}target.querySelectorAll('[data-bid]').forEach(b=>b.onclick=()=>bid(b.dataset.bid));target.querySelectorAll('[data-del]').forEach(b=>b.onclick=()=>removeAuction(b.dataset.del));target.querySelectorAll('[data-reserve]').forEach(b=>b.onclick=()=>showReserve(b.dataset.reserve))}catch(e){$('connectionStatus').textContent='Gabim: '+e.message;$('auctions').textContent='Gabim gjatë ngarkimit: '+e.message;console.error('ap_list_auctions:',e)}}
-async function loadBids(id){try{const bids=await call('ap_list_bids',{p_auction:id});const box=$('bids-'+id);if(!box)return;if(!bids?.length){box.textContent='Ende pa oferta';return}const ul=document.createElement('ul');ul.className='bids';for(const b of bids){const li=document.createElement('li');li.textContent=`${b.first_name} · ${b.city}`;const strong=document.createElement('strong');strong.textContent=Number(b.amount).toFixed(2)+' €';li.appendChild(strong);ul.appendChild(li)}box.replaceChildren(ul)}catch(e){const box=$('bids-'+id);if(box)box.textContent=e.message}}
-async function bid(id){try{if(!user||!profile)throw Error('Hyni dhe ruani profilin');if(!access||access.status==='pending')throw Error('Qasja është në pritje');const amount=Number($('amount-'+id).value);if(!Number.isFinite(amount)||amount<=0)throw Error('Vendosni ofertë më të madhe se 0 €');await call('ap_place_bid',{p_auction:id,p_amount:amount});msg('Oferta u regjistrua (jo detyruese)');await loadAuctions()}catch(e){msg(e.message,true)}}
-async function showReserve(id){try{const n=await call('ap_my_reserve',{p_auction:id});msg('Rezerva private e ankandit tuaj: '+Number(n).toFixed(2)+' €')}catch(e){msg(e.message,true)}}
-async function removeAuction(id){if(!confirm('Ta fshini këtë ankand? Fshirja nuk mund të zhbëhet.'))return;try{await call('ap_delete_early',{p_auction:id});msg('Ankandi u fshi. Fotografitë mund të kërkojnë pastrim nga administratori.');await loadAuctions()}catch(e){msg(e.message,true)}}
-async function loadNotifications(){try{const notes=await call('ap_my_notifications')||[];const target=$('notifications');target.replaceChildren();if(!notes.length){target.textContent='Nuk ka njoftime.';return}for(const n of notes){const p=document.createElement('p');p.className='note';p.textContent=date(n.created_at)+' — '+n.message;target.appendChild(p)}}catch(e){$('notifications').textContent=e.message}}
-$('refresh').onclick=async()=>{await loadAuctions();if(user)await loadNotifications()};
-window.addEventListener('error',e=>{console.error('Gabim JavaScript:',e.error||e.message);if($('connectionStatus'))$('connectionStatus').textContent='Gabim JavaScript: '+e.message});
-window.addEventListener('unhandledrejection',e=>{console.error('Gabim asinkron:',e.reason);if($('connectionStatus'))$('connectionStatus').textContent='Gabim: '+(e.reason?.message||String(e.reason))});
-async function loadSupabaseLibrary(){
-  if(window.supabase?.createClient)return;
-  for(const url of ['https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js','https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.min.js']){
-    try{await new Promise((resolve,reject)=>{const s=document.createElement('script');s.src=url;s.onload=()=>{clearTimeout(timer);resolve()};s.onerror=()=>{clearTimeout(timer);reject(Error('CDN i paarritshëm'))};const timer=setTimeout(()=>{s.remove();reject(Error('CDN nuk u përgjigj brenda 8 sekondave'))},8000);document.head.appendChild(s)});if(window.supabase?.createClient)return}catch(e){console.warn(url,e)}
-  }
-  throw Error('Nuk u ngarkua biblioteka Supabase nga asnjëri server. Kontrolloni lidhjen me internetin ose bllokimin e CDN.');
+"use strict";
+
+const SUPABASE_URL =
+  "https://bhwidixijfuhylbanjuk.supabase.co";
+
+const SUPABASE_KEY =
+  "sb_publishable_aTg_EeN9qT5C54_dRViJHQ_YJM9BW4B";
+
+let db = null;
+let user = null;
+let profile = null;
+let access = null;
+
+const $ = id => document.getElementById(id);
+
+function notify(text, error = false) {
+  const el = $("message");
+  el.textContent = text;
+  el.className = error ? "message error" : "message";
+  el.style.display = "block";
+  clearTimeout(notify.timer);
+  notify.timer = setTimeout(() => {
+    el.style.display = "none";
+  }, 9000);
 }
-async function boot(){try{
-  await loadSupabaseLibrary();
-  db=window.supabase.createClient(URL,KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
-  db.auth.onAuthStateChange(()=>{setTimeout(()=>authRefresh().catch(e=>msg(e.message,true)),0)});
+
+function safe(value) {
+  return String(value ?? "").replace(/[&<>"']/g, char => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;"
+  })[char]);
+}
+
+function formatDate(value) {
+  if (!value) return "—";
+  const d = new Date(value);
+  return Number.isNaN(d.getTime())
+    ? "—"
+    : d.toLocaleString("sq-AL");
+}
+
+function money(value) {
+  return Number(value || 0).toFixed(2) + " €";
+}
+
+function hasAccess() {
+  return access?.status === "trial" ||
+         access?.status === "active";
+}
+
+async function rpc(name, params = {}) {
+  if (!db) throw Error("Lidhja me Supabase nuk është gati.");
+
+  const result = await Promise.race([
+    db.rpc(name, params),
+    new Promise((_, reject) =>
+      setTimeout(() => reject(
+        Error("Supabase nuk u përgjigj brenda 15 sekondave.")
+      ), 15000)
+    )
+  ]);
+
+  if (result.error) {
+    throw Error(name + ": " + result.error.message);
+  }
+
+  return result.data;
+}
+
+async function loadLibrary() {
+  if (window.supabase?.createClient) return;
+
+  const sources = [
+    "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js",
+    "https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.min.js"
+  ];
+
+  for (const source of sources) {
+    try {
+      await new Promise((resolve, reject) => {
+        const script = document.createElement("script");
+        let finished = false;
+
+        const timer = setTimeout(() => {
+          if (finished) return;
+          finished = true;
+          script.remove();
+          reject(Error("Koha e ngarkimit përfundoi."));
+        }, 10000);
+
+        script.onload = () => {
+          if (finished) return;
+          finished = true;
+          clearTimeout(timer);
+          resolve();
+        };
+
+        script.onerror = () => {
+          if (finished) return;
+          finished = true;
+          clearTimeout(timer);
+          reject(Error("Serveri CDN nuk u arrit."));
+        };
+
+        script.src = source;
+        document.head.appendChild(script);
+      });
+
+      if (window.supabase?.createClient) return;
+    } catch (error) {
+      console.warn("CDN:", source, error);
+    }
+  }
+
+  throw Error("Biblioteka Supabase nuk u ngarkua.");
+}
+
+async function refreshAccount() {
+  if (!db) return;
+
+  const result = await db.auth.getSession();
+  if (result.error) throw result.error;
+
+  user = result.data.session?.user || null;
+  profile = null;
+  access = null;
+
+  $("guest").classList.toggle("hidden", !!user);
+  $("member").classList.toggle("hidden", !user);
+  $("createPanel").classList.toggle("hidden", !user);
+  $("notificationsPanel").classList.toggle("hidden", !user);
+  $("authStatus").textContent = user ? "I identifikuar" : "Vizitor";
+
+  if (!user) {
+    await loadAuctions();
+    return;
+  }
+
+  $("memberEmail").textContent = user.email || "";
+
+  try {
+    profile = await rpc("ap_my_profile");
+    access = await rpc("ap_access_state");
+
+    if (profile) {
+      $("first").value = profile.first_name || "";
+      $("last").value = profile.last_name || "";
+      $("city").value = profile.city || "";
+      $("phone").value = profile.phone || "";
+    }
+
+    let text = "Në pritje — qasja për publikim dhe ofertim është e kufizuar.";
+
+    if (access?.status === "trial") {
+      text = "Provë falas deri më " +
+        formatDate(access.trial_ends_at);
+    }
+
+    if (access?.status === "active") {
+      text = access.unlimited_access
+        ? "Qasje aktive pa afat."
+        : "Qasje aktive deri më " +
+          formatDate(access.complimentary_until);
+    }
+
+    $("accessStatus").textContent = text;
+    $("publishBtn").disabled = !profile || !hasAccess();
+
+    await loadNotifications();
+  } catch (error) {
+    notify(error.message, true);
+    $("accessStatus").textContent =
+      "Nuk u arrit të kontrollohej qasja.";
+    $("publishBtn").disabled = true;
+  }
+
   await loadAuctions();
-  await authRefresh();
-}catch(e){console.error('Nisja e faqes:',e);$('connectionStatus').textContent='Gabim në nisje: '+e.message;$('auctions').textContent='Nuk u arrit lidhja. '+e.message;msg(e.message,true)}}
-boot();
-</script></body></html>
+}
+
+$("registerBtn").onclick = async () => {
+  try {
+    const email = $("email").value.trim();
+    const password = $("password").value;
+
+    if (!$("email").validity.valid || !email.includes("@")) {
+      throw Error("Shkruani një adresë emaili të vlefshme.");
+    }
+
+    if (password.length < 6) {
+      throw Error("Fjalëkalimi duhet të ketë të paktën 6 karaktere.");
+    }
+
+    const { data, error } = await db.auth.signUp({
+      email,
+      password
+    });
+
+    if (error) throw error;
+
+    notify(data.session
+      ? "Llogaria u krijua. Plotësoni profilin."
+      : "Kontrolloni emailin për konfirmimin e regjistrimit.");
+
+    await refreshAccount();
+  } catch (error) {
+    notify(error.message, true);
+  }
+};
+
+$("loginBtn").onclick = async () => {
+  try {
+    const email = $("email").value.trim();
+    const password = $("password").value;
+
+    if (!email || !password) {
+      throw Error("Shkruani emailin dhe fjalëkalimin.");
+    }
+
+    const { error } = await db.auth.signInWithPassword({
+      email,
+      password
+    });
+
+    if (error) throw error;
+
+    await refreshAccount();
+    notify("Hyrja u krye me sukses.");
+  } catch (error) {
+    notify(error.message, true);
+  }
+};
+
+$("logoutBtn").onclick = async () => {
+  try {
+    const { error } = await db.auth.signOut();
+    if (error) throw error;
+    await refreshAccount();
+    notify("Dolët nga llogaria.");
+  } catch (error) {
+    notify(error.message, true);
+  }
+};
+
+$("saveProfile").onclick = async () => {
+  try {
+    await rpc("ap_save_profile", {
+      p_first: $("first").value.trim(),
+      p_last: $("last").value.trim(),
+      p_city: $("city").value.trim(),
+      p_phone: $("phone").value.trim()
+    });
+
+    notify("Profili u ruajt.");
+    await refreshAccount();
+  } catch (error) {
+    notify(error.message, true);
+  }
+};
+
+function publicImage(path) {
+  return db.storage
+    .from("ap-auction-photos")
+    .getPublicUrl(path).data.publicUrl;
+}
+
+$("publishBtn").onclick = async () => {
+  const button = $("publishBtn");
+  button.disabled = true;
+
+  const uploaded = [];
+
+  try {
+    if (!user || !profile || !hasAccess()) {
+      throw Error("Duhet profil i plotësuar dhe qasje aktive.");
+    }
+
+    const title = $("title").value.trim();
+    const description = $("description").value.trim();
+    const reserve = Number($("reserve").value);
+    const files = [...$("images").files];
+
+    if (!title) throw Error("Vendosni titullin.");
+    if (!Number.isFinite(reserve) || reserve < 0) {
+      throw Error("Çmimi rezervë është i pavlefshëm.");
+    }
+    if (files.length > 4) {
+      throw Error("Lejohen maksimumi 4 fotografi.");
+    }
+
+    for (const file of files) {
+      if (
+        !["image/jpeg", "image/png", "image/webp"].includes(file.type) ||
+        file.size > 5 * 1024 * 1024
+      ) {
+        throw Error("Fotografia duhet të jetë JPG, PNG ose WebP, deri 5 MB.");
+      }
+
+      const extension = file.type === "image/jpeg"
+        ? "jpg"
+        : file.type === "image/png" ? "png" : "webp";
+
+      const path = user.id + "/" +
+        crypto.randomUUID() + "." + extension;
+
+      const { error } = await db.storage
+        .from("ap-auction-photos")
+        .upload(path, file, {
+          contentType: file.type,
+          upsert: false
+        });
+
+      if (error) throw error;
+      uploaded.push(path);
+    }
+
+    await rpc("ap_create_auction", {
+      p_title: title,
+      p_description: description,
+      p_category: $("category").value,
+      p_reserve: reserve,
+      p_images: uploaded
+    });
+
+    $("title").value = "";
+    $("description").value = "";
+    $("images").value = "";
+
+    notify("Ankandi u publikua për 7 ditë.");
+    await loadAuctions();
+  } catch (error) {
+    if (uploaded.length) {
+      try {
+        await db.storage
+          .from("ap-auction-photos")
+          .remove(uploaded);
+      } catch (cleanupError) {
+        console.warn("Pastrimi i fotografive:", cleanupError);
+      }
+    }
+    notify(error.message, true);
+  } finally {
+    button.disabled = !hasAccess();
+  }
+};
+
+async function loadAuctions() {
+  const container = $("auctions");
+
+  try {
+    $("connection").textContent = "Duke ngarkuar ankandet...";
+
+    const auctions = await rpc("ap_list_auctions") || [];
+    container.replaceChildren();
+
+    $("connection").textContent =
+      "Lidhja me Supabase është aktive. Ankande: " +
+      auctions.length;
+
+    if (!auctions.length) {
+      container.textContent = "Nuk ka ankande për momentin.";
+      return;
+    }
+
+    for (const auction of auctions) {
+      const article = document.createElement("article");
+      article.className = "product";
+
+      const images = (auction.image_paths || [])
+        .map(path =>
+          '<img loading="lazy" alt="Foto produkti" src="' +
+          safe(publicImage(path)) + '">'
+        ).join("");
+
+      const active =
+        auction.status === "active" &&
+        new Date(auction.ends_at).getTime() > Date.now();
+
+      const canBid =
+        active && !auction.is_mine &&
+        !!user && !!profile && hasAccess();
+
+      article.innerHTML = `
+        <div class="row">
+          <h3>${safe(auction.title)}</h3>
+          <span class="status">
+            ${active ? "Aktiv" : "Përfunduar"}
+          </span>
+        </div>
+
+        <div class="photos">${images}</div>
+
+        <p>${safe(auction.description)}</p>
+
+        <p class="muted">
+          ${safe(auction.category)} ·
+          Shitësi: ${safe(auction.first_name)} ·
+          ${safe(auction.city)} ·
+          ${safe(auction.phone_mask)}
+        </p>
+
+        <p>
+          <strong>
+            Oferta më e lartë:
+            ${money(auction.current_price)}
+          </strong>
+          · ${Number(auction.bid_count || 0)} oferta
+        </p>
+
+        <p class="muted">
+          Mbyllet: ${formatDate(auction.ends_at)}
+        </p>
+
+        <p class="muted">
+          ${active
+            ? "Çmimi rezervë është privat."
+            : auction.reserve_reached
+              ? "Rezerva u arrit."
+              : "Rezerva nuk u arrit."}
+        </p>
+
+        <div id="bids-${auction.id}" class="muted">
+          Po ngarkohen ofertat...
+        </div>
+
+        <div class="row" style="margin-top:12px">
+          ${active && !auction.is_mine ? `
+            <input
+              id="amount-${auction.id}"
+              type="number"
+              min="0.01"
+              step="0.01"
+              placeholder="Oferta (€)"
+              style="max-width:140px">
+            <button
+              data-bid="${auction.id}"
+              ${canBid ? "" : "disabled"}>
+              Oferto
+            </button>
+          ` : ""}
+
+          ${auction.can_delete ? `
+            <button class="red" data-delete="${auction.id}">
+              Fshi ankandin
+            </button>
+          ` : ""}
+
+          ${auction.is_mine ? `
+            <button class="gray" data-reserve="${auction.id}">
+              Shiko rezervën
+            </button>
+          ` : ""}
+        </div>
+      `;
+
+      container.appendChild(article);
+      loadBids(auction.id);
+    }
+
+    container.querySelectorAll("[data-bid]").forEach(button => {
+      button.onclick = () => placeBid(button.dataset.bid);
+    });
+
+    container.querySelectorAll("[data-delete]").forEach(button => {
+      button.onclick = () => deleteAuction(button.dataset.delete);
+    });
+
+    container.querySelectorAll("[data-reserve]").forEach(button => {
+      button.onclick = () => showReserve(button.dataset.reserve);
+    });
+
+  } catch (error) {
+    console.error(error);
+    container.textContent = "Gabim: " + error.message;
+    $("connection").textContent =
+      "Lidhja ose funksioni SQL nuk u përgjigj.";
+  }
+}
+
+async function loadBids(auctionId) {
+  const box = $("bids-" + auctionId);
+  if (!box) return;
+
+  try {
+    const bids = await rpc("ap_list_bids", {
+      p_auction: auctionId
+    }) || [];
+
+    if (!bids.length) {
+      box.textContent = "Ende pa oferta.";
+      return;
+    }
+
+    const list = document.createElement("ul");
+    list.className = "bidlist";
+
+    for (const bid of bids) {
+      const item = document.createElement("li");
+      const name = document.createElement("span");
+      const amount = document.createElement("strong");
+
+      name.textContent =
+        (bid.first_name || "Ofertues") +
+        " · " + (bid.city || "");
+
+      amount.textContent = money(bid.amount);
+
+      item.append(name, amount);
+      list.appendChild(item);
+    }
+
+    box.replaceChildren(list);
+  } catch (error) {
+    box.textContent = "Gabim ofertash: " + error.message;
+  }
+}
+
+async function placeBid(auctionId) {
+  try {
+    if (!user || !profile || !hasAccess()) {
+      throw Error("Duhet të hyni dhe të keni qasje aktive.");
+    }
+
+    const amount = Number($("amount-" + auctionId).value);
+
+    if (!Number.isFinite(amount) || amount <= 0) {
+      throw Error("Oferta duhet të jetë më e madhe se 0 €.");
+    }
+
+    await rpc("ap_place_bid", {
+      p_auction: auctionId,
+      p_amount: amount
+    });
+
+    notify("Oferta virtuale u regjistrua.");
+    await loadAuctions();
+  } catch (error) {
+    notify(error.message, true);
+  }
+}
+
+async function showReserve(auctionId) {
+  try {
+    const reserve = await rpc("ap_my_reserve", {
+      p_auction: auctionId
+    });
+
+    notify("Rezerva private: " + money(reserve));
+  } catch (error) {
+    notify(error.message, true);
+  }
+}
+
+async function deleteAuction(auctionId) {
+  if (!confirm("Ta fshini këtë ankand?")) return;
+
+  try {
+    await rpc("ap_delete_early", {
+      p_auction: auctionId
+    });
+
+    notify("Ankandi u fshi nga databaza.");
+    await loadAuctions();
+  } catch (error) {
+    notify(error.message, true);
+  }
+}
+
+async function loadNotifications() {
+  const box = $("notifications");
+
+  try {
+    const notes = await rpc("ap_my_notifications") || [];
+    box.replaceChildren();
+
+    if (!notes.length) {
+      box.textContent = "Nuk ka njoftime.";
+      return;
+    }
+
+    for (const note of notes) {
+      const item = document.createElement("p");
+      item.className = "notice";
+      item.textContent =
+        formatDate(note.created_at) +
+        " — " + (note.message || "");
+      box.appendChild(item);
+    }
+  } catch (error) {
+    box.textContent = "Gabim: " + error.message;
+  }
+}
+
+$("refreshBtn").onclick = async () => {
+  await loadAuctions();
+  if (user) await loadNotifications();
+};
+
+async function start() {
+  try {
+    await loadLibrary();
+
+    db = window.supabase.createClient(
+      SUPABASE_URL,
+      SUPABASE_KEY,
+      {
+        auth: {
+          persistSession: true,
+          autoRefreshToken: true,
+          detectSessionInUrl: true
+        }
+      }
+    );
+
+    db.auth.onAuthStateChange(() => {
+      setTimeout(() => {
+        refreshAccount().catch(error => {
+          console.error(error);
+          notify(error.message, true);
+        });
+      }, 0);
+    });
+
+    await refreshAccount();
+  } catch (error) {
+    console.error("Gabim në nisje:", error);
+    $("connection").textContent = "Gabim: " + error.message;
+    $("auctions").textContent =
+      "Nuk u arrit lidhja me Supabase.";
+    notify(error.message, true);
+  }
+}
+
+start();
+</script>
+</body>
+</html>
