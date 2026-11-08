@@ -8,15 +8,17 @@
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
         
-        /* SFONDI ME FLAMURIN SHQIPTAR DUKE VALËVITUR */
+        /* KORRIGJIMI: SFONDI I MADH ME FLAMURIN SHQIPTAR QË MBULON KREJT EKRANIN */
         body { 
-            background: linear-gradient(rgba(241, 245, 249, 0.88), rgba(241, 245, 249, 0.88)), 
+            background: linear-gradient(rgba(241, 245, 249, 0.82), rgba(241, 245, 249, 0.82)), 
                         url('https://wikimedia.org');
-            background-size: cover;
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
             background-attachment: fixed;
             background-position: center;
             color: #1e293b; 
             padding: 20px; 
+            min-height: 100vh;
         }
         
         header { background-color: #0f172a; color: white; padding: 30px; text-align: center; margin-bottom: 25px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.15); }
@@ -126,7 +128,6 @@
             
             let endDate = new Date(); endDate.setDate(endDate.getDate() + 7);
 
-            // KORRIGJIMI: Çdo produkt i ri fillon zyrtarisht me vlerën 0 Euro
             const { error } = await dbServer.from('products').insert([{ 
                 title, category, description, current_price: 0, 
                 end_date: endDate.toISOString(), image_data: base64Image, reserve_price: 0
