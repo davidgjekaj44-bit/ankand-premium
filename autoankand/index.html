@@ -3,35 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ankand Premium Shqipëri Kosovë</title>
-    <script src="https://jsdelivr.net"></script>
+    <title>Ankand® Premium Shqipëri Kosovë</title>
+    <!-- Ngarkimi super i shpejtë i Supabase nga Cloudflare -->
+    <script src="https://cloudflare.com" integrity="sha512-Y3I7i8z9tTfNshB6wYI6zD9vV8BInF7v2f1v/3K6M3BExXyZtWc9fL1t/3K6M3BExXyZtW==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: #f1f5f9; color: #1e293b; padding: 20px; }
         
-        /* KORRIGJIMI: SFONDI I MADH ME FLAMURIN SHQIPTAR QË MBULON KREJT EKRANIN */
-        body { 
-            background: linear-gradient(rgba(241, 245, 249, 0.82), rgba(241, 245, 249, 0.82)), 
-                        url('https://wikimedia.org');
-            background-size: 100% 100%;
-            background-repeat: no-repeat;
-            background-attachment: fixed;
-            background-position: center;
-            color: #1e293b; 
-            padding: 20px; 
-            min-height: 100vh;
-        }
-        
-        header { background-color: #0f172a; color: white; padding: 30px; text-align: center; margin-bottom: 25px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.15); }
-        header h1 { font-size: 36px; font-weight: 800; letter-spacing: -0.5px; }
-        header p { color: #94a3b8; font-size: 15px; margin-top: 6px; }
+        header { background-color: #0f172a; color: white; padding: 35px 25px; text-align: center; margin-bottom: 25px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+        header h1 { font-size: 38px; font-weight: 800; letter-spacing: -0.5px; }
+        header p { color: #94a3b8; font-size: 16px; margin-top: 8px; font-weight: 500; }
         
         .layout { max-width: 1400px; margin: 0 auto; display: grid; grid-template-columns: 1fr 2fr; gap: 25px; }
-        @media (max-width: 900px) { .layout { grid-template-columns: 1fr; } }
+        @media (max-width: 1000px) { .layout { grid-template-columns: 1fr; } }
         
-        .card { background: rgba(255, 255, 255, 0.96); padding: 20px; border-radius: 10px; box-shadow: 0 6px 12px rgba(0,0,0,0.08); border: 1px solid #e2e8f0; height: fit-content; }
-        .card h3 { margin-bottom: 15px; font-size: 18px; border-bottom: 2px solid #f1f5f9; padding-bottom: 8px; color: #0f172a; }
-        .welcome-notice { background-color: #ef4444; border: 1px solid #dc2626; color: white; padding: 12px; border-radius: 6px; font-size: 13px; font-weight: bold; margin-bottom: 15px; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .card { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; height: fit-content; margin-bottom: 20px; }
+        .card h3 { margin-bottom: 15px; font-size: 18px; border-bottom: 2px solid #f1f5f9; padding-bottom: 8px; }
         
+        .price-notice { background-color: #fef9c3; border: 1px solid #fef08a; color: #713f12; padding: 12px; border-radius: 6px; font-size: 13px; font-weight: 600; margin-bottom: 15px; line-height: 1.4; text-align: center; }
         .form-group { margin-bottom: 12px; }
         label { display: block; font-size: 12px; font-weight: 600; margin-bottom: 4px; color: #475569; }
         input, select, textarea { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 14px; background: white; }
@@ -43,131 +32,100 @@
         .btn-blue:hover { background: #1d4ed8; }
         .btn-green { background: #10b981; color: white; }
         .btn-green:hover { background: #059669; }
+        .btn-red { background: #ef4444; color: white; }
         
-        .timer-box { font-size: 12px; font-weight: bold; color: #dc2626; background: #fff5f5; border: 1px solid #fca5a5; padding: 4px 6px; border-radius: 4px; margin-top: 5px; display: inline-block; }
+        .toggle-link { display: block; text-align: center; margin-top: 12px; font-size: 13px; color: #2563eb; cursor: pointer; text-decoration: underline; }
+        .user-session-box { background: #f8fafc; border: 1px solid #cbd5e1; padding: 15px; border-radius: 8px; margin-bottom: 15px; }
+        .badge { padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; text-transform: uppercase; }
+        .badge-active { background: #dcfce7; color: #15803d; }
+        .badge-pending { background: #fef9c3; color: #a16207; }
+        
+        .thank-you-box { background: #f0fdf4; border: 2px solid #16a34a; padding: 20px; border-radius: 8px; color: #14532d; font-size: 14px; line-height: 1.6; margin-top: 15px; display: none; }
+        
+        .reserve-status { font-size: 12px; font-weight: bold; padding: 4px 8px; border-radius: 4px; margin-top: 5px; display: inline-block; }
+        .reserve-not-met { background: #fee2e2; color: #9f1239; }
+        .reserve-met { background: #dcfce7; color: #15803d; }
+        .timer-box { font-size: 13px; font-weight: bold; color: #dc2626; background: #fff5f5; border: 1px solid #fca5a5; padding: 4px 8px; border-radius: 4px; margin-top: 5px; display: inline-block; }
+
         .public-feed { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
-        .product-card { background: rgba(255, 255, 255, 0.96); border-radius: 10px; border: 1px solid #e2e8f0; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 4px 8px rgba(0,0,0,0.05); }
-        .prod-img-box { height: 180px; background: #cbd5e1; background-size: cover; background-position: center; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #475569; font-size: 12px; text-transform: uppercase; }
+        .product-card { background: white; border-radius: 10px; border: 1px solid #e2e8f0; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
+        .prod-img { height: 140px; background: #cbd5e1; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #475569; font-size: 12px; text-transform: uppercase; }
         .prod-body { padding: 15px; flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between; }
-        .prod-title { font-size: 16px; font-weight: bold; color: #0f172a; }
+        .prod-title { font-size: 15px; font-weight: bold; }
         .prod-category { font-size: 11px; background: #e2e8f0; padding: 2px 6px; border-radius: 4px; font-weight: bold; color: #475569; width: fit-content; margin-top: 3px; }
-        .prod-price { font-size: 16px; font-weight: bold; margin: 8px 0; background: #fff5f5; padding: 8px; border-radius: 4px; text-align: center; border: 1px solid #fee2e2; color: #dc2626; }
+        .prod-price { font-size: 16px; font-weight: bold; margin: 8px 0; background: #f8fafc; padding: 6px; border-radius: 4px; text-align: center; border: 1px solid #f1f5f9; }
+        .locked-msg { font-size: 11px; color: #dc2626; font-weight: bold; text-align: center; margin-top: 8px; display: block; }
+
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); align-items: center; justify-content: center; padding: 20px; }
+        .modal-content { background-color: white; padding: 25px; border-radius: 12px; max-width: 500px; width: 100%; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
     </style>
 </head>
 <body>
 
     <header>
         <h1>Ankand® Premium Shqipëri Kosovë</h1>
-        <p>Sistemi Inteligjent i Ankandeve të Hapura me Foto Live 📸</p>
+        <p>Sistemi Inteligjent i Ankandeve me Çmim Rezervë të Fshehur 🔒</p>
     </header>
 
     <div class="layout">
-        <!-- FORMULAR SHTIMI -->
         <div>
-            <div class="welcome-notice">🇦🇱 MIRËSEVINI: Çdo ankand i ri fillon automatikisht nga 0 Euro! Publikoni falas pa regjistrim.</div>
-            
-            <div class="card">
-                <h3>➕ Nxirr një Artikull në Ankand</h3>
-                <div class="form-group">
-                    <label>Kategoria</label>
-                    <select id="p-category">
-                        <option value="Makinë">Makinë 🚗</option>
-                        <option value="Traktor">Traktor 🚜</option>
-                        <option value="Eskavator">Eskavator 🏗️</option>
-                        <option value="Shtëpi">Shtëpi 🏠</option>
-                        <option value="Telefon">Telefon 📱</option>
-                    </select>
-                </div>
-                <div class="form-group"><label>Emri i Artikullit</label><input type="text" id="p-title" placeholder="p.sh. Golf 7 S-Line"></div>
-                <div class="form-group"><label>Përshkrimi i Detajuar</label><textarea id="p-desc" placeholder="Shkruani vitin, lokacionin, gjendjen dhe kontaktin tuaj..."></textarea></div>
-                <div class="form-group"><label>📸 Ngarko Foto nga Pajisja</label><input type="file" id="p-image" accept="image/*"></div>
-                <button class="btn btn-green btn-block" onclick="saveProductToDatabase()">NISI ANKANDIN (7 DITË)</button>
+            <div class="user-session-box" id="session-card" style="display: none;">
+                <h4>Mirëseerdhe, <span id="session-user-name">...</span>!</h4>
+                <p style="font-size: 13px; margin: 5px 0;">Statusi: <span id="session-user-status" class="badge">Në Pritje</span></p>
+                <button class="btn btn-red" style="width:100%; margin-top:10px;" onclick="logout()">Dil nga Llogaria (Logout)</button>
+            </div>
+
+            <div class="price-notice" id="price-alert-box">
+                📢 SHËRBIM PREMIUM: Për të bërë oferta ose për të publikuar produkte për shitje, kërkohet abonim aktiv vjetor prej 120 Euro/Vit.
+            </div>
+
+            <div class="card" id="login-card">
+                <h3>🔑 Hyr në Llogari</h3>
+                <div class="form-group"><label>Numër Telefoni</label><input type="tel" id="login-phone" placeholder="069XXXXXXX ose 044XXXXXX"></div>
+                <div class="form-group"><label>Fjalëkalimi</label><input type="password" id="login-pass" placeholder="******"></div>
+                <button class="btn btn-blue btn-block" onclick="processLogin()">Hyr</button>
+                <span class="toggle-link" onclick="toggleForms('register')">Nuk keni llogari? Regjistrohuni këtu</span>
+            </div>
+
+            <div class="card" id="register-card" style="display: none;">
+                <h3>📝 Regjistrohu si Anëtar</h3>
+                <div class="form-group"><label>Emër</label><input type="text" id="u-name" placeholder="Agim"></div>
+                <div class="form-group"><label>Mbiemër</label><input type="text" id="u-surname" placeholder="Krasniqi"></div>
+                <div class="form-group"><label>Numër Telefoni (AL / KS)</label><input type="tel" id="u-phone" placeholder="p.sh. 069... ose +3834..."></div>
+                <div class="form-group"><label>Qyteti</label><input type="text" id="u-city" placeholder="Prishtinë"></div>
+                <div class="form-group"><label>Krijo Fjalëkalim (Min. 6 karaktere)</label><input type="password" id="u-pass" placeholder="******"></div>
+                <button class="btn btn-green btn-block" onclick="processRegistration()">Regjistrohu</button>
+                <span class="toggle-link" onclick="toggleForms('login')">Keni një llogari? Hyni këtu</span>
+            </div>
+
+            <div class="thank-you-box" id="thank-you-message">
+                <h3>🎉 Regjistrimi u dërgua!</h3>
+                <p>Faleminderit, do merrni një sms për pagesën. Në momentin që bëni pagesën do jeni aktiv për blerje ose shitje për 12 muaj.</p>
+                <button class="btn btn-blue" style="margin-top: 15px; width: 100%;" onclick="toggleForms('login')">Kthehu tek Hyrja</button>
             </div>
         </div>
 
-        <!-- FEED-I LIVE -->
         <div>
-            <h2 style="font-size: 18px; margin-bottom: 15px; color: #0f172a; text-shadow: 0 1px 2px rgba(255,255,255,0.8);">🛒 Artikujt Aktivë në Ankand</h2>
+            <div style="margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center;">
+                <h2 style="font-size: 18px;">🛒 Artikujt e Postuar (Nga 0 €)</h2>
+                <button class="btn btn-blue" onclick="openProductModal()">➕ SHTO PRODUKT</button>
+            </div>
             <div class="public-feed" id="products-container-list"></div>
         </div>
     </div>
 
-    <script>
-        const _URL = "https://supabase.co";
-        const _KEY = "sb_publishable_aTg_EeN9qT5C54_dRViJHQ_YJM9BW4B";
-        const dbServer = supabase.createClient(_URL, _KEY);
-        let intervalsTracker = [];
-
-        window.onload = function() { fetchLiveProductsFromDb(); syncProductsRealtime(); };
-
-        function convertImageToBase64(file) {
-            return new Promise((resolve, reject) => {
-                const reader = new FileReader();
-                reader.readAsDataURL(file);
-                reader.onload = () => resolve(reader.result);
-                reader.onerror = error => reject(error);
-            });
-        }
-
-        async function saveProductToDatabase() {
-            let title = document.getElementById('p-title').value.trim();
-            let category = document.getElementById('p-category').value;
-            let description = document.getElementById('p-desc').value.trim();
-            let imageInput = document.getElementById('p-image');
-
-            if(!title || !description) { alert("Ju lutem plotësoni të gjitha fushat!"); return; }
-            
-            let base64Image = null;
-            if(imageInput.files.length > 0) {
-                try {
-                    base64Image = await convertImageToBase64(imageInput.files[0]);
-                } catch(e) {
-                    alert("Gabim gjatë leximit të fotos."); return;
-                }
-            }
-            
-            let endDate = new Date(); endDate.setDate(endDate.getDate() + 7);
-
-            const { error } = await dbServer.from('products').insert([{ 
-                title, category, description, current_price: 0, 
-                end_date: endDate.toISOString(), image_data: base64Image, reserve_price: 0
-            }]);
-            
-            if (error) alert(error.message);
-            else { 
-                alert("🎉 Ankandi juaj nisi me sukses nga 0 €!"); 
-                document.getElementById('p-title').value = ""; 
-                document.getElementById('p-desc').value = ""; 
-                imageInput.value = "";
-                fetchLiveProductsFromDb(); 
-            }
-        }
-
-        async function fetchLiveProductsFromDb() {
-            const { data: products } = await dbServer.from('products').select('*').order('created_at', { ascending: false });
-            if (!products) return;
-
-            let container = document.getElementById('products-container-list'); container.innerHTML = "";
-            intervalsTracker.forEach(clearInterval); intervalsTracker = [];
-
-            if(products.length === 0) {
-                container.innerHTML = `<p style="color:#64748b; font-style:italic; padding:20px; background:white; border-radius:8px;">Nuk ka asnjë artikull për momentin.</p>`;
-                return;
-            }
-
-            products.forEach(p => {
-                let card = document.createElement('div'); card.className = 'product-card';
-                
-                let imageStyle = p.image_data ? `style="background-image: url('${p.image_data}')"` : '';
-                let imageContent = p.image_data ? '' : '📦 Nuk ka foto';
-
-                card.innerHTML = `
-                    <div class="prod-img-box" ${imageStyle}>${imageContent}</div>
-                    <div class="prod-body">
-                        <div>
-                            <div class="prod-title">${p.title}</div>
-                            <span class="prod-category">${p.category}</span>
-                            <p style="font-size:12px; color:#475569; margin-top:8px; line-height:1.4;">${p.description}</p>
-                            <br>
-                            <div class="timer-box" id="timer-${p.id}">Duke llogaritur...</div>
-                        </div>
+    <!-- DRITARJA MODALE -->
+    <div class="modal" id="productModal">
+        <div class="modal-content">
+            <h3 style="margin-bottom:15px;">➕ Nxirr një Artikull në Ankand</h3>
+            <div class="form-group">
+                <label>Kategoria</label>
+                <select id="p-category">
+                    <option value="Makinë">Makinë</option><option value="Traktor">Traktor</option><option value="Eskavator">Eskavator</option>
+                    <option value="Shtëpi">Shtëpi</option><option value="Dyqan">Dyqan</option><option value="Motorr">Motorr</option><option value="Telefon">Telefon</option>
+                </select>
+            </div>
+            <div class="form-group"><label>Emri i Artikullit</label><input type="text" id="p-title"></div>
+            <div class="form-group"><label>Përshkrimi</label><textarea id="p-desc"></textarea></div>
+            <div class="form-group"><label>🔒 Çmimi Rezervë i Fshehur (€)</label><input type="number" id="p-reserve"></div>
+            <button class="btn btn-green btn-block" onclick="saveProductToDatabase()">NISI ANKANDIN (7 DITË)</button>
