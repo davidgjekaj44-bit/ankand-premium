@@ -32,8 +32,7 @@ header p{position:relative;color:#f4d9db;font-weight:500}
 <main>
 
 <section class="plans" aria-label="Planet e qasjes">
-<div class="plan"><h2>Provë falas</h2><strong>7 ditë</strong><p>Publikim dhe ofertim virtual gjatë periudhës së provës, sipas rregullave të platformës.</p></div>
-<div class="plan"><h2>Plan vjetor i propozuar</h2><strong>40 € / vit</strong><p></p></div>
+<div class="plan"><h2>Platforma falas për të gjithë</h2><strong>Deri më 10/05/2027</strong><p>Publikimi i ankandeve dhe vendosja e ofertave janë falas për të gjithë përdoruesit e regjistruar, sipas rregullave të platformës.</p></div>
 </section>
 <div class="layout"><aside>
 <section class="card"><div class="row"><h2>🔑 Llogaria</h2><span class="status" id="accountStatus">Vizitor</span></div>
@@ -49,7 +48,7 @@ header p{position:relative;color:#f4d9db;font-weight:500}
 <section id="notificationsPanel" class="card hidden"><h2>🔔 Njoftimet private</h2><p class="muted">Pas përfundimit, informacionet përkatëse të kontaktit u shfaqen vetëm palëve të autorizuara.</p><div id="notifications"></div></section>
 </div></div>
 </main>
-<footer><strong>Njoftim për përgjegjësinë</strong><p>Ankand Premium Shqipëri – Kosovë shërben si platformë ndërmjetësuese për lidhjen e shitësve me ofertuesit. Marrëveshja përfundimtare, pagesa, dorëzimi dhe gjendja e produktit janë përgjegjësi e palëve të përfshira. Platforma nuk garanton realizimin e shitblerjes pas përfundimit të ankandit.</p><p>Ofertat janë jo detyruese. Plani vjetor është informues; në këtë version nuk pranohen ose përpunohen pagesa apo SMS. Ky njoftim nuk përjashton detyrimet ligjore.</p></footer>
+<footer><strong>Njoftim për përgjegjësinë</strong><p>Ankand Premium Shqipëri – Kosovë shërben si platformë ndërmjetësuese për lidhjen e shitësve me ofertuesit. Marrëveshja përfundimtare, pagesa, dorëzimi dhe gjendja e produktit janë përgjegjësi e palëve të përfshira. Platforma nuk garanton realizimin e shitblerjes pas përfundimit të ankandit.</p><p>Ofertat janë jo detyruese. Platforma është falas deri më 10/05/2027; në këtë version nuk pranohen ose përpunohen pagesa apo SMS. Ky njoftim nuk përjashton detyrimet ligjore.</p></footer>
 <script>
 'use strict';
 const SUPABASE_URL='https://bhwidixijfuhylbanjuk.supabase.co';
@@ -60,7 +59,9 @@ const $=id=>document.getElementById(id);
 const escapeHtml=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const money=n=>Number(n||0).toFixed(2)+' €';
 const when=s=>s?new Date(s).toLocaleString('sq-AL'):'—';
-const eligible=()=>access?.status==='trial'||access?.status==='active';
+// Data e mbarimit është përfshirëse sipas orës së Shqipërisë/Kosovës.
+const freeForAll=()=>Date.now()<Date.parse('2027-05-11T00:00:00+02:00');
+const eligible=()=>freeForAll()||access?.status==='trial'||access?.status==='active';
 function notice(text,bad=false){const el=$('alert');el.textContent=text;el.className=bad?'error':'';el.style.display='block';clearTimeout(notice.t);notice.t=setTimeout(()=>el.style.display='none',9000)}
 function normalizePhone(s){const p=String(s||'').replace(/[\s().-]/g,'');if(!/^\+(355|383)\d{7,10}$/.test(p))throw Error('Shkruani numrin me +355 ose +383.');return p}
 function setBusy(id,busy){$(id).disabled=busy}
@@ -102,7 +103,7 @@ $('loginBtn').onclick=async()=>{
   }catch(e){notice(e.message,true)}finally{setBusy('loginBtn',false)}
 };
 $('logoutBtn').onclick=async()=>{try{const {error}=await db.auth.signOut();if(error)throw error;await refreshAccount();notice('Dolët nga llogaria.')}catch(e){notice(e.message,true)}};
-async function refreshAccount(){if(!db)return;const {data,error}=await db.auth.getSession();if(error)throw error;user=data.session?.user||null;access=null;profile=null;$('guest').classList.toggle('hidden',!!user);$('member').classList.toggle('hidden',!user);$('createPanel').classList.toggle('hidden',!user);$('notificationsPanel').classList.toggle('hidden',!user);$('accountStatus').textContent=user?'I identifikuar':'Vizitor';$('publishBtn').disabled=true;if(user){$('memberLabel').textContent='Llogaria juaj';try{profile=await rpc('ap_my_profile');await savePendingProfile();access=await rpc('ap_access_state');$('accessStatus').textContent=access?.status==='trial'?'Provë falas deri më '+when(access.trial_ends_at):access?.status==='active'?(access.unlimited_access?'Qasje aktive pa afat':'Qasje aktive deri më '+when(access.complimentary_until)):'7 DITËT FALAS KANË MBARUAR! Për planin 12-mujor — 40 EURO, kontaktoni: +355 69 723 2425';$('publishBtn').disabled=!profile||!eligible();await loadNotifications()}catch(e){notice(e.message,true)}}await loadAuctions()}
+async function refreshAccount(){if(!db)return;const {data,error}=await db.auth.getSession();if(error)throw error;user=data.session?.user||null;access=null;profile=null;$('guest').classList.toggle('hidden',!!user);$('member').classList.toggle('hidden',!user);$('createPanel').classList.toggle('hidden',!user);$('notificationsPanel').classList.toggle('hidden',!user);$('accountStatus').textContent=user?'I identifikuar':'Vizitor';$('publishBtn').disabled=true;if(user){$('memberLabel').textContent='Llogaria juaj';try{profile=await rpc('ap_my_profile');await savePendingProfile();access=await rpc('ap_access_state');$('accessStatus').textContent=freeForAll()?'Platforma është FALAS për të gjithë deri më 10/05/2027. Publikimi dhe ofertimi janë falas, sipas rregullave të platformës.':access?.status==='trial'?'Provë falas deri më '+when(access.trial_ends_at):access?.status==='active'?(access.unlimited_access?'Qasje aktive pa afat':'Qasje aktive deri më '+when(access.complimentary_until)):'Qasja nuk është aktive.';$('publishBtn').disabled=!profile||!eligible();await loadNotifications()}catch(e){notice(e.message,true)}}await loadAuctions()}
 function imageUrl(path){return db.storage.from('ap-auction-photos').getPublicUrl(path).data.publicUrl}
 $('publishBtn').onclick=async()=>{setBusy('publishBtn',true);const uploaded=[];try{if(!user||!profile||!eligible())throw Error('Duhet profil dhe qasje aktive.');const title=$('title').value.trim(),reserve=Number($('reserve').value),files=[...$('images').files];if(!title)throw Error('Shkruani titullin.');if(!Number.isFinite(reserve)||reserve<0)throw Error('Rezerva është e pavlefshme.');if(files.length>4)throw Error('Maksimumi 4 fotografi.');for(const file of files){if(!['image/jpeg','image/png','image/webp'].includes(file.type)||file.size>5*1024*1024)throw Error('Foto e pavlefshme ose mbi 5 MB.');const ext=file.type==='image/jpeg'?'jpg':file.type==='image/png'?'png':'webp',path=user.id+'/'+crypto.randomUUID()+'.'+ext;const {error}=await db.storage.from('ap-auction-photos').upload(path,file,{contentType:file.type,upsert:false});if(error)throw error;uploaded.push(path)}await rpc('ap_create_auction',{p_title:title,p_description:$('description').value,p_category:$('category').value,p_reserve:reserve,p_images:uploaded});$('title').value='';$('description').value='';$('images').value='';notice('Ankandi virtual u publikua.');await loadAuctions()}catch(e){if(uploaded.length){const {error}=await db.storage.from('ap-auction-photos').remove(uploaded);if(error)console.warn('Pastrimi i fotove:',error)}notice(e.message,true)}finally{$('publishBtn').disabled=!eligible()}};
 function galleryHtml(paths){
@@ -148,4 +149,3 @@ start();
 </script>
 </body>
 </html>
-<!-- Rindertim GitHub Pages -->
