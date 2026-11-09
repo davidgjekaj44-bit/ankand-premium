@@ -20,15 +20,6 @@ header p{position:relative;color:#f4d9db;font-weight:500}
 .header-flag img{display:block;width:100%;height:100%;object-fit:fill;border:2px solid #d6b36b;border-radius:3px;box-shadow:0 7px 20px #0009;transform:none!important;animation:none!important}
 @media(max-width:650px){header{padding:30px 85px;min-height:162px}.header-flag{width:73px;height:52px}.header-flag.al{left:7px}.header-flag.xk{right:7px}header h1{font-size:clamp(17px,4.5vw,25px)}header p{font-size:11px}header::after{font-size:9px;letter-spacing:1.4px;margin-top:11px;padding-top:7px}}
 </style>
-<meta name="theme-color" content="#0f172a">
-<meta name="application-name" content="Ankand Premium">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="Ankand Premium">
-<meta name="description" content="Ankande virtuale për Shqipëri dhe Kosovë.">
-<link rel="manifest" href="/manifest.webmanifest">
-<link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png">
-<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
 </head>
 <body>
 <header>
@@ -181,13 +172,6 @@ async function loadNotifications(){const box=$('notifications');try{const notes=
 $('refreshBtn').onclick=async()=>{await loadAuctions();if(user)await loadNotifications()};
 async function start(){try{await loadLibrary();db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});db.auth.onAuthStateChange(()=>setTimeout(()=>refreshAccount().catch(e=>notice(e.message,true)),0));await refreshAccount()}catch(e){console.error(e);$('connection').textContent='Gabim: '+e.message;$('auctions').textContent='Nuk u arrit lidhja me Supabase.';notice(e.message,true)}}
 start();
-</script>
-<script>
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js', {scope:'/'}).catch(err => console.warn('PWA:', err));
-  });
-}
 </script>
 </body>
 </html>
