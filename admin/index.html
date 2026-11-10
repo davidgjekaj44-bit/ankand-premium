@@ -38,6 +38,13 @@
     .account-action.block-action { background: #fca5a5; color: #111827; }
     .account-action.unblock-action { background: #86efac; color: #111827; }
     .card-message { min-height: 0; margin-top: 8px; text-align: left; font-size: 14px; }
+    .toolbar { display:flex; flex-wrap:wrap; gap:8px; margin:12px 0; }
+    .toolbar button { width:auto; margin:0; padding:10px 12px; font-size:14px; }
+    .inline-form { background:#162236; padding:14px; border-radius:10px; margin-top:12px; }
+    .inline-form label { font-size:14px; }
+    .inline-form button { margin-top:12px; }
+    .muted { color:#cbd5e1; font-size:13px; }
+    .search-input { margin-top:12px; }
     button:focus-visible { outline: 3px solid #38bdf8; outline-offset: 3px; }
   </style>
 </head>
@@ -68,8 +75,18 @@
       <button id="usersButton" type="button">Përdoruesit</button>
       <section id="usersView" class="hidden" aria-label="Lista e përdoruesve">
         <div class="users-heading"><h2>Lista e përdoruesve</h2><span id="usersCount" class="count"></span></div>
+        <input id="userSearch" class="search-input" type="search" placeholder="Kërko sipas emrit, telefonit, qytetit ose ID-së" aria-label="Kërko përdorues">
         <p id="usersMessage" class="message" role="status"></p>
         <div id="usersList" class="users-list"></div>
+      </section>
+      <div class="toolbar">
+        <button id="adminsButton" class="secondary" type="button">Administratorët</button>
+        <button id="auditButton" class="secondary hidden" type="button">Historiku</button>
+      </div>
+      <section id="extraView" class="hidden" aria-label="Menaxhimi i administratorëve dhe historiku">
+        <h2 id="extraTitle"></h2>
+        <p id="extraMessage" class="message" role="status"></p>
+        <div id="extraList" class="users-list"></div>
       </section>
       <button id="logoutButton" class="secondary" type="button">Dil nga administrimi</button>
       <p id="dashboardMessage" class="message" role="status"></p>
@@ -80,6 +97,7 @@
     "use strict";
 
     const API = "https://bhwidixijfuhylbanjuk.supabase.co/functions/v1/admin-auth";
+    const MANAGE_API = "https://bhwidixijfuhylbanjuk.supabase.co/functions/v1/admin-manage";
     const USERS_API = "https://bhwidixijfuhylbanjuk.supabase.co/functions/v1/admin-users";
 
     const mainPanel = document.getElementById("mainPanel");
@@ -102,6 +120,13 @@
     let currentUsers = [];
     let actionInProgress = false;
     let requestVersion = 0;
+    const userSearch = document.getElementById("userSearch");
+    const adminsButton = document.getElementById("adminsButton");
+    const auditButton = document.getElementById("auditButton");
+    const extraView = document.getElementById("extraView");
+    const extraTitle = document.getElementById("extraTitle");
+    const extraMessage = document.getElementById("extraMessage");
+    const extraList = document.getElementById("extraList");
 
     async function apiRequest(body) {
       const response = await fetch(API, {
@@ -125,6 +150,7 @@
       usersView.classList.add("hidden");
       usersList.replaceChildren();
       currentUsers = [];
+      userSearch.value = "";
       usersMessage.textContent = "";
       usersMessage.classList.remove("success");
       usersCount.textContent = "";
@@ -138,6 +164,8 @@
       sessionToken = null;
       adminRole = null;
       actionInProgress = false;
+      extraView.classList.add("hidden");
+      extraList.replaceChildren();
       clearUsers();
       dashboardView.classList.add("hidden");
       loginView.classList.remove("hidden");
@@ -146,6 +174,7 @@
 
     function showDashboard(admin, expiresAt) {
       adminRole = admin.role;
+      auditButton.classList.toggle("hidden", admin.role !== "super_admin");
       document.getElementById("adminName").textContent = admin.username;
       document.getElementById("adminRole").textContent = admin.role;
       document.getElementById("sessionExpiry").textContent = new Date(expiresAt).toLocaleString("sq-AL");
@@ -179,8 +208,17 @@
 
     function renderUsers(users) {
       currentUsers = users;
+      paintUsers();
+    }
+
+    function paintUsers() {
+      const term = userSearch.value.trim().toLocaleLowerCase("sq");
+      const users = currentUsers.filter(user =>
+        [user.first_name, user.last_name, user.city, user.phone, user.user_id]
+          .some(value => String(value ?? "").toLocaleLowerCase("sq").includes(term))
+      );
       usersList.replaceChildren();
-      usersCount.textContent = users.length + " përdorues";
+      usersCount.textContent = users.length + " / " + currentUsers.length + " përdorues";
       usersMessage.classList.remove("success");
       if (!users.length) {
         usersMessage.textContent = "Nuk u gjet asnjë përdorues.";
@@ -224,6 +262,24 @@
             changeAccountStatus(user, displayName, actionButton, actionMessage)
           );
           card.append(actionButton, actionMessage);
+        }
+        if (adminRole === "super_admin" && !user.blocked) {
+          const tools = document.createElement("div");
+          tools.className = "toolbar";
+          for (const [label, action] of [
+            ["Modifiko", "update_profile"],
+            ["Zgjat abonimin", "extend_subscription"],
+            ["Akses falas", "grant_complimentary"],
+            ["Akses pa afat", "grant_unlimited"]
+          ]) {
+            const btn = document.createElement("button");
+            btn.type = "button";
+            btn.className = "secondary";
+            btn.textContent = label;
+            btn.addEventListener("click", () => openManageForm(user, action, card));
+            tools.appendChild(btn);
+          }
+          card.appendChild(tools);
         }
         usersList.appendChild(card);
       }
@@ -269,7 +325,7 @@
           throw new Error("Ndryshimi nuk u konfirmua nga serveri.");
         }
         user.blocked = action === "block";
-        renderUsers(currentUsers);
+        paintUsers();
         usersMessage.classList.add("success");
         usersMessage.textContent = action === "block"
           ? `Llogaria e ${displayName} u bllokua.`
@@ -283,6 +339,149 @@
         if (version === requestVersion && token === sessionToken) button.disabled = false;
       }
     }
+
+    userSearch.addEventListener("input", paintUsers);
+
+    async function manageRequest(payload) {
+      const token = sessionToken;
+      if (!token) throw new Error("Hyr përsëri.");
+      const response = await fetch(MANAGE_API, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Authorization": "Bearer " + token },
+        body: JSON.stringify(payload),
+        cache: "no-store"
+      });
+      let result;
+      try { result = await response.json(); }
+      catch { throw new Error("Përgjigje e pavlefshme nga serveri."); }
+      if (response.status === 401) {
+        showLogin();
+        throw new Error("Sesioni ka skaduar. Hyr përsëri.");
+      }
+      if (response.status === 403) throw new Error("Nuk ke leje për këtë veprim.");
+      if (!response.ok || result.ok !== true) {
+        throw new Error(result.error || "Veprimi dështoi.");
+      }
+      return result;
+    }
+
+    function openManageForm(user, action, card) {
+      if (adminRole !== "super_admin" || actionInProgress) return;
+      const existing = card.querySelector(".inline-form");
+      if (existing) { existing.remove(); return; }
+      const form = document.createElement("form");
+      form.className = "inline-form";
+      const title = document.createElement("strong");
+      const titles = {
+        update_profile: "Modifiko profilin",
+        extend_subscription: "Zgjat abonimin",
+        grant_complimentary: "Jep akses falas",
+        grant_unlimited: "Jep akses pa afat"
+      };
+      title.textContent = titles[action];
+      form.appendChild(title);
+      const fields = action === "update_profile"
+        ? [["first_name", "Emri"], ["last_name", "Mbiemri"], ["city", "Qyteti"], ["phone", "Telefoni"]]
+        : action === "grant_unlimited" ? [] : [["days", "Numri i ditëve (1–3650)"]];
+      for (const [name, labelText] of fields) {
+        const label = document.createElement("label");
+        label.textContent = labelText;
+        const input = document.createElement("input");
+        input.name = name;
+        input.required = true;
+        if (name === "days") {
+          input.type = "number"; input.min = "1"; input.max = "3650"; input.step = "1";
+        } else {
+          input.type = "text"; input.maxLength = 100;
+          input.value = user[name] || "";
+        }
+        label.appendChild(input);
+        form.appendChild(label);
+      }
+      const submit = document.createElement("button");
+      submit.type = "submit";
+      submit.textContent = "Konfirmo ndryshimin";
+      const msg = document.createElement("p");
+      msg.className = "message";
+      msg.setAttribute("role", "status");
+      form.append(submit, msg);
+      form.addEventListener("submit", async event => {
+        event.preventDefault();
+        if (actionInProgress) return;
+        const payload = { action, user_id: user.user_id };
+        for (const [name] of fields) {
+          const value = form.elements.namedItem(name).value.trim();
+          payload[name] = name === "days" ? Number(value) : value;
+        }
+        const displayName = [user.first_name, user.last_name].filter(Boolean).join(" ") || user.user_id;
+        if (!window.confirm("Konfirmon veprimin: " + titles[action] + " për " + displayName + "?")) return;
+        const version = requestVersion;
+        actionInProgress = true;
+        submit.disabled = true;
+        msg.textContent = "Duke ruajtur…";
+        try {
+          const result = await manageRequest(payload);
+          if (version !== requestVersion) return;
+          if (action === "update_profile") {
+            for (const [name] of fields) user[name] = payload[name];
+          } else if (user.access) {
+            if (action === "grant_unlimited") user.access.unlimited_access = true;
+            if (action === "extend_subscription" || action === "grant_complimentary") {
+              // Rilexojmë të dhënat nga serveri për datën e saktë.
+            }
+          }
+          paintUsers();
+          usersMessage.classList.add("success");
+          usersMessage.textContent = result.audit_logged === false
+            ? "Ndryshimi u ruajt, por historiku nuk u regjistrua. Kontakto administratorin."
+            : "Ndryshimi u ruajt. Mbyll dhe rihap listën për të parë datat e reja.";
+        } catch (error) {
+          if (version === requestVersion) msg.textContent = error.message || "Gabim.";
+        } finally {
+          actionInProgress = false;
+          submit.disabled = false;
+        }
+      });
+      card.appendChild(form);
+    }
+
+    async function openExtra(action) {
+      if (!sessionToken || actionInProgress) return;
+      extraView.classList.remove("hidden");
+      mainPanel.classList.add("wide");
+      extraList.replaceChildren();
+      extraTitle.textContent = action === "list_admins" ? "Administratorët" : "Historiku i veprimeve";
+      extraMessage.textContent = "Duke ngarkuar…";
+      const version = requestVersion;
+      try {
+        const result = await manageRequest({ action });
+        if (version !== requestVersion) return;
+        const entries = action === "list_admins" ? result.admins : result.entries;
+        if (!Array.isArray(entries)) throw new Error("Formati i të dhënave është i pavlefshëm.");
+        extraMessage.textContent = entries.length ? "" : "Nuk ka të dhëna.";
+        for (const entry of entries) {
+          const card = document.createElement("div");
+          card.className = "user-card";
+          if (action === "list_admins") {
+            addField(card, "Emri", entry.username);
+            addField(card, "Roli", entry.role);
+            addField(card, "Aktiv", entry.is_active ? "Po" : "Jo");
+            addField(card, "Krijuar", entry.created_at ? new Date(entry.created_at).toLocaleString("sq-AL") : "—");
+          } else {
+            addField(card, "Veprimi", entry.action);
+            addField(card, "Objekti", entry.target_type);
+            addField(card, "ID", entry.target_id);
+            addField(card, "Koha", entry.created_at ? new Date(entry.created_at).toLocaleString("sq-AL") : "—");
+          }
+          extraList.appendChild(card);
+        }
+      } catch (error) {
+        if (version === requestVersion) extraMessage.textContent = error.message || "Gabim.";
+      }
+    }
+
+    adminsButton.addEventListener("click", () => openExtra("list_admins"));
+    auditButton.addEventListener("click", () => openExtra("audit_log"));
 
     loginForm.addEventListener("submit", async function (event) {
       event.preventDefault();
