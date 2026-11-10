@@ -1,398 +1,274 @@
-
 <!DOCTYPE html>
 <html lang="sq">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport"
-        content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Administratori | Ankand Premium</title>
   <meta name="robots" content="noindex, nofollow">
-
   <style>
     * { box-sizing: border-box; }
-
-    body {
-      margin: 0;
-      min-height: 100vh;
-      font-family: Arial, sans-serif;
-      background: #101827;
-      color: #f8fafc;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-    }
-
-    .panel {
-      width: 100%;
-      max-width: 440px;
-      background: #1e293b;
-      border: 1px solid #334155;
-      border-radius: 18px;
-      padding: 28px;
-      box-shadow: 0 20px 50px #0005;
-    }
-
-    h1 {
-      margin: 0 0 8px;
-      font-size: 25px;
-      text-align: center;
-    }
-
-    .subtitle {
-      text-align: center;
-      color: #cbd5e1;
-      margin-bottom: 26px;
-      line-height: 1.5;
-    }
-
-    label {
-      display: block;
-      margin: 16px 0 7px;
-      font-weight: bold;
-    }
-
-    input {
-      width: 100%;
-      padding: 13px;
-      border-radius: 9px;
-      border: 1px solid #64748b;
-      background: #0f172a;
-      color: white;
-      font-size: 16px;
-    }
-
-    input:focus {
-      outline: 2px solid #38bdf8;
-    }
-
-    button {
-      width: 100%;
-      padding: 14px;
-      margin-top: 20px;
-      border: 0;
-      border-radius: 9px;
-      background: #fbbf24;
-      color: #111827;
-      font-weight: bold;
-      font-size: 16px;
-      cursor: pointer;
-    }
-
-    button:disabled {
-      opacity: 0.6;
-      cursor: wait;
-    }
-
-    .secondary {
-      background: #334155;
-      color: white;
-    }
-
-    .message {
-      margin-top: 18px;
-      text-align: center;
-      line-height: 1.5;
-      min-height: 22px;
-      color: #fca5a5;
-    }
-
-    .success {
-      color: #86efac;
-    }
-
-    .hidden {
-      display: none;
-    }
-
-    .info {
-      padding: 15px;
-      background: #0f172a;
-      border-radius: 10px;
-      line-height: 1.8;
-      overflow-wrap: anywhere;
-    }
-
-    .note {
-      color: #cbd5e1;
-      font-size: 14px;
-      line-height: 1.6;
-      margin-top: 20px;
-    }
+    body { margin: 0; min-height: 100vh; font-family: Arial, sans-serif; background: #101827; color: #f8fafc; display: flex; align-items: center; justify-content: center; padding: 20px; }
+    .panel { width: 100%; max-width: 440px; background: #1e293b; border: 1px solid #334155; border-radius: 18px; padding: 28px; box-shadow: 0 20px 50px #0005; }
+    .panel.wide { max-width: 850px; }
+    h1 { margin: 0 0 8px; font-size: 25px; text-align: center; }
+    h2 { font-size: 20px; margin: 25px 0 12px; }
+    .subtitle { text-align: center; color: #cbd5e1; margin-bottom: 26px; line-height: 1.5; }
+    label { display: block; margin: 16px 0 7px; font-weight: bold; }
+    input { width: 100%; padding: 13px; border-radius: 9px; border: 1px solid #64748b; background: #0f172a; color: white; font-size: 16px; }
+    input:focus { outline: 2px solid #38bdf8; }
+    button { width: 100%; padding: 14px; margin-top: 20px; border: 0; border-radius: 9px; background: #fbbf24; color: #111827; font-weight: bold; font-size: 16px; cursor: pointer; }
+    button:disabled { opacity: 0.6; cursor: wait; }
+    .secondary { background: #334155; color: white; }
+    .message { margin-top: 18px; text-align: center; line-height: 1.5; min-height: 22px; color: #fca5a5; }
+    .success { color: #86efac; }
+    .hidden { display: none !important; }
+    .info { padding: 15px; background: #0f172a; border-radius: 10px; line-height: 1.8; overflow-wrap: anywhere; }
+    .note { color: #cbd5e1; font-size: 14px; line-height: 1.6; margin-top: 20px; }
+    .users-list { display: grid; gap: 12px; margin-top: 15px; }
+    .user-card { background: #0f172a; border: 1px solid #334155; border-radius: 10px; padding: 15px; line-height: 1.7; overflow-wrap: anywhere; }
+    .user-card strong { color: #fbbf24; }
+    .user-meta { color: #cbd5e1; font-size: 14px; }
+    .users-heading { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+    .users-heading h2 { margin-bottom: 0; }
+    .count { color: #cbd5e1; font-size: 14px; }
   </style>
 </head>
-
 <body>
-
-  <main class="panel">
-
+  <main id="mainPanel" class="panel">
     <section id="loginView">
       <h1>Paneli i Administratorit</h1>
-
-      <p class="subtitle">
-        Ankand Premium Shqipëri – Kosovë
-      </p>
-
+      <p class="subtitle">Ankand Premium Shqipëri – Kosovë</p>
       <form id="loginForm">
-        <label for="username">
-          Emri i përdoruesit
-        </label>
-
-        <input
-          id="username"
-          name="username"
-          type="text"
-          value="admin_admin"
-          autocomplete="username"
-          minlength="3"
-          maxlength="30"
-          required
-        >
-
-        <label for="password">
-          Fjalëkalimi
-        </label>
-
-        <input
-          id="password"
-          name="password"
-          type="password"
-          autocomplete="current-password"
-          minlength="12"
-          maxlength="72"
-          required
-        >
-
-        <button id="loginButton" type="submit">
-          Hyr si administrator
-        </button>
+        <label for="username">Emri i përdoruesit</label>
+        <input id="username" name="username" type="text" value="admin_admin" autocomplete="username" minlength="3" maxlength="30" required>
+        <label for="password">Fjalëkalimi</label>
+        <input id="password" name="password" type="password" autocomplete="current-password" minlength="12" maxlength="72" required>
+        <button id="loginButton" type="submit">Hyr si administrator</button>
       </form>
-
-      <p id="loginMessage"
-         class="message"
-         role="status"></p>
+      <p id="loginMessage" class="message" role="status"></p>
     </section>
 
     <section id="dashboardView" class="hidden">
       <h1>Paneli i Administratorit</h1>
-
-      <p class="subtitle">
-        Mirë se erdhe në administrim
-      </p>
-
+      <p class="subtitle">Mirë se erdhe në administrim</p>
       <div class="info">
-        <div>
-          <strong>Përdoruesi:</strong>
-          <span id="adminName"></span>
-        </div>
-
-        <div>
-          <strong>Roli:</strong>
-          <span id="adminRole"></span>
-        </div>
-
-        <div>
-          <strong>Sesioni skadon:</strong>
-          <span id="sessionExpiry"></span>
-        </div>
+        <div><strong>Përdoruesi:</strong> <span id="adminName"></span></div>
+        <div><strong>Roli:</strong> <span id="adminRole"></span></div>
+        <div><strong>Sesioni skadon:</strong> <span id="sessionExpiry"></span></div>
       </div>
-
-      <p class="note">
-        Hyrja e sigurt është hapi i parë.
-        Menaxhimi i përdoruesve dhe
-        administratorëve do të shtohet
-        pasi të përfundojmë testet.
-      </p>
-
-      <button id="logoutButton"
-              class="secondary"
-              type="button">
-        Dil nga administrimi
-      </button>
-
-      <p id="dashboardMessage"
-         class="message"
-         role="status"></p>
+      <p class="note">Përdor butonin më poshtë për të parë përdoruesit e regjistruar. Ndryshimi i llogarive nuk është aktivizuar ende.</p>
+      <button id="usersButton" type="button">Përdoruesit</button>
+      <section id="usersView" class="hidden" aria-label="Lista e përdoruesve">
+        <div class="users-heading"><h2>Lista e përdoruesve</h2><span id="usersCount" class="count"></span></div>
+        <p id="usersMessage" class="message" role="status"></p>
+        <div id="usersList" class="users-list"></div>
+      </section>
+      <button id="logoutButton" class="secondary" type="button">Dil nga administrimi</button>
+      <p id="dashboardMessage" class="message" role="status"></p>
     </section>
-
   </main>
 
   <script>
     "use strict";
 
-    const API =
-      "https://bhwidixijfuhylbanjuk.supabase.co/functions/v1/admin-auth";
+    const API = "https://bhwidixijfuhylbanjuk.supabase.co/functions/v1/admin-auth";
+    const USERS_API = "https://bhwidixijfuhylbanjuk.supabase.co/functions/v1/admin-users";
 
-    const loginView =
-      document.getElementById("loginView");
+    const mainPanel = document.getElementById("mainPanel");
+    const loginView = document.getElementById("loginView");
+    const dashboardView = document.getElementById("dashboardView");
+    const loginForm = document.getElementById("loginForm");
+    const loginButton = document.getElementById("loginButton");
+    const loginMessage = document.getElementById("loginMessage");
+    const dashboardMessage = document.getElementById("dashboardMessage");
+    const logoutButton = document.getElementById("logoutButton");
+    const usersButton = document.getElementById("usersButton");
+    const usersView = document.getElementById("usersView");
+    const usersList = document.getElementById("usersList");
+    const usersMessage = document.getElementById("usersMessage");
+    const usersCount = document.getElementById("usersCount");
 
-    const dashboardView =
-      document.getElementById("dashboardView");
-
-    const loginForm =
-      document.getElementById("loginForm");
-
-    const loginButton =
-      document.getElementById("loginButton");
-
-    const loginMessage =
-      document.getElementById("loginMessage");
-
-    const dashboardMessage =
-      document.getElementById("dashboardMessage");
-
-    const logoutButton =
-      document.getElementById("logoutButton");
-
-    // Tokeni mbahet vetem ne memorien
-    // e faqes, jo ne localStorage.
+    // Tokeni mbahet vetëm në memorien e faqes, jo në localStorage.
     let sessionToken = null;
+    let requestVersion = 0;
 
     async function apiRequest(body) {
       const response = await fetch(API, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
         cache: "no-store"
       });
-
       let result;
-
-      try {
-        result = await response.json();
-      } catch {
-        throw new Error(
-          "Përgjigje e pavlefshme nga serveri."
-        );
-      }
-
+      try { result = await response.json(); }
+      catch { throw new Error("Përgjigje e pavlefshme nga serveri."); }
       if (!response.ok) {
-        if (response.status === 401) {
-          throw new Error(
-            "Të dhënat e hyrjes nuk janë të sakta."
-          );
-        }
-
-        if (response.status === 429) {
-          throw new Error(
-            "Shumë tentativa. Provo më vonë."
-          );
-        }
-
-        throw new Error(
-          "Shërbimi nuk është i disponueshëm."
-        );
+        if (response.status === 401) throw new Error("Të dhënat e hyrjes nuk janë të sakta.");
+        if (response.status === 429) throw new Error("Shumë tentativa. Provo më vonë.");
+        throw new Error("Shërbimi nuk është i disponueshëm.");
       }
-
       return result;
     }
 
+    function clearUsers() {
+      usersView.classList.add("hidden");
+      usersList.replaceChildren();
+      usersMessage.textContent = "";
+      usersCount.textContent = "";
+      usersButton.disabled = false;
+      usersButton.textContent = "Përdoruesit";
+      mainPanel.classList.remove("wide");
+    }
+
     function showLogin() {
+      requestVersion++;
       sessionToken = null;
+      clearUsers();
       dashboardView.classList.add("hidden");
       loginView.classList.remove("hidden");
       document.getElementById("password").value = "";
     }
 
     function showDashboard(admin, expiresAt) {
-      document.getElementById("adminName")
-        .textContent = admin.username;
-
-      document.getElementById("adminRole")
-        .textContent = admin.role;
-
-      document.getElementById("sessionExpiry")
-        .textContent =
-          new Date(expiresAt).toLocaleString("sq-AL");
-
+      document.getElementById("adminName").textContent = admin.username;
+      document.getElementById("adminRole").textContent = admin.role;
+      document.getElementById("sessionExpiry").textContent = new Date(expiresAt).toLocaleString("sq-AL");
+      dashboardMessage.textContent = "";
       loginView.classList.add("hidden");
       dashboardView.classList.remove("hidden");
     }
 
-    loginForm.addEventListener(
-      "submit",
-      async function (event) {
-        event.preventDefault();
+    function addField(card, label, value) {
+      const line = document.createElement("div");
+      line.className = "user-meta";
+      const name = document.createElement("strong");
+      name.textContent = label + ": ";
+      const content = document.createElement("span");
+      content.textContent = value == null || value === "" ? "—" : String(value);
+      line.append(name, content);
+      card.appendChild(line);
+    }
 
-        loginMessage.textContent = "";
-        loginButton.disabled = true;
+    function accessStatus(access) {
+      if (!access) return "Pa të dhëna aksesi";
+      if (access.payment_suspended) return "I pezulluar";
+      if (access.unlimited_access) return "Akses i pakufizuar";
+      const now = Date.now();
+      const complimentary = Date.parse(access.complimentary_until || "");
+      const subscription = Date.parse(access.subscription_ends_at || "");
+      if (complimentary > now) return "Akses falas aktiv";
+      if (subscription > now) return "Abonim aktiv";
+      return "Pa akses aktiv";
+    }
 
-        const username =
-          document.getElementById("username")
-            .value.trim();
-
-        const password =
-          document.getElementById("password")
-            .value;
-
-        try {
-          const result = await apiRequest({
-            action: "login",
-            username,
-            password
-          });
-
-          if (
-            typeof result.token !== "string" ||
-            !result.admin ||
-            !result.expires_at
-          ) {
-            throw new Error(
-              "Përgjigje e paplotë nga serveri."
-            );
-          }
-
-          sessionToken = result.token;
-
-          document.getElementById("password")
-            .value = "";
-
-          showDashboard(
-            result.admin,
-            result.expires_at
-          );
-        } catch (error) {
-          loginMessage.textContent =
-            error.message ||
-            "Hyrja dështoi.";
-        } finally {
-          loginButton.disabled = false;
-        }
+    function renderUsers(users) {
+      usersList.replaceChildren();
+      usersCount.textContent = users.length + " përdorues";
+      if (!users.length) {
+        usersMessage.textContent = "Nuk u gjet asnjë përdorues.";
+        return;
       }
-    );
+      usersMessage.textContent = "";
+      for (const user of users) {
+        const card = document.createElement("article");
+        card.className = "user-card";
+        const heading = document.createElement("div");
+        const strong = document.createElement("strong");
+        strong.textContent = [user.first_name, user.last_name].filter(Boolean).join(" ") || "Pa emër";
+        heading.appendChild(strong);
+        card.appendChild(heading);
+        addField(card, "Qyteti", user.city);
+        addField(card, "Telefoni", user.phone);
+        addField(card, "Statusi", accessStatus(user.access));
+        addField(card, "ID", user.user_id);
+        usersList.appendChild(card);
+      }
+    }
 
-    logoutButton.addEventListener(
-      "click",
-      async function () {
-        dashboardMessage.textContent = "";
-        logoutButton.disabled = true;
+    loginForm.addEventListener("submit", async function (event) {
+      event.preventDefault();
+      loginMessage.textContent = "";
+      loginButton.disabled = true;
+      const username = document.getElementById("username").value.trim();
+      const password = document.getElementById("password").value;
+      try {
+        const result = await apiRequest({ action: "login", username, password });
+        if (typeof result.token !== "string" || !result.admin || !result.expires_at) {
+          throw new Error("Përgjigje e paplotë nga serveri.");
+        }
+        sessionToken = result.token;
+        document.getElementById("password").value = "";
+        showDashboard(result.admin, result.expires_at);
+      } catch (error) {
+        loginMessage.textContent = error.message || "Hyrja dështoi.";
+      } finally {
+        loginButton.disabled = false;
+      }
+    });
 
-        try {
-          if (sessionToken) {
-            await apiRequest({
-              action: "logout",
-              token: sessionToken
-            });
-          }
-
+    usersButton.addEventListener("click", async function () {
+      if (!sessionToken) {
+        showLogin();
+        return;
+      }
+      if (!usersView.classList.contains("hidden")) {
+        clearUsers();
+        return;
+      }
+      usersView.classList.remove("hidden");
+      mainPanel.classList.add("wide");
+      usersButton.disabled = true;
+      usersMessage.textContent = "Duke ngarkuar përdoruesit…";
+      const version = ++requestVersion;
+      const token = sessionToken;
+      try {
+        const response = await fetch(USERS_API, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + token
+          },
+          body: JSON.stringify({}),
+          cache: "no-store"
+        });
+        let result;
+        try { result = await response.json(); }
+        catch { throw new Error("Përgjigje e pavlefshme nga serveri."); }
+        if (version !== requestVersion || token !== sessionToken) return;
+        if (response.status === 401) {
           showLogin();
-        } catch {
-          // Nuk e fshehim deshtimin e revokimit.
-          dashboardMessage.textContent =
-            "Dalja në server dështoi. " +
-            "Mbyll faqen dhe provo përsëri.";
-        } finally {
-          logoutButton.disabled = false;
+          loginMessage.textContent = "Sesioni ka skaduar. Hyr përsëri.";
+          return;
         }
+        if (response.status === 403) throw new Error("Nuk ke leje për të parë përdoruesit.");
+        if (!response.ok) throw new Error("Lista e përdoruesve nuk u ngarkua.");
+        if (!Array.isArray(result.users)) throw new Error("Formati i listës është i pavlefshëm.");
+        renderUsers(result.users);
+        usersButton.textContent = "Mbyll listën e përdoruesve";
+      } catch (error) {
+        if (version === requestVersion && token === sessionToken) {
+          usersMessage.textContent = error.message || "Gabim gjatë ngarkimit.";
+        }
+      } finally {
+        if (version === requestVersion && token === sessionToken) usersButton.disabled = false;
       }
-    );
+    });
 
-    // Kur mbyllet ose rifreskohet faqja,
-    // tokeni nuk ruhet.
+    logoutButton.addEventListener("click", async function () {
+      dashboardMessage.textContent = "";
+      logoutButton.disabled = true;
+      try {
+        if (sessionToken) await apiRequest({ action: "logout", token: sessionToken });
+        showLogin();
+      } catch {
+        dashboardMessage.textContent = "Dalja në server dështoi. Mbyll faqen dhe provo përsëri.";
+      } finally {
+        logoutButton.disabled = false;
+      }
+    });
+
+    // Kur mbyllet ose rifreskohet faqja, tokeni nuk ruhet.
     showLogin();
   </script>
-
 </body>
 </html>
