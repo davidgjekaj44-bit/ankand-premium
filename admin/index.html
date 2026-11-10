@@ -1,0 +1,398 @@
+
+<!DOCTYPE html>
+<html lang="sq">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1">
+  <title>Administratori | Ankand Premium</title>
+  <meta name="robots" content="noindex, nofollow">
+
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Arial, sans-serif;
+      background: #101827;
+      color: #f8fafc;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .panel {
+      width: 100%;
+      max-width: 440px;
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 18px;
+      padding: 28px;
+      box-shadow: 0 20px 50px #0005;
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: 25px;
+      text-align: center;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: #cbd5e1;
+      margin-bottom: 26px;
+      line-height: 1.5;
+    }
+
+    label {
+      display: block;
+      margin: 16px 0 7px;
+      font-weight: bold;
+    }
+
+    input {
+      width: 100%;
+      padding: 13px;
+      border-radius: 9px;
+      border: 1px solid #64748b;
+      background: #0f172a;
+      color: white;
+      font-size: 16px;
+    }
+
+    input:focus {
+      outline: 2px solid #38bdf8;
+    }
+
+    button {
+      width: 100%;
+      padding: 14px;
+      margin-top: 20px;
+      border: 0;
+      border-radius: 9px;
+      background: #fbbf24;
+      color: #111827;
+      font-weight: bold;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    button:disabled {
+      opacity: 0.6;
+      cursor: wait;
+    }
+
+    .secondary {
+      background: #334155;
+      color: white;
+    }
+
+    .message {
+      margin-top: 18px;
+      text-align: center;
+      line-height: 1.5;
+      min-height: 22px;
+      color: #fca5a5;
+    }
+
+    .success {
+      color: #86efac;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .info {
+      padding: 15px;
+      background: #0f172a;
+      border-radius: 10px;
+      line-height: 1.8;
+      overflow-wrap: anywhere;
+    }
+
+    .note {
+      color: #cbd5e1;
+      font-size: 14px;
+      line-height: 1.6;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <main class="panel">
+
+    <section id="loginView">
+      <h1>Paneli i Administratorit</h1>
+
+      <p class="subtitle">
+        Ankand Premium Shqipëri – Kosovë
+      </p>
+
+      <form id="loginForm">
+        <label for="username">
+          Emri i përdoruesit
+        </label>
+
+        <input
+          id="username"
+          name="username"
+          type="text"
+          value="admin_admin"
+          autocomplete="username"
+          minlength="3"
+          maxlength="30"
+          required
+        >
+
+        <label for="password">
+          Fjalëkalimi
+        </label>
+
+        <input
+          id="password"
+          name="password"
+          type="password"
+          autocomplete="current-password"
+          minlength="12"
+          maxlength="72"
+          required
+        >
+
+        <button id="loginButton" type="submit">
+          Hyr si administrator
+        </button>
+      </form>
+
+      <p id="loginMessage"
+         class="message"
+         role="status"></p>
+    </section>
+
+    <section id="dashboardView" class="hidden">
+      <h1>Paneli i Administratorit</h1>
+
+      <p class="subtitle">
+        Mirë se erdhe në administrim
+      </p>
+
+      <div class="info">
+        <div>
+          <strong>Përdoruesi:</strong>
+          <span id="adminName"></span>
+        </div>
+
+        <div>
+          <strong>Roli:</strong>
+          <span id="adminRole"></span>
+        </div>
+
+        <div>
+          <strong>Sesioni skadon:</strong>
+          <span id="sessionExpiry"></span>
+        </div>
+      </div>
+
+      <p class="note">
+        Hyrja e sigurt është hapi i parë.
+        Menaxhimi i përdoruesve dhe
+        administratorëve do të shtohet
+        pasi të përfundojmë testet.
+      </p>
+
+      <button id="logoutButton"
+              class="secondary"
+              type="button">
+        Dil nga administrimi
+      </button>
+
+      <p id="dashboardMessage"
+         class="message"
+         role="status"></p>
+    </section>
+
+  </main>
+
+  <script>
+    "use strict";
+
+    const API =
+      "https://bhwidixijfuhylbanjuk.supabase.co/functions/v1/admin-auth";
+
+    const loginView =
+      document.getElementById("loginView");
+
+    const dashboardView =
+      document.getElementById("dashboardView");
+
+    const loginForm =
+      document.getElementById("loginForm");
+
+    const loginButton =
+      document.getElementById("loginButton");
+
+    const loginMessage =
+      document.getElementById("loginMessage");
+
+    const dashboardMessage =
+      document.getElementById("dashboardMessage");
+
+    const logoutButton =
+      document.getElementById("logoutButton");
+
+    // Tokeni mbahet vetem ne memorien
+    // e faqes, jo ne localStorage.
+    let sessionToken = null;
+
+    async function apiRequest(body) {
+      const response = await fetch(API, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(body),
+        cache: "no-store"
+      });
+
+      let result;
+
+      try {
+        result = await response.json();
+      } catch {
+        throw new Error(
+          "Përgjigje e pavlefshme nga serveri."
+        );
+      }
+
+      if (!response.ok) {
+        if (response.status === 401) {
+          throw new Error(
+            "Të dhënat e hyrjes nuk janë të sakta."
+          );
+        }
+
+        if (response.status === 429) {
+          throw new Error(
+            "Shumë tentativa. Provo më vonë."
+          );
+        }
+
+        throw new Error(
+          "Shërbimi nuk është i disponueshëm."
+        );
+      }
+
+      return result;
+    }
+
+    function showLogin() {
+      sessionToken = null;
+      dashboardView.classList.add("hidden");
+      loginView.classList.remove("hidden");
+      document.getElementById("password").value = "";
+    }
+
+    function showDashboard(admin, expiresAt) {
+      document.getElementById("adminName")
+        .textContent = admin.username;
+
+      document.getElementById("adminRole")
+        .textContent = admin.role;
+
+      document.getElementById("sessionExpiry")
+        .textContent =
+          new Date(expiresAt).toLocaleString("sq-AL");
+
+      loginView.classList.add("hidden");
+      dashboardView.classList.remove("hidden");
+    }
+
+    loginForm.addEventListener(
+      "submit",
+      async function (event) {
+        event.preventDefault();
+
+        loginMessage.textContent = "";
+        loginButton.disabled = true;
+
+        const username =
+          document.getElementById("username")
+            .value.trim();
+
+        const password =
+          document.getElementById("password")
+            .value;
+
+        try {
+          const result = await apiRequest({
+            action: "login",
+            username,
+            password
+          });
+
+          if (
+            typeof result.token !== "string" ||
+            !result.admin ||
+            !result.expires_at
+          ) {
+            throw new Error(
+              "Përgjigje e paplotë nga serveri."
+            );
+          }
+
+          sessionToken = result.token;
+
+          document.getElementById("password")
+            .value = "";
+
+          showDashboard(
+            result.admin,
+            result.expires_at
+          );
+        } catch (error) {
+          loginMessage.textContent =
+            error.message ||
+            "Hyrja dështoi.";
+        } finally {
+          loginButton.disabled = false;
+        }
+      }
+    );
+
+    logoutButton.addEventListener(
+      "click",
+      async function () {
+        dashboardMessage.textContent = "";
+        logoutButton.disabled = true;
+
+        try {
+          if (sessionToken) {
+            await apiRequest({
+              action: "logout",
+              token: sessionToken
+            });
+          }
+
+          showLogin();
+        } catch {
+          // Nuk e fshehim deshtimin e revokimit.
+          dashboardMessage.textContent =
+            "Dalja në server dështoi. " +
+            "Mbyll faqen dhe provo përsëri.";
+        } finally {
+          logoutButton.disabled = false;
+        }
+      }
+    );
+
+    // Kur mbyllet ose rifreskohet faqja,
+    // tokeni nuk ruhet.
+    showLogin();
+  </script>
+
+</body>
+</html>
