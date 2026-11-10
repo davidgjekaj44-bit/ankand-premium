@@ -31,6 +31,14 @@
     .users-heading { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
     .users-heading h2 { margin-bottom: 0; }
     .count { color: #cbd5e1; font-size: 14px; }
+    .account-state { margin-top: 8px; font-size: 14px; font-weight: bold; }
+    .account-state.blocked { color: #fca5a5; }
+    .account-state.allowed { color: #86efac; }
+    .account-action { margin-top: 12px; padding: 11px; font-size: 14px; }
+    .account-action.block-action { background: #fca5a5; color: #111827; }
+    .account-action.unblock-action { background: #86efac; color: #111827; }
+    .card-message { min-height: 0; margin-top: 8px; text-align: left; font-size: 14px; }
+    button:focus-visible { outline: 3px solid #38bdf8; outline-offset: 3px; }
   </style>
 </head>
 <body>
@@ -56,7 +64,7 @@
         <div><strong>Roli:</strong> <span id="adminRole"></span></div>
         <div><strong>Sesioni skadon:</strong> <span id="sessionExpiry"></span></div>
       </div>
-      <p class="note">Përdor butonin më poshtë për të parë përdoruesit e regjistruar. Ndryshimi i llogarive nuk është aktivizuar ende.</p>
+      <p class="note">Shiko përdoruesit e regjistruar. Vetëm super_admin mund të bllokojë ose zhbllokojë llogari. Veprimet kërkojnë konfirmim.</p>
       <button id="usersButton" type="button">Përdoruesit</button>
       <section id="usersView" class="hidden" aria-label="Lista e përdoruesve">
         <div class="users-heading"><h2>Lista e përdoruesve</h2><span id="usersCount" class="count"></span></div>
@@ -90,6 +98,9 @@
 
     // Tokeni mbahet vetëm në memorien e faqes, jo në localStorage.
     let sessionToken = null;
+    let adminRole = null;
+    let currentUsers = [];
+    let actionInProgress = false;
     let requestVersion = 0;
 
     async function apiRequest(body) {
@@ -113,7 +124,9 @@
     function clearUsers() {
       usersView.classList.add("hidden");
       usersList.replaceChildren();
+      currentUsers = [];
       usersMessage.textContent = "";
+      usersMessage.classList.remove("success");
       usersCount.textContent = "";
       usersButton.disabled = false;
       usersButton.textContent = "Përdoruesit";
@@ -123,6 +136,8 @@
     function showLogin() {
       requestVersion++;
       sessionToken = null;
+      adminRole = null;
+      actionInProgress = false;
       clearUsers();
       dashboardView.classList.add("hidden");
       loginView.classList.remove("hidden");
@@ -130,6 +145,7 @@
     }
 
     function showDashboard(admin, expiresAt) {
+      adminRole = admin.role;
       document.getElementById("adminName").textContent = admin.username;
       document.getElementById("adminRole").textContent = admin.role;
       document.getElementById("sessionExpiry").textContent = new Date(expiresAt).toLocaleString("sq-AL");
@@ -162,8 +178,10 @@
     }
 
     function renderUsers(users) {
+      currentUsers = users;
       usersList.replaceChildren();
       usersCount.textContent = users.length + " përdorues";
+      usersMessage.classList.remove("success");
       if (!users.length) {
         usersMessage.textContent = "Nuk u gjet asnjë përdorues.";
         return;
@@ -174,14 +192,95 @@
         card.className = "user-card";
         const heading = document.createElement("div");
         const strong = document.createElement("strong");
-        strong.textContent = [user.first_name, user.last_name].filter(Boolean).join(" ") || "Pa emër";
+        const displayName = [user.first_name, user.last_name]
+          .filter(Boolean).join(" ") || "Pa emër";
+        strong.textContent = displayName;
         heading.appendChild(strong);
         card.appendChild(heading);
         addField(card, "Qyteti", user.city);
         addField(card, "Telefoni", user.phone);
-        addField(card, "Statusi", accessStatus(user.access));
+        addField(card, "Aksesi në ankande", accessStatus(user.access));
         addField(card, "ID", user.user_id);
+
+        const status = document.createElement("div");
+        status.className = "account-state " +
+          (user.blocked ? "blocked" : "allowed");
+        status.textContent = user.blocked
+          ? "Llogaria: E bllokuar"
+          : "Llogaria: E pabllokuar";
+        card.appendChild(status);
+
+        if (adminRole === "super_admin") {
+          const actionButton = document.createElement("button");
+          actionButton.type = "button";
+          actionButton.className = "account-action " +
+            (user.blocked ? "unblock-action" : "block-action");
+          actionButton.textContent = user.blocked
+            ? "Zhblloko" : "Blloko llogarinë";
+          const actionMessage = document.createElement("p");
+          actionMessage.className = "message card-message";
+          actionMessage.setAttribute("role", "status");
+          actionButton.addEventListener("click", () =>
+            changeAccountStatus(user, displayName, actionButton, actionMessage)
+          );
+          card.append(actionButton, actionMessage);
+        }
         usersList.appendChild(card);
+      }
+    }
+
+    async function changeAccountStatus(user, displayName, button, message) {
+      if (!sessionToken || adminRole !== "super_admin" || actionInProgress) return;
+      if (typeof user.user_id !== "string") return;
+      const action = user.blocked ? "unblock" : "block";
+      const question = action === "block"
+        ? `A dëshiron të BLLOKOSH llogarinë e ${displayName}?\nID: ${user.user_id}`
+        : `A dëshiron të ZHBLLOKOSH llogarinë e ${displayName}?\nID: ${user.user_id}`;
+      if (!window.confirm(question)) return;
+
+      const token = sessionToken;
+      const version = requestVersion;
+      actionInProgress = true;
+      button.disabled = true;
+      message.classList.remove("success");
+      message.textContent = "Duke ruajtur ndryshimin…";
+      try {
+        const response = await fetch(USERS_API, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + token
+          },
+          body: JSON.stringify({ action, user_id: user.user_id }),
+          cache: "no-store"
+        });
+        let result;
+        try { result = await response.json(); }
+        catch { throw new Error("Përgjigje e pavlefshme nga serveri."); }
+        if (version !== requestVersion || token !== sessionToken) return;
+        if (response.status === 401) {
+          showLogin();
+          loginMessage.textContent = "Sesioni ka skaduar. Hyr përsëri.";
+          return;
+        }
+        if (response.status === 403) throw new Error("Nuk ke leje për këtë veprim.");
+        if (!response.ok || result.ok !== true || result.action !== action ||
+            result.user_id !== user.user_id) {
+          throw new Error("Ndryshimi nuk u konfirmua nga serveri.");
+        }
+        user.blocked = action === "block";
+        renderUsers(currentUsers);
+        usersMessage.classList.add("success");
+        usersMessage.textContent = action === "block"
+          ? `Llogaria e ${displayName} u bllokua.`
+          : `Llogaria e ${displayName} u zhbllokua.`;
+      } catch (error) {
+        if (version === requestVersion && token === sessionToken) {
+          message.textContent = error.message || "Ndryshimi dështoi.";
+        }
+      } finally {
+        actionInProgress = false;
+        if (version === requestVersion && token === sessionToken) button.disabled = false;
       }
     }
 
@@ -212,6 +311,8 @@
         return;
       }
       if (!usersView.classList.contains("hidden")) {
+        if (actionInProgress) return;
+        requestVersion++;
         clearUsers();
         return;
       }
