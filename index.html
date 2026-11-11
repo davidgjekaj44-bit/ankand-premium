@@ -74,7 +74,7 @@ header p{position:relative;color:#f4d9db;font-weight:500}
 <div class="layout"><aside>
 <section class="card" id="accountPanel"><div class="row"><h2>🔑 Llogaria</h2><span class="status" id="accountStatus">Vizitor</span></div>
 <div id="guest">
-<div id="loginForm"><h3>Hyr</h3><label>Email</label><input id="loginEmail" type="email" autocomplete="email" placeholder="emri@shembull.com"><label>Fjalëkalimi</label><input id="loginPassword" type="password" autocomplete="current-password"><div class="row" style="margin-top:14px"><button id="loginBtn">Hyr</button><button id="showRegister" class="gray">Regjistrohu</button></div></div>
+<div id="loginForm"><h3>Hyr</h3><label>Email ose username</label><input id="loginEmail" type="text" autocomplete="username" autocapitalize="none" spellcheck="false" placeholder="Email ose username"><label>Fjalëkalimi</label><input id="loginPassword" type="password" autocomplete="current-password"><div class="row" style="margin-top:14px"><button id="loginBtn">Hyr</button><button id="showRegister" class="gray">Regjistrohu</button></div></div>
 <div id="registerForm" class="hidden"><h3>📝 Regjistrohu</h3><label>Emri</label><input id="regFirst" maxlength="60" autocomplete="given-name"><label>Mbiemri (privat)</label><input id="regLast" maxlength="60" autocomplete="family-name"><label>Qyteti</label><input id="regCity" maxlength="80" autocomplete="address-level2"><label>Numri i telefonit (+355 / +383)</label><input id="regPhone" type="tel" autocomplete="tel" placeholder="+355..."><label>Email</label><input id="regEmail" type="email" autocomplete="email" placeholder="emri@shembull.com"><label>Fjalëkalimi (minimumi 8 karaktere)</label><input id="regPassword" type="password" autocomplete="new-password" minlength="8"><label>Përsërit fjalëkalimin</label><input id="regConfirm" type="password" autocomplete="new-password"><p class="muted">Konfirmoni emailin përpara hyrjes. Telefoni ruhet në profilin privat në Supabase, mund të shihet nga administratori për administrimin e llogarisë dhe nuk verifikohet me SMS. Mos vendosni numrin e dikujt tjetër.</p><div class="row"><button id="registerBtn" class="green">Krijo llogarinë</button><button id="showLogin" class="gray">Kthehu te hyrja</button></div><div style="margin-top:12px;border-top:1px solid #e2e8f0;padding-top:12px"><button id="resendConfirmBtn" type="button" class="gray">📧 Ridërgo emailin e konfirmimit</button><p class="muted">Shkruaj emailin te fusha e regjistrimit. Mund të ketë kufizim kohe ndërmjet kërkesave.</p></div></div>
 <div style="margin-top:18px;border-top:1px solid #e2e8f0;padding-top:16px;text-align:center">
 <p class="muted">Ose hyr / regjistrohu me Google</p>
@@ -92,7 +92,7 @@ header p{position:relative;color:#f4d9db;font-weight:500}
 </main>
 <dialog id="photoViewer" aria-label="Shiko fotografinë e zmadhuar"><div class="photo-viewer-inner"><img id="photoViewerImage" alt="Fotografia e ankandit"><div class="photo-viewer-toolbar"><button id="photoViewerPrev" type="button" aria-label="Foto e mëparshme">❮</button><span id="photoViewerCount"></span><button id="photoViewerNext" type="button" aria-label="Foto tjetër">❯</button><button id="photoViewerClose" type="button">✕ Mbyll</button></div></div></dialog>
 
-<footer><strong>Njoftim për përgjegjësinë</strong><p>Ankand Premium Shqipëri – Kosovë shërben si platformë ndërmjetësuese për lidhjen e shitësve me ofertuesit. Marrëveshja përfundimtare, pagesa, dorëzimi dhe gjendja e produktit janë përgjegjësi e palëve të përfshira. Platforma nuk garanton realizimin e shitblerjes pas përfundimit të ankandit.</p><p>Ofertat janë jo detyruese. Platforma është falas deri më 10/05/2027; në këtë version nuk pranohen ose përpunohen pagesa apo SMS. Ky njoftim nuk përjashton detyrimet ligjore.</p></footer>
+<footer><strong>Njoftim për përgjegjësinë</strong><p>Ankand Premium Shqipëri – Kosovë shërben si platformë ndërmjetësuese për lidhjen e shitësve me ofertuesit. Marrëveshja përfundimtare, pagesa, dorëzimi dhe gjendja e produktit janë përgjegjësi e palëve të përfshira. Platforma nuk garanton realizimin e shitblerjes pas përfundimit të ankandit.</p><p>Ofertat janë jo detyruese. Platforma është falas deri më 11/05/2027; në këtë version nuk pranohen ose përpunohen pagesa apo SMS. Ky njoftim nuk përjashton detyrimet ligjore.</p></footer>
 <script>
 'use strict';
 const SUPABASE_URL='https://bhwidixijfuhylbanjuk.supabase.co';
@@ -163,12 +163,40 @@ $('loginBtn').onclick=async()=>{
   setBusy('loginBtn',true);
   try{
     if(!db)throw Error('Supabase nuk është gati.');
-    const email=$('loginEmail').value.trim().toLowerCase(),password=$('loginPassword').value;
-    const {error}=await db.auth.signInWithPassword({email,password});
-    if(error)throw error;
+    const identifier=$('loginEmail').value.trim().toLowerCase();
+    const password=$('loginPassword').value;
+    if(!identifier||!password)throw Error('Shkruani emailin ose username dhe fjalëkalimin.');
+    if(identifier.includes('@')){
+      const {error}=await db.auth.signInWithPassword({email:identifier,password});
+      if(error)throw error;
+    }else{
+      if(!/^[a-z0-9_]{3,30}$/.test(identifier))throw Error('Username duhet të ketë 3–30 karaktere: shkronja të vogla, numra ose _.');
+      const controller=new AbortController();
+      const timeout=setTimeout(()=>controller.abort(),15000);
+      let response;
+      try{
+        response=await fetch(SUPABASE_URL+'/functions/v1/ap-username-login',{
+          method:'POST',
+          headers:{'Content-Type':'application/json','apikey':SUPABASE_KEY},
+          body:JSON.stringify({username:identifier,password}),
+          signal:controller.signal
+        });
+      }finally{clearTimeout(timeout)}
+      const result=await response.json().catch(()=>({}));
+      if(!response.ok||!result.ok||!result.session?.access_token||!result.session?.refresh_token){
+        throw Error(result.error||'Hyrja me username nuk u krye.');
+      }
+      const {error}=await db.auth.setSession({
+        access_token:result.session.access_token,
+        refresh_token:result.session.refresh_token
+      });
+      if(error)throw error;
+    }
     await refreshAccount();notice('Hyrja u krye.');
-  }catch(e){notice(e.message,true)}finally{setBusy('loginBtn',false)}
+  }catch(e){notice(e.name==='AbortError'?'Koha e pritjes për hyrjen përfundoi. Provo përsëri.':e.message,true)}
+  finally{setBusy('loginBtn',false)}
 };
+
 $('googleBtn').onclick=async()=>{
   try{
     if(!db)throw Error('Supabase nuk është gati.');
