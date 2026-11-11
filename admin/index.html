@@ -72,6 +72,21 @@
         <div><strong>Sesioni skadon:</strong> <span id="sessionExpiry"></span></div>
       </div>
       <p class="note">Shiko përdoruesit e regjistruar. Vetëm super_admin mund të bllokojë ose zhbllokojë llogari. Admin dhe super_admin mund të zgjasin abonimet me 12 muaj. Veprimet kërkojnë konfirmim.</p>
+      <button id="createAdminButton" type="button" class="hidden">+ Shto administrator</button>
+      <section id="createAdminView" class="hidden inline-form" aria-label="Shto administrator">
+        <h2>Shto administrator</h2>
+        <p class="muted">Administratori i ri do të ketë rolin admin, jo super_admin.</p>
+        <form id="createAdminForm" autocomplete="off">
+          <label for="adminNewUsername">Emri i administratorit (3–30 karaktere)</label>
+          <input id="adminNewUsername" name="username" type="text" pattern="[a-zA-Z0-9_]{3,30}" minlength="3" maxlength="30" autocapitalize="none" autocomplete="off" required>
+          <label for="adminNewPassword">Fjalëkalimi (12–72 karaktere)</label>
+          <input id="adminNewPassword" name="password" type="password" minlength="12" maxlength="72" autocomplete="new-password" required>
+          <label for="adminNewPasswordConfirm">Përsërit fjalëkalimin</label>
+          <input id="adminNewPasswordConfirm" name="password_confirm" type="password" minlength="12" maxlength="72" autocomplete="new-password" required>
+          <button id="createAdminSubmit" type="submit">Krijo administratorin</button>
+          <p id="createAdminMessage" class="message" role="status"></p>
+        </form>
+      </section>
       <button id="createUserButton" type="button">+ Shto përdorues</button>
       <section id="createUserView" class="hidden inline-form" aria-label="Shto përdorues">
         <h2>Shto përdorues</h2>
@@ -184,6 +199,8 @@
       adminRole = null;
       actionInProgress = false;
       extraView.classList.add("hidden");
+      createAdminView.classList.add("hidden");
+      createAdminForm.reset();
       createUserView.classList.add("hidden");
       createUserForm.reset();
       extraList.replaceChildren();
@@ -195,6 +212,8 @@
 
     function showDashboard(admin, expiresAt) {
       adminRole = admin.role;
+      createAdminButton.classList.toggle("hidden", admin.role !== "super_admin");
+      adminsButton.classList.toggle("hidden", admin.role !== "super_admin");
       document.querySelectorAll("#newAccess option[data-super-only]").forEach(option => {
         option.hidden = admin.role !== "super_admin";
         option.disabled = admin.role !== "super_admin";
@@ -537,6 +556,57 @@
         if (version === requestVersion) extraMessage.textContent = error.message || "Gabim.";
       }
     }
+
+    const createAdminButton = document.getElementById("createAdminButton");
+    const createAdminView = document.getElementById("createAdminView");
+    const createAdminForm = document.getElementById("createAdminForm");
+    const createAdminSubmit = document.getElementById("createAdminSubmit");
+    const createAdminMessage = document.getElementById("createAdminMessage");
+
+    createAdminButton.addEventListener("click", () => {
+      if (adminRole !== "super_admin" || actionInProgress) return;
+      createAdminView.classList.toggle("hidden");
+      mainPanel.classList.add("wide");
+      createAdminMessage.textContent = "";
+    });
+
+    createAdminForm.addEventListener("submit", async event => {
+      event.preventDefault();
+      if (!sessionToken || adminRole !== "super_admin" || actionInProgress) return;
+      const username = document.getElementById("adminNewUsername").value.trim();
+      const password = document.getElementById("adminNewPassword").value;
+      const confirmation = document.getElementById("adminNewPasswordConfirm").value;
+      createAdminMessage.classList.remove("success");
+      if (password !== confirmation) {
+        createAdminMessage.textContent = "Fjalëkalimet nuk përputhen.";
+        return;
+      }
+      if (!window.confirm(`Të krijohet administratori ${username} me rolin admin?`)) return;
+      const version = requestVersion;
+      const token = sessionToken;
+      actionInProgress = true;
+      createAdminSubmit.disabled = true;
+      createAdminMessage.textContent = "Duke krijuar administratorin…";
+      try {
+        const result = await manageRequest({ action: "create_admin", username, password });
+        if (version !== requestVersion || token !== sessionToken) return;
+        if (result.action !== "create_admin" || result.role !== "admin" || !result.admin_id) {
+          throw new Error("Serveri nuk konfirmoi krijimin e administratorit.");
+        }
+        createAdminForm.reset();
+        createAdminMessage.classList.add("success");
+        createAdminMessage.textContent = result.audit_logged === false
+          ? "Administratori u krijua, por regjistrimi në historik dështoi."
+          : `Administratori ${result.username} u krijua me sukses.`;
+      } catch (error) {
+        if (version === requestVersion && token === sessionToken) {
+          createAdminMessage.textContent = error.message || "Krijimi dështoi.";
+        }
+      } finally {
+        actionInProgress = false;
+        createAdminSubmit.disabled = false;
+      }
+    });
 
     const createUserButton = document.getElementById("createUserButton");
     const createUserView = document.getElementById("createUserView");
