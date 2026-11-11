@@ -540,8 +540,58 @@
           if (action === "list_admins") {
             addField(card, "Emri", entry.username);
             addField(card, "Roli", entry.role);
-            addField(card, "Aktiv", entry.is_active ? "Po" : "Jo");
+            const isDeleted = Boolean(entry.deleted_at);
+            addField(card, "Gjendja", isDeleted ? "I fshirë" : (entry.is_active ? "Aktiv" : "I bllokuar"));
             addField(card, "Krijuar", entry.created_at ? new Date(entry.created_at).toLocaleString("sq-AL") : "—");
+            if (isDeleted) addField(card, "Fshirë më", new Date(entry.deleted_at).toLocaleString("sq-AL"));
+            // Veprimet shfaqen vetëm për super_admin dhe vetëm për llogaritë admin.
+            if (adminRole === "super_admin" && entry.role === "admin" && !isDeleted) {
+              const actions = document.createElement("div");
+              actions.className = "toolbar";
+              const choices = entry.is_active
+                ? [{ action: "block_admin", label: "Blloko" }, { action: "delete_admin", label: "Fshij" }]
+                : [{ action: "unblock_admin", label: "Zhblloko" }, { action: "delete_admin", label: "Fshij" }];
+              for (const choice of choices) {
+                const button = document.createElement("button");
+                button.type = "button";
+                button.className = "secondary";
+                button.textContent = choice.label;
+                button.addEventListener("click", async () => {
+                  if (!sessionToken || adminRole !== "super_admin" || actionInProgress) return;
+                  const promptText = choice.action === "delete_admin"
+                    ? `A je i sigurt që dëshiron të FSHISH administratorin “${entry.username}”? Kjo llogari nuk mund të zhbllokohet më. Historiku ruhet.`
+                    : `A je i sigurt që dëshiron të ${choice.label.toLowerCase()} administratorin “${entry.username}”?`;
+                  if (!window.confirm(promptText)) return;
+                  const currentVersion = requestVersion;
+                  actionInProgress = true;
+                  button.disabled = true;
+                  extraMessage.classList.remove("success");
+                  extraMessage.textContent = "Duke ruajtur ndryshimin…";
+                  try {
+                    const outcome = await manageRequest({
+                      action: choice.action,
+                      admin_id: entry.id,
+                      confirm: true
+                    });
+                    if (currentVersion !== requestVersion) return;
+                    await openExtraAfterAdminAction();
+                    if (currentVersion !== requestVersion) return;
+                    extraMessage.classList.add("success");
+                    extraMessage.textContent = `${choice.label}: ${entry.username}.` +
+                      (outcome.audit_logged === false ? " Kujdes: regjistrimi në historik dështoi." : "");
+                  } catch (error) {
+                    if (currentVersion === requestVersion) {
+                      extraMessage.textContent = error.message || "Veprimi dështoi.";
+                    }
+                  } finally {
+                    actionInProgress = false;
+                    button.disabled = false;
+                  }
+                });
+                actions.appendChild(button);
+              }
+              card.appendChild(actions);
+            }
           } else {
             addField(card, "Veprimi", entry.action);
             if (adminRole === "super_admin") addField(card, "ID e administratorit", entry.admin_id);
@@ -554,6 +604,16 @@
         }
       } catch (error) {
         if (version === requestVersion) extraMessage.textContent = error.message || "Gabim.";
+      }
+    }
+
+    async function openExtraAfterAdminAction() {
+      // Rifreskojmë listën pasi veprimi në server ka përfunduar.
+      actionInProgress = false;
+      try {
+        await openExtra("list_admins");
+      } finally {
+        actionInProgress = true;
       }
     }
 
