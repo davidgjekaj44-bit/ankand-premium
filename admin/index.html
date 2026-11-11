@@ -37,6 +37,7 @@
     .account-action { margin-top: 12px; padding: 11px; font-size: 14px; }
     .account-action.block-action { background: #fca5a5; color: #111827; }
     .account-action.unblock-action { background: #86efac; color: #111827; }
+    .account-action.delete-action { background: #b91c1c; color: white; }
     .card-message { min-height: 0; margin-top: 8px; text-align: left; font-size: 14px; }
     .toolbar { display:flex; flex-wrap:wrap; gap:8px; margin:12px 0; }
     .toolbar button { width:auto; margin:0; padding:10px 12px; font-size:14px; }
@@ -364,6 +365,7 @@
             changeAccountStatus(user, displayName, actionButton, actionMessage)
           );
           card.append(actionButton, actionMessage);
+          appendDeleteButton(card, user, displayName);
         }
         if (!user.blocked) {
           const tools = document.createElement("div");
@@ -396,8 +398,60 @@
         state.className = "account-state blocked";
         state.textContent = "Identiteti: I pakonfirmuar";
         card.appendChild(state);
+        if (adminRole === "super_admin") appendDeleteButton(card, user, name.textContent);
         pendingUsersList.appendChild(card);
       }
+    }
+
+    function appendDeleteButton(card, user, displayName) {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "account-action delete-action";
+      button.textContent = "Fshij përgjithmonë";
+      const message = document.createElement("p");
+      message.className = "message card-message";
+      message.setAttribute("role", "status");
+      button.addEventListener("click", async () => {
+        if (!sessionToken || adminRole !== "super_admin" || actionInProgress) return;
+        if (typeof user.user_id !== "string") return;
+        const question = `A je i sigurt?\n\nDo të FSHISH PËRGJITHMONË përdoruesin ${displayName}?\nID: ${user.user_id}\n\nKy veprim nuk mund të zhbëhet. Nëse ka ankande ose oferta, serveri do ta refuzojë.`;
+        if (!window.confirm(question)) return;
+        const typed = window.prompt('Për të konfirmuar, shkruaj saktësisht: FSHI PERGJITHMONE');
+        if (typed !== "FSHI PERGJITHMONE") {
+          if (typed !== null) message.textContent = "Konfirmimi nuk përputhet. Nuk u fshi asgjë.";
+          return;
+        }
+        const version = requestVersion;
+        const token = sessionToken;
+        actionInProgress = true;
+        button.disabled = true;
+        message.classList.remove("success");
+        message.textContent = "Duke kontrolluar dhe fshirë…";
+        try {
+          const result = await manageRequest({
+            action: "delete_user", user_id: user.user_id,
+            confirm: true, confirm_text: typed
+          });
+          if (version !== requestVersion || token !== sessionToken) return;
+          if (result.action !== "delete_user" || result.user_id !== user.user_id) {
+            throw new Error("Serveri nuk konfirmoi fshirjen.");
+          }
+          currentUsers = currentUsers.filter(item => item.user_id !== user.user_id);
+          pendingUsers = pendingUsers.filter(item => item.user_id !== user.user_id);
+          paintUsers();
+          usersMessage.classList.add("success");
+          usersMessage.textContent = `Përdoruesi ${displayName} u fshi përgjithmonë.` +
+            (result.audit_logged === false ? " Kujdes: historiku përfundimtar nuk u regjistrua." : "");
+        } catch (error) {
+          if (version === requestVersion && token === sessionToken) {
+            message.textContent = error.message || "Fshirja dështoi.";
+          }
+        } finally {
+          actionInProgress = false;
+          if (version === requestVersion && token === sessionToken) button.disabled = false;
+        }
+      });
+      card.append(button, message);
     }
 
     async function changeAccountStatus(user, displayName, button, message) {
