@@ -72,6 +72,25 @@
         <div><strong>Sesioni skadon:</strong> <span id="sessionExpiry"></span></div>
       </div>
       <p class="note">Shiko përdoruesit e regjistruar. Vetëm super_admin mund të bllokojë ose zhbllokojë llogari. Veprimet kërkojnë konfirmim.</p>
+      <button id="createUserButton" type="button">+ Shto përdorues</button>
+      <section id="createUserView" class="hidden inline-form" aria-label="Shto përdorues">
+        <h2>Shto përdorues</h2>
+        <form id="createUserForm" autocomplete="off">
+          <label for="newFirst">Emri</label><input id="newFirst" name="first_name" required minlength="2" maxlength="60">
+          <label for="newLast">Mbiemri</label><input id="newLast" name="last_name" required minlength="2" maxlength="60">
+          <label for="newCity">Qyteti</label><input id="newCity" name="city" required minlength="2" maxlength="80">
+          <label for="newPhone">Telefoni</label><input id="newPhone" name="phone" type="tel" required minlength="7" maxlength="24">
+          <label for="newUsername">Username (3–30 karaktere: a-z, 0-9, _)</label><input id="newUsername" name="username" required minlength="3" maxlength="30" pattern="[a-z0-9_]{3,30}" autocapitalize="none" autocomplete="off">
+          <label for="newPassword">Fjalëkalimi (12–72 karaktere)</label><input id="newPassword" name="password" type="password" required minlength="12" maxlength="72" autocomplete="new-password">
+          <label for="newAccess">Lloji i aksesit</label>
+          <select id="newAccess" name="access_type" style="width:100%;padding:13px;border-radius:9px;background:#0f172a;color:white;border:1px solid #64748b;font-size:16px">
+            <option value="none">Pa abonim aktiv</option><option value="complimentary">Akses falas me afat</option><option value="subscription">Abonim me afat</option><option value="unlimited">Akses pa afat</option>
+          </select>
+          <div id="newDaysGroup" class="hidden"><label for="newDays">Kohëzgjatja në ditë</label><input id="newDays" name="days" type="number" min="1" max="3650" step="1"></div>
+          <button id="createUserSubmit" type="submit">Krijo përdoruesin</button>
+          <p id="createUserMessage" class="message" role="status"></p>
+        </form>
+      </section>
       <button id="usersButton" type="button">Përdoruesit</button>
       <section id="usersView" class="hidden" aria-label="Lista e përdoruesve">
         <div class="users-heading"><h2>Lista e përdoruesve</h2><span id="usersCount" class="count"></span></div>
@@ -165,6 +184,8 @@
       adminRole = null;
       actionInProgress = false;
       extraView.classList.add("hidden");
+      createUserView.classList.add("hidden");
+      createUserForm.reset();
       extraList.replaceChildren();
       clearUsers();
       dashboardView.classList.add("hidden");
@@ -192,6 +213,20 @@
       content.textContent = value == null || value === "" ? "—" : String(value);
       line.append(name, content);
       card.appendChild(line);
+    }
+
+    function formatExpiry(value) {
+      if (!value) return "—";
+      const d = new Date(value);
+      return Number.isNaN(d.getTime()) ? "—" : d.toLocaleDateString("sq-AL", { day: "2-digit", month: "2-digit", year: "numeric" });
+    }
+
+    function accessExpiry(access) {
+      if (!access || access.payment_suspended || access.unlimited_access) return null;
+      const now = Date.now();
+      if (Date.parse(access.complimentary_until || "") > now) return access.complimentary_until;
+      if (Date.parse(access.subscription_ends_at || "") > now) return access.subscription_ends_at;
+      return null;
     }
 
     function accessStatus(access) {
@@ -238,6 +273,7 @@
         addField(card, "Qyteti", user.city);
         addField(card, "Telefoni", user.phone);
         addField(card, "Aksesi në ankande", accessStatus(user.access));
+        if (accessExpiry(user.access)) addField(card, "Aktiv deri më", formatExpiry(accessExpiry(user.access)));
         addField(card, "ID", user.user_id);
 
         const status = document.createElement("div");
@@ -479,6 +515,57 @@
         if (version === requestVersion) extraMessage.textContent = error.message || "Gabim.";
       }
     }
+
+    const createUserButton = document.getElementById("createUserButton");
+    const createUserView = document.getElementById("createUserView");
+    const createUserForm = document.getElementById("createUserForm");
+    const newAccess = document.getElementById("newAccess");
+    const newDaysGroup = document.getElementById("newDaysGroup");
+    const newDays = document.getElementById("newDays");
+    const createUserMessage = document.getElementById("createUserMessage");
+    const createUserSubmit = document.getElementById("createUserSubmit");
+
+    createUserButton.addEventListener("click", () => {
+      createUserView.classList.toggle("hidden");
+      mainPanel.classList.add("wide");
+    });
+    newAccess.addEventListener("change", () => {
+      const timed = ["complimentary", "subscription"].includes(newAccess.value);
+      newDaysGroup.classList.toggle("hidden", !timed);
+      newDays.required = timed;
+      if (!timed) newDays.value = "";
+    });
+    createUserForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      if (!sessionToken || actionInProgress) return;
+      const data = new FormData(createUserForm);
+      const payload = { action: "create_user" };
+      for (const key of ["first_name", "last_name", "city", "phone", "username", "password", "access_type"]) payload[key] = data.get(key);
+      payload.username = String(payload.username).trim().toLowerCase();
+      if (["complimentary", "subscription"].includes(payload.access_type)) payload.days = Number(data.get("days"));
+      if (!window.confirm("Konfirmon krijimin e përdoruesit " + payload.username + "?")) return;
+      const version = requestVersion;
+      actionInProgress = true;
+      createUserSubmit.disabled = true;
+      createUserMessage.classList.remove("success");
+      createUserMessage.textContent = "Duke krijuar llogarinë…";
+      try {
+        const result = await manageRequest(payload);
+        if (version !== requestVersion) return;
+        createUserForm.reset();
+        newDaysGroup.classList.add("hidden");
+        newDays.required = false;
+        createUserMessage.classList.add("success");
+        createUserMessage.textContent = result.audit_logged === false
+          ? "Llogaria u krijua, por historiku nuk u regjistrua."
+          : "Llogaria u krijua me sukses. Jepi përdoruesit të dhënat e hyrjes në mënyrë private.";
+      } catch (error) {
+        if (version === requestVersion) createUserMessage.textContent = error.message || "Krijimi dështoi.";
+      } finally {
+        actionInProgress = false;
+        createUserSubmit.disabled = false;
+      }
+    });
 
     adminsButton.addEventListener("click", () => openExtra("list_admins"));
     auditButton.addEventListener("click", () => openExtra("audit_log"));
