@@ -74,8 +74,19 @@ header p{position:relative;color:#f4d9db;font-weight:500}
 <div class="layout"><aside>
 <section class="card" id="accountPanel"><div class="row"><h2>🔑 Llogaria</h2><span class="status" id="accountStatus">Vizitor</span></div>
 <div id="guest">
-<div id="loginForm"><h3>Hyr</h3><label>Email ose username</label><input id="loginEmail" type="text" autocomplete="username" autocapitalize="none" spellcheck="false" placeholder="Email ose username"><label>Fjalëkalimi</label><input id="loginPassword" type="password" autocomplete="current-password"><div class="row" style="margin-top:14px"><button id="loginBtn">Hyr</button><button id="showRegister" class="gray">Regjistrohu</button></div></div>
-<div id="registerForm" class="hidden"><h3>📝 Regjistrohu</h3><label>Emri</label><input id="regFirst" maxlength="60" autocomplete="given-name"><label>Mbiemri (privat)</label><input id="regLast" maxlength="60" autocomplete="family-name"><label>Qyteti</label><input id="regCity" maxlength="80" autocomplete="address-level2"><label>Numri i telefonit (+355 / +383)</label><input id="regPhone" type="tel" autocomplete="tel" placeholder="+355..."><label>Email</label><input id="regEmail" type="email" autocomplete="email" placeholder="emri@shembull.com"><label>Fjalëkalimi (minimumi 8 karaktere)</label><input id="regPassword" type="password" autocomplete="new-password" minlength="8"><label>Përsërit fjalëkalimin</label><input id="regConfirm" type="password" autocomplete="new-password"><p class="muted">Konfirmoni emailin përpara hyrjes. Telefoni ruhet në profilin privat në Supabase, mund të shihet nga administratori për administrimin e llogarisë dhe nuk verifikohet me SMS. Mos vendosni numrin e dikujt tjetër.</p><div class="row"><button id="registerBtn" class="green">Krijo llogarinë</button><button id="showLogin" class="gray">Kthehu te hyrja</button></div><div style="margin-top:12px;border-top:1px solid #e2e8f0;padding-top:12px"><button id="resendConfirmBtn" type="button" class="gray">📧 Ridërgo emailin e konfirmimit</button><p class="muted">Shkruaj emailin te fusha e regjistrimit. Mund të ketë kufizim kohe ndërmjet kërkesave.</p></div></div>
+<div id="loginForm"><h3>Hyr</h3><label>Email ose username</label><input id="loginEmail" type="text" autocomplete="username" autocapitalize="none" spellcheck="false" placeholder="Email ose username"><label>Fjalëkalimi</label><input id="loginPassword" type="password" autocomplete="current-password"><div class="row" style="margin-top:14px"><button id="loginBtn">Hyr</button><button id="showRegister" class="gray">Regjistrohu</button></div><button id="forgotPasswordBtn" type="button" class="gray" style="margin-top:10px;width:100%">Keni harruar fjalëkalimin?</button></div>
+<div id="registerForm" class="hidden">
+<h3>📝 Regjistrohu pa email</h3>
+<label for="regFullName">Emër dhe mbiemër</label><input id="regFullName" maxlength="121" autocomplete="name" placeholder="Emër Mbiemër">
+<label for="regPhone">Numri i telefonit (+355 / +383)</label><input id="regPhone" type="tel" autocomplete="tel" placeholder="+355 69 123 4567">
+<label for="regCity">Qyteti</label><input id="regCity" maxlength="80" autocomplete="address-level2" placeholder="Qyteti">
+<label for="regUsername">Username</label><input id="regUsername" maxlength="30" minlength="3" autocomplete="username" autocapitalize="none" spellcheck="false" placeholder=""><p class="muted">3–30 karaktere: shkronja, numra ose _. Shenja _ nuk është e detyrueshme.</p>
+<label for="regPassword">Fjalëkalimi (12–72 karaktere)</label><input id="regPassword" type="password" autocomplete="new-password" minlength="12" maxlength="72">
+<label for="regConfirm">Konfirmo fjalëkalimin</label><input id="regConfirm" type="password" autocomplete="new-password" minlength="12" maxlength="72">
+<div id="turnstileRegister" style="margin:14px 0;min-height:65px" aria-label="Verifikimi i sigurisë"></div>
+<p class="muted">Një numër telefoni mund të përdoret vetëm për një llogari. Numri nuk verifikohet me SMS; mos vendosni numrin e dikujt tjetër. Emri i plotë dhe telefoni ruhen privatisht.</p>
+<div class="row"><button id="registerBtn" class="green" type="button">Krijo llogarinë</button><button id="showLogin" class="gray" type="button">Kthehu te hyrja</button></div>
+</div>
 <div style="margin-top:18px;border-top:1px solid #e2e8f0;padding-top:16px;text-align:center">
 <p class="muted">Ose hyr / regjistrohu me Google</p>
 <button id="googleBtn" type="button" style="width:100%;background:#fff;color:#1e293b;border:1px solid #cbd5e1;display:flex;align-items:center;justify-content:center;gap:10px"><svg width="19" height="19" viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.27 5.48-4.81 7.18l7.73 6C44.37 38.03 46.98 31.89 46.98 24.55z"/><path fill="#FBBC05" d="M10.53 28.59A14.41 14.41 0 0 1 9.75 24c0-1.59.27-3.13.76-4.59l-7.98-6.2A23.89 23.89 0 0 0 0 24c0 3.87.93 7.52 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.91-5.8l-7.73-6c-2.15 1.45-4.92 2.3-8.18 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>Vazhdo me Google</button>
@@ -97,7 +108,9 @@ header p{position:relative;color:#f4d9db;font-weight:500}
 'use strict';
 const SUPABASE_URL='https://bhwidixijfuhylbanjuk.supabase.co';
 const SUPABASE_KEY='sb_publishable_aTg_EeN9qT5C54_dRViJHQ_YJM9BW4B';
-// Autentikimi bëhet drejtpërdrejt përmes Supabase Auth me konfirmim emaili.
+// Regjistrimi me username përdor Edge Function; hyrja me email/Google ruhet për llogaritë ekzistuese.
+const TURNSTILE_SITE_KEY="0x4AAAAAAF9JuLRraPkKiWE9";
+let turnstileWidgetId=null;
 let db=null,user=null,access=null,profile=null;
 const $=id=>document.getElementById(id);
 const escapeHtml=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -108,7 +121,7 @@ const FREE_ACCESS_END=Date.parse('2027-05-11T00:00:00+02:00');
 const freeForAll=()=>Date.now()<FREE_ACCESS_END;
 const eligible=()=>access?.status==='active'||access?.status==='trial';
 function notice(text,bad=false){const el=$('alert');el.textContent=text;el.className=bad?'error':'';el.style.display='block';clearTimeout(notice.t);notice.t=setTimeout(()=>el.style.display='none',9000)}
-function normalizePhone(s){const p=String(s||'').replace(/[\s().-]/g,'');if(!/^\+(355|383)\d{7,10}$/.test(p))throw Error('Shkruani numrin me +355 ose +383.');return p}
+function normalizePhone(s){let p=String(s||'').replace(/[^0-9]/g,'');if(p.startsWith('00'))p=p.slice(2);if(p.startsWith('0')&&p.length===10)p='355'+p.slice(1);if(!/^355[0-9]{9}$/.test(p)&&!/^383[0-9]{8}$/.test(p))throw Error('Shkruani numër të vlefshëm me +355 ose +383.');return '+'+p}
 function setBusy(id,busy){$(id).disabled=busy}
 async function loadLibrary(){if(window.supabase?.createClient)return;for(const src of ['https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js','https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.min.js']){try{await new Promise((ok,fail)=>{const s=document.createElement('script');let done=false;const timer=setTimeout(()=>{if(!done){done=true;s.remove();fail(Error('CDN timeout'))}},9000);s.onload=()=>{if(!done){done=true;clearTimeout(timer);ok()}};s.onerror=()=>{if(!done){done=true;clearTimeout(timer);fail(Error('CDN unavailable'))}};s.src=src;document.head.appendChild(s)});if(window.supabase?.createClient)return}catch(e){console.warn(e)}}throw Error('Nuk u ngarkua biblioteka Supabase.')}
 async function rpc(fn,args={}){if(!db)throw Error('Supabase nuk është gati.');const result=await Promise.race([db.rpc(fn,args),new Promise((_,rej)=>setTimeout(()=>rej(Error('Supabase nuk u përgjigj brenda 15 sekondave.')),15000))]);if(result.error)throw Error(fn+': '+result.error.message);return result.data}
@@ -122,43 +135,61 @@ async function savePendingProfile(){
 $('showRegister').onclick=()=>{$('loginForm').classList.add('hidden');$('registerForm').classList.remove('hidden')};
 $('showLogin').onclick=()=>{$('registerForm').classList.add('hidden');$('loginForm').classList.remove('hidden')};
 
-$('resendConfirmBtn').onclick=async()=>{
-  const btn=$('resendConfirmBtn');
-  const email=$('regEmail').value.trim().toLowerCase();
-  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
-    notice('Shkruaj një email të vlefshëm te formulari i regjistrimit.',true);
-    $('regEmail').focus();
-    return;
+// Ngarko Cloudflare Turnstile vetëm kur hapet formulari i regjistrimit.
+async function initRegisterTurnstile(){
+  if(turnstileWidgetId!==null)return;
+  if(!window.turnstile){
+    if(!document.getElementById('turnstileScript')){
+      const script=document.createElement('script');
+      script.id='turnstileScript';
+      script.src='https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';
+      script.async=true;
+      document.head.appendChild(script);
+    }
+    for(let i=0;i<40&&!window.turnstile;i++)await new Promise(r=>setTimeout(r,250));
   }
-  if(!db){notice('Lidhja me Supabase nuk është gati.',true);return;}
-  btn.disabled=true;
-  try{
-    const {error}=await db.auth.resend({type:'signup',email,options:{emailRedirectTo:location.origin+location.pathname}});
-    if(error)throw error;
-    notice('Nëse emaili ka një regjistrim në pritje të konfirmimit, do të dërgohet një lidhje e re. Kontrollo edhe Spam.');
-  }catch(e){
-    if(e.status===429||/rate limit|too many|seconds/i.test(e.message||''))
-      notice('Janë bërë shumë kërkesa. Prit pak para se ta provosh përsëri.',true);
-    else notice('Ridërgimi nuk u krye: '+(e.message||'Gabim i panjohur'),true);
-  }finally{btn.disabled=false;}
-};
-
+  if(!window.turnstile){notice('Verifikimi i sigurisë nuk u ngarkua. Rifresko faqen.',true);return;}
+  turnstileWidgetId=window.turnstile.render('#turnstileRegister',{sitekey:TURNSTILE_SITE_KEY,theme:'auto'});
+}
+$('showRegister').addEventListener('click',()=>initRegisterTurnstile().catch(e=>notice(e.message,true)));
+$('auctions').addEventListener('click',e=>{if(e.target.closest('[data-register]'))initRegisterTurnstile().catch(err=>notice(err.message,true))});
+$('forgotPasswordBtn').onclick=()=>notice('Kontakto +355697232425 për rivendosjen e fjalëkalimit.');
 $('registerBtn').onclick=async()=>{
   setBusy('registerBtn',true);
   try{
     if(!db)throw Error('Supabase nuk është gati.');
-    const first_name=$('regFirst').value.trim(),last_name=$('regLast').value.trim(),city=$('regCity').value.trim();
-    const phone=normalizePhone($('regPhone').value),email=$('regEmail').value.trim().toLowerCase(),password=$('regPassword').value;
-    if(!first_name||!last_name||!city)throw Error('Plotësoni emrin, mbiemrin dhe qytetin.');
-    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))throw Error('Shkruani një email të vlefshëm.');
-    if(password.length<8)throw Error('Fjalëkalimi duhet të ketë të paktën 8 karaktere.');
-    if(password!==$('regConfirm').value)throw Error('Fjalëkalimet nuk përputhen.');
-    const {data,error}=await db.auth.signUp({email,password,options:{emailRedirectTo:location.origin+location.pathname,data:{first_name,last_name,city,phone}}});
-    if(error)throw error;
-    if(data.session){await refreshAccount();notice('Regjistrimi u krye. Kontrolloni konfigurimin Confirm email në Supabase.');}
-    else{ $('registerForm').classList.add('hidden');$('loginForm').classList.remove('hidden');notice('Nëse adresa është e pranueshme, do të merrni një email konfirmimi. Hapni lidhjen dhe pastaj hyni.'); }
-  }catch(e){notice(e.message,true)}finally{setBusy('registerBtn',false)}
+    const full_name=$('regFullName').value.trim().replace(/\s+/g,' ');
+    const phone=normalizePhone($('regPhone').value);
+    const city=$('regCity').value.trim();
+    const username=$('regUsername').value.trim().toLowerCase();
+    const password=$('regPassword').value;
+    const confirm_password=$('regConfirm').value;
+    if(full_name.split(' ').length<2)throw Error('Shkruani emrin dhe mbiemrin.');
+    if(city.length<2)throw Error('Shkruani qytetin.');
+    if(!/^[a-z0-9_]{3,30}$/.test(username))throw Error('Username duhet të ketë 3–30 karaktere: shkronja, numra ose _.');
+    if(password.length<12||password.length>72)throw Error('Fjalëkalimi duhet të ketë 12–72 karaktere.');
+    if(password!==confirm_password)throw Error('Fjalëkalimet nuk përputhen.');
+    const captcha_token=window.turnstile&&turnstileWidgetId!==null?window.turnstile.getResponse(turnstileWidgetId):'';
+    if(!captcha_token)throw Error('Plotësoni verifikimin e sigurisë.');
+    const controller=new AbortController();
+    const timeout=setTimeout(()=>controller.abort(),20000);
+    let response;
+    try{
+      response=await fetch(SUPABASE_URL+'/functions/v1/ap-username-register',{
+        method:'POST',headers:{'Content-Type':'application/json','apikey':SUPABASE_KEY},
+        body:JSON.stringify({full_name,phone,city,username,password,confirm_password,captcha_token}),signal:controller.signal
+      });
+    }finally{clearTimeout(timeout)}
+    const result=await response.json().catch(()=>({}));
+    if(!response.ok||!result.ok)throw Error(result.error||'Regjistrimi nuk u realizua.');
+    $('regPassword').value='';$('regConfirm').value='';
+    $('registerForm').classList.add('hidden');$('loginForm').classList.remove('hidden');
+    $('loginEmail').value=username;
+    notice('Llogaria u krijua! Hyni me username dhe fjalëkalimin tuaj.');
+  }catch(e){notice(e.name==='AbortError'?'Koha e pritjes përfundoi. Kontrolloni nëse llogaria u krijua para se të provoni sërish.':e.message,true)}
+  finally{setBusy('registerBtn',false);if(window.turnstile&&turnstileWidgetId!==null)window.turnstile.reset(turnstileWidgetId)}
 };
+
 $('loginBtn').onclick=async()=>{
   setBusy('loginBtn',true);
   try{
