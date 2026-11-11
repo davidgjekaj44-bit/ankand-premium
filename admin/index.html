@@ -71,7 +71,7 @@
         <div><strong>Roli:</strong> <span id="adminRole"></span></div>
         <div><strong>Sesioni skadon:</strong> <span id="sessionExpiry"></span></div>
       </div>
-      <p class="note">Shiko përdoruesit e regjistruar. Vetëm super_admin mund të bllokojë ose zhbllokojë llogari. Veprimet kërkojnë konfirmim.</p>
+      <p class="note">Shiko përdoruesit e regjistruar. Vetëm super_admin mund të bllokojë ose zhbllokojë llogari. Admin dhe super_admin mund të zgjasin abonimet me 12 muaj. Veprimet kërkojnë konfirmim.</p>
       <button id="createUserButton" type="button">+ Shto përdorues</button>
       <section id="createUserView" class="hidden inline-form" aria-label="Shto përdorues">
         <h2>Shto përdorues</h2>
@@ -195,7 +195,7 @@
 
     function showDashboard(admin, expiresAt) {
       adminRole = admin.role;
-      auditButton.classList.toggle("hidden", admin.role !== "super_admin");
+      auditButton.classList.remove("hidden");
       document.getElementById("adminName").textContent = admin.username;
       document.getElementById("adminRole").textContent = admin.role;
       document.getElementById("sessionExpiry").textContent = new Date(expiresAt).toLocaleString("sq-AL");
@@ -299,15 +299,13 @@
           );
           card.append(actionButton, actionMessage);
         }
-        if (adminRole === "super_admin" && !user.blocked) {
+        if (!user.blocked) {
           const tools = document.createElement("div");
           tools.className = "toolbar";
-          for (const [label, action] of [
-            ["Modifiko", "update_profile"],
-            ["Zgjat abonimin", "extend_subscription"],
-            ["Akses falas", "grant_complimentary"],
-            ["Akses pa afat", "grant_unlimited"]
-          ]) {
+          const availableActions = adminRole === "super_admin"
+            ? [["Modifiko", "update_profile"], ["Zgjat abonimin (+12 muaj)", "extend_subscription"], ["Akses falas", "grant_complimentary"], ["Akses pa afat", "grant_unlimited"]]
+            : [["Zgjat abonimin (+12 muaj)", "extend_subscription"]];
+          for (const [label, action] of availableActions) {
             const btn = document.createElement("button");
             btn.type = "button";
             btn.className = "secondary";
@@ -402,7 +400,7 @@
     }
 
     function openManageForm(user, action, card) {
-      if (adminRole !== "super_admin" || actionInProgress) return;
+      if ((adminRole !== "super_admin" && action !== "extend_subscription") || actionInProgress) return;
       const existing = card.querySelector(".inline-form");
       if (existing) { existing.remove(); return; }
       const form = document.createElement("form");
@@ -410,7 +408,7 @@
       const title = document.createElement("strong");
       const titles = {
         update_profile: "Modifiko profilin",
-        extend_subscription: "Zgjat abonimin",
+        extend_subscription: "Zgjat abonimin me 12 muaj",
         grant_complimentary: "Jep akses falas",
         grant_unlimited: "Jep akses pa afat"
       };
@@ -418,7 +416,13 @@
       form.appendChild(title);
       const fields = action === "update_profile"
         ? [["first_name", "Emri"], ["last_name", "Mbiemri"], ["city", "Qyteti"], ["phone", "Telefoni"]]
-        : action === "grant_unlimited" ? [] : [["days", "Numri i ditëve (1–3650)"]];
+        : (action === "grant_unlimited" || action === "extend_subscription") ? [] : [["days", "Numri i ditëve (1–3650)"]];
+      if (action === "extend_subscription") {
+        const notice = document.createElement("p");
+        notice.className = "note";
+        notice.textContent = "Abonimi zgjatet automatikisht me 12 muaj kalendarikë. Nuk nevojitet numër ditësh.";
+        form.appendChild(notice);
+      }
       for (const [name, labelText] of fields) {
         const label = document.createElement("label");
         label.textContent = labelText;
@@ -450,7 +454,10 @@
           payload[name] = name === "days" ? Number(value) : value;
         }
         const displayName = [user.first_name, user.last_name].filter(Boolean).join(" ") || user.user_id;
-        if (!window.confirm("Konfirmon veprimin: " + titles[action] + " për " + displayName + "?")) return;
+        const confirmation = action === "extend_subscription"
+          ? "Konfirmon zgjatjen e abonimit me 12 muaj për " + displayName + "?"
+          : "Konfirmon veprimin: " + titles[action] + " për " + displayName + "?";
+        if (!window.confirm(confirmation)) return;
         const version = requestVersion;
         actionInProgress = true;
         submit.disabled = true;
@@ -486,7 +493,7 @@
       extraView.classList.remove("hidden");
       mainPanel.classList.add("wide");
       extraList.replaceChildren();
-      extraTitle.textContent = action === "list_admins" ? "Administratorët" : "Historiku i veprimeve";
+      extraTitle.textContent = action === "list_admins" ? "Administratorët" : (adminRole === "super_admin" ? "Historiku i veprimeve (100 të fundit)" : "Historiku im (100 veprimet e fundit)");
       extraMessage.textContent = "Duke ngarkuar…";
       const version = requestVersion;
       try {
@@ -505,6 +512,8 @@
             addField(card, "Krijuar", entry.created_at ? new Date(entry.created_at).toLocaleString("sq-AL") : "—");
           } else {
             addField(card, "Veprimi", entry.action);
+            if (adminRole === "super_admin") addField(card, "ID e administratorit", entry.admin_id);
+            if (entry.action === "extend_subscription") addField(card, "Kohëzgjatja", "12 muaj");
             addField(card, "Objekti", entry.target_type);
             addField(card, "ID", entry.target_id);
             addField(card, "Koha", entry.created_at ? new Date(entry.created_at).toLocaleString("sq-AL") : "—");
