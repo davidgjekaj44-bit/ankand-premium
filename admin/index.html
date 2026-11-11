@@ -74,7 +74,7 @@
         <div><strong>Roli:</strong> <span id="adminRole"></span></div>
         <div><strong>Sesioni skadon:</strong> <span id="sessionExpiry"></span></div>
       </div>
-      <p class="note">Shiko përdoruesit e regjistruar. Vetëm super_admin mund të bllokojë ose zhbllokojë llogari. Admin dhe super_admin mund të zgjasin abonimet me 12 muaj. Veprimet kërkojnë konfirmim.</p>
+      <p class="note">Aksesi falas vlen deri më 11/05/2027. Nga 12/05/2027, përdoruesit pa abonim aktiv kalojnë në pritje të pagesës. Vetëm super_admin mund të bllokojë ose zhbllokojë llogari. Admin dhe super_admin mund të zgjasin abonimet me 12 muaj.</p>
       <button id="createAdminButton" type="button" class="hidden">+ Shto administrator</button>
       <section id="createAdminView" class="hidden inline-form" aria-label="Shto administrator">
         <h2>Shto administrator</h2>
@@ -100,11 +100,8 @@
           <label for="newPhone">Telefoni</label><input id="newPhone" name="phone" type="tel" required minlength="7" maxlength="24">
           <label for="newUsername">Username (3–30 karaktere: a-z, 0-9, _)</label><input id="newUsername" name="username" required minlength="3" maxlength="30" pattern="[a-z0-9_]{3,30}" autocapitalize="none" autocomplete="off">
           <label for="newPassword">Fjalëkalimi (12–72 karaktere)</label><input id="newPassword" name="password" type="password" required minlength="12" maxlength="72" autocomplete="new-password">
-          <label for="newAccess">Lloji i aksesit</label>
-          <select id="newAccess" name="access_type" style="width:100%;padding:13px;border-radius:9px;background:#0f172a;color:white;border:1px solid #64748b;font-size:16px">
-            <option value="none">Pa abonim aktiv</option><option value="subscription">Abonim me afat</option><option value="complimentary" data-super-only>Akses falas me afat</option><option value="unlimited" data-super-only>Akses pa afat</option>
-          </select>
-          <div id="newDaysGroup" class="hidden"><label for="newDays">Kohëzgjatja në ditë</label><input id="newDays" name="days" type="number" min="1" max="3650" step="1"></div>
+          <input type="hidden" name="access_type" value="none">
+          <p class="note">Aksesi falas është aktiv deri më 11/05/2027, sipas rregullave të platformës. Pas kësaj date, nëse nuk ka abonim aktiv, statusi është «Në pritje të pagesës». Abonimi zgjatet nga lista e përdoruesve me butonin «Zgjat abonimin (+12 muaj)».</p>
           <button id="createUserSubmit" type="submit">Krijo përdoruesin</button>
           <p id="createUserMessage" class="message" role="status"></p>
         </form>
@@ -234,11 +231,6 @@
       adminRole = admin.role;
       createAdminButton.classList.toggle("hidden", admin.role !== "super_admin");
       adminsButton.classList.toggle("hidden", admin.role !== "super_admin");
-      document.querySelectorAll("#newAccess option[data-super-only]").forEach(option => {
-        option.hidden = admin.role !== "super_admin";
-        option.disabled = admin.role !== "super_admin";
-      });
-      if (admin.role !== "super_admin" && ["complimentary", "unlimited"].includes(newAccess.value)) newAccess.value = "none";
       auditButton.classList.remove("hidden");
       document.getElementById("adminName").textContent = admin.username;
       document.getElementById("adminRole").textContent = admin.role;
@@ -265,27 +257,35 @@
       return Number.isNaN(d.getTime()) ? "—" : d.toLocaleDateString("sq-AL", { day: "2-digit", month: "2-digit", year: "numeric" });
     }
 
+    // Mesnata pas datës 11/05/2027, sipas orës së Shqipërisë/Kosovës.
+    const FREE_ACCESS_END = Date.parse("2027-05-12T00:00:00+02:00");
+
     function accessExpiry(access) {
       if (!access || access.payment_suspended || access.unlimited_access) return null;
       const now = Date.now();
-      if (Date.parse(access.complimentary_until || "") > now) return access.complimentary_until;
-      if (Date.parse(access.subscription_ends_at || "") > now) return access.subscription_ends_at;
+      const complimentary = Date.parse(access.complimentary_until || "");
+      const subscription = Date.parse(access.subscription_ends_at || "");
+      // Shfaqet afati më i largët që mbetet aktiv, jo vetëm periudha falas.
+      if (subscription > now && subscription > complimentary) return access.subscription_ends_at;
+      if (complimentary > now) return access.complimentary_until;
+      if (subscription > now) return access.subscription_ends_at;
       return null;
     }
 
     function accessStatus(access) {
-      if (!access) return "Pa të dhëna aksesi";
+      if (!access) return "Në pritje të të dhënave të aksesit";
       if (access.payment_suspended) return "I pezulluar";
-      if (access.unlimited_access) return "Akses i pakufizuar";
+      if (access.unlimited_access) return "Akses aktiv pa afat";
       const now = Date.now();
       const complimentary = Date.parse(access.complimentary_until || "");
       const subscription = Date.parse(access.subscription_ends_at || "");
+      if (subscription > now && subscription > complimentary) return "Abonim aktiv";
       if (complimentary > now) return "Akses falas aktiv";
       if (subscription > now) return "Abonim aktiv";
-      return "Pa akses aktiv";
+      return "Në pritje të pagesës";
     }
 
-    // Klasifikimi bazohet te aksesi aktiv, jo te ekzistenca e nje rreshti ne ap_access.
+    // Përputhet me kushtet e funksionit Supabase ap_access_state.
     function hasActiveAccess(access) {
       if (!access || access.payment_suspended) return false;
       if (access.unlimited_access === true) return true;
@@ -376,9 +376,7 @@
         if (!user.blocked) {
           const tools = document.createElement("div");
           tools.className = "toolbar";
-          const availableActions = adminRole === "super_admin"
-            ? [["Modifiko", "update_profile"], ["Rivendos fjalëkalimin", "reset_password"], ["Zgjat abonimin (+12 muaj)", "extend_subscription"], ["Akses falas", "grant_complimentary"], ["Akses pa afat", "grant_unlimited"]]
-            : [["Modifiko", "update_profile"], ["Rivendos fjalëkalimin", "reset_password"], ["Zgjat abonimin (+12 muaj)", "extend_subscription"]];
+          const availableActions = [["Modifiko", "update_profile"], ["Rivendos fjalëkalimin", "reset_password"], ["Zgjat abonimin (+12 muaj)", "extend_subscription"]];
           for (const [label, action] of availableActions) {
             const btn = document.createElement("button");
             btn.type = "button";
@@ -789,21 +787,12 @@
     const createUserButton = document.getElementById("createUserButton");
     const createUserView = document.getElementById("createUserView");
     const createUserForm = document.getElementById("createUserForm");
-    const newAccess = document.getElementById("newAccess");
-    const newDaysGroup = document.getElementById("newDaysGroup");
-    const newDays = document.getElementById("newDays");
     const createUserMessage = document.getElementById("createUserMessage");
     const createUserSubmit = document.getElementById("createUserSubmit");
 
     createUserButton.addEventListener("click", () => {
       createUserView.classList.toggle("hidden");
       mainPanel.classList.add("wide");
-    });
-    newAccess.addEventListener("change", () => {
-      const timed = ["subscription", "complimentary"].includes(newAccess.value);
-      newDaysGroup.classList.toggle("hidden", !timed);
-      newDays.required = timed;
-      if (!timed) newDays.value = "";
     });
     createUserForm.addEventListener("submit", async (event) => {
       event.preventDefault();
@@ -812,11 +801,6 @@
       const payload = { action: "create_user" };
       for (const key of ["first_name", "last_name", "city", "phone", "username", "password", "access_type"]) payload[key] = data.get(key);
       payload.username = String(payload.username).trim().toLowerCase();
-      if (adminRole !== "super_admin" && ["complimentary", "unlimited"].includes(payload.access_type)) {
-        createUserMessage.textContent = "Ky akses lejohet vetëm për super_admin.";
-        return;
-      }
-      if (["subscription", "complimentary"].includes(payload.access_type)) payload.days = Number(data.get("days"));
       if (!window.confirm("Konfirmon krijimin e përdoruesit " + payload.username + "?")) return;
       const version = requestVersion;
       actionInProgress = true;
@@ -827,8 +811,6 @@
         const result = await manageRequest(payload);
         if (version !== requestVersion) return;
         createUserForm.reset();
-        newDaysGroup.classList.add("hidden");
-        newDays.required = false;
         createUserMessage.classList.add("success");
         createUserMessage.textContent = result.audit_logged === false
           ? "Llogaria u krijua, por historiku nuk u regjistrua."
