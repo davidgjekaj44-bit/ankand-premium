@@ -108,10 +108,13 @@
       </section>
       <button id="usersButton" type="button">Përdoruesit</button>
       <section id="usersView" class="hidden" aria-label="Lista e përdoruesve">
-        <div class="users-heading"><h2>Lista e përdoruesve</h2><span id="usersCount" class="count"></span></div>
+        <div class="users-heading"><h2>Përdoruesit e konfirmuar</h2><span id="usersCount" class="count"></span></div>
         <input id="userSearch" class="search-input" type="search" placeholder="Kërko sipas emrit, telefonit, qytetit ose ID-së" aria-label="Kërko përdorues">
         <p id="usersMessage" class="message" role="status"></p>
         <div id="usersList" class="users-list"></div>
+        <div class="users-heading"><h2>Përdoruesit e pakonfirmuar</h2><span id="pendingCount" class="count"></span></div>
+        <div id="pendingUsersList" class="users-list"></div>
+        <p id="usersTotal" class="note"></p>
       </section>
       <div class="toolbar">
         <button id="adminsButton" class="secondary" type="button">Administratorët</button>
@@ -152,6 +155,10 @@
     let sessionToken = null;
     let adminRole = null;
     let currentUsers = [];
+    let pendingUsers = [];
+    const pendingUsersList = document.getElementById("pendingUsersList");
+    const pendingCount = document.getElementById("pendingCount");
+    const usersTotal = document.getElementById("usersTotal");
     let actionInProgress = false;
     let requestVersion = 0;
     const userSearch = document.getElementById("userSearch");
@@ -184,6 +191,10 @@
       usersView.classList.add("hidden");
       usersList.replaceChildren();
       currentUsers = [];
+      pendingUsers = [];
+      pendingUsersList.replaceChildren();
+      pendingCount.textContent = "";
+      usersTotal.textContent = "";
       userSearch.value = "";
       usersMessage.textContent = "";
       usersMessage.classList.remove("success");
@@ -265,21 +276,30 @@
       return "Pa akses aktiv";
     }
 
-    function renderUsers(users) {
+    function renderUsers(users, pending) {
       currentUsers = users;
+      pendingUsers = pending;
       paintUsers();
     }
 
     function paintUsers() {
       const term = userSearch.value.trim().toLocaleLowerCase("sq");
-      const users = currentUsers.filter(user =>
+      const matches = user =>
         [user.first_name, user.last_name, user.city, user.phone, user.user_id]
-          .some(value => String(value ?? "").toLocaleLowerCase("sq").includes(term))
-      );
+          .some(value => String(value ?? "").toLocaleLowerCase("sq").includes(term));
+      const users = currentUsers.filter(matches);
+      const pending = pendingUsers.filter(matches);
       usersList.replaceChildren();
-      usersCount.textContent = users.length + " / " + currentUsers.length + " përdorues";
+      pendingUsersList.replaceChildren();
+      usersCount.textContent = term
+        ? users.length + " / " + currentUsers.length + " përdorues"
+        : currentUsers.length + " përdorues";
+      pendingCount.textContent = term
+        ? pending.length + " / " + pendingUsers.length + " përdorues"
+        : pendingUsers.length + " përdorues";
+      usersTotal.textContent = "Gjithsej: " + (currentUsers.length + pendingUsers.length) + " përdorues";
       usersMessage.classList.remove("success");
-      if (!users.length) {
+      if (!users.length && !pending.length) {
         usersMessage.textContent = "Nuk u gjet asnjë përdorues.";
         return;
       }
@@ -340,6 +360,21 @@
           card.appendChild(tools);
         }
         usersList.appendChild(card);
+      }
+      for (const user of pending) {
+        const card = document.createElement("article");
+        card.className = "user-card";
+        const name = document.createElement("strong");
+        name.textContent = [user.first_name, user.last_name].filter(Boolean).join(" ") || "Pa emër";
+        card.appendChild(name);
+        addField(card, "Qyteti", user.city);
+        addField(card, "Telefoni", user.phone);
+        addField(card, "ID", user.user_id);
+        const state = document.createElement("div");
+        state.className = "account-state blocked";
+        state.textContent = "Identiteti: I pakonfirmuar";
+        card.appendChild(state);
+        pendingUsersList.appendChild(card);
       }
     }
 
@@ -785,8 +820,10 @@
         }
         if (response.status === 403) throw new Error("Nuk ke leje për të parë përdoruesit.");
         if (!response.ok) throw new Error("Lista e përdoruesve nuk u ngarkua.");
-        if (!Array.isArray(result.users)) throw new Error("Formati i listës është i pavlefshëm.");
-        renderUsers(result.users);
+        if (!Array.isArray(result.users) || !Array.isArray(result.pending_users)) {
+          throw new Error("Formati i listave është i pavlefshëm. Kontrollo versionin e admin-users.");
+        }
+        renderUsers(result.users, result.pending_users);
         usersButton.textContent = "Mbyll listën e përdoruesve";
       } catch (error) {
         if (version === requestVersion && token === sessionToken) {
