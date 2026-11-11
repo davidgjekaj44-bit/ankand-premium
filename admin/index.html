@@ -35,9 +35,11 @@
     .account-state.blocked { color: #fca5a5; }
     .account-state.allowed { color: #86efac; }
     .account-action { margin-top: 12px; padding: 11px; font-size: 14px; }
-    .account-action.block-action { background: #fca5a5; color: #111827; }
+    .account-action.block-action { background: #fbbf24; color: #111827; }
     .account-action.unblock-action { background: #86efac; color: #111827; }
-    .account-action.delete-action { background: #b91c1c; color: white; }
+    .account-action.delete-action { background: #dc6464; color: #111827; }
+    .account-actions-row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 10px; margin-top: 12px; }
+    .account-actions-row .account-action { width: 100%; margin-top: 0; min-width: 0; height: 100%; padding: 11px 6px; font-size: 13px; overflow-wrap: anywhere; }
     .card-message { min-height: 0; margin-top: 8px; text-align: left; font-size: 14px; }
     .toolbar { display:flex; flex-wrap:wrap; gap:8px; margin:12px 0; }
     .toolbar button { width:auto; margin:0; padding:10px 12px; font-size:14px; }
@@ -364,8 +366,12 @@
           actionButton.addEventListener("click", () =>
             changeAccountStatus(user, displayName, actionButton, actionMessage)
           );
-          card.append(actionButton, actionMessage);
-          appendDeleteButton(card, user, displayName);
+          const actionRow = document.createElement("div");
+          actionRow.className = "account-actions-row";
+          actionRow.appendChild(actionButton);
+          card.appendChild(actionRow);
+          appendDeleteButton(card, user, displayName, actionRow);
+          card.appendChild(actionMessage);
         }
         if (!user.blocked) {
           const tools = document.createElement("div");
@@ -403,7 +409,7 @@
       }
     }
 
-    function appendDeleteButton(card, user, displayName) {
+    function appendDeleteButton(card, user, displayName, buttonContainer = card) {
       const button = document.createElement("button");
       button.type = "button";
       button.className = "account-action delete-action";
@@ -451,7 +457,8 @@
           if (version === requestVersion && token === sessionToken) button.disabled = false;
         }
       });
-      card.append(button, message);
+      buttonContainer.appendChild(button);
+      card.appendChild(message);
     }
 
     async function changeAccountStatus(user, displayName, button, message) {
