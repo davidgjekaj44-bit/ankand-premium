@@ -108,10 +108,12 @@
       </section>
       <button id="usersButton" type="button">Përdoruesit</button>
       <section id="usersView" class="hidden" aria-label="Lista e përdoruesve">
-        <div class="users-heading"><h2>Përdoruesit e konfirmuar</h2><span id="usersCount" class="count"></span></div>
+        <div class="users-heading"><h2>Përdoruesit e abonuar</h2><span id="usersCount" class="count"></span></div>
         <input id="userSearch" class="search-input" type="search" placeholder="Kërko sipas emrit, telefonit, qytetit ose ID-së" aria-label="Kërko përdorues">
         <p id="usersMessage" class="message" role="status"></p>
         <div id="usersList" class="users-list"></div>
+        <div class="users-heading"><h2>Përdoruesit e paabonuar</h2><span id="unsubscribedCount" class="count"></span></div>
+        <div id="unsubscribedUsersList" class="users-list"></div>
         <div class="users-heading"><h2>Përdoruesit e pakonfirmuar</h2><span id="pendingCount" class="count"></span></div>
         <div id="pendingUsersList" class="users-list"></div>
         <p id="usersTotal" class="note"></p>
@@ -150,6 +152,8 @@
     const usersList = document.getElementById("usersList");
     const usersMessage = document.getElementById("usersMessage");
     const usersCount = document.getElementById("usersCount");
+    const unsubscribedCount = document.getElementById("unsubscribedCount");
+    const unsubscribedUsersList = document.getElementById("unsubscribedUsersList");
 
     // Tokeni mbahet vetëm në memorien e faqes, jo në localStorage.
     let sessionToken = null;
@@ -190,6 +194,8 @@
     function clearUsers() {
       usersView.classList.add("hidden");
       usersList.replaceChildren();
+      unsubscribedUsersList.replaceChildren();
+      unsubscribedCount.textContent = "";
       currentUsers = [];
       pendingUsers = [];
       pendingUsersList.replaceChildren();
@@ -276,6 +282,15 @@
       return "Pa akses aktiv";
     }
 
+    // Klasifikimi bazohet te aksesi aktiv, jo te ekzistenca e nje rreshti ne ap_access.
+    function hasActiveAccess(access) {
+      if (!access || access.payment_suspended) return false;
+      if (access.unlimited_access === true) return true;
+      const now = Date.now();
+      return Date.parse(access.subscription_ends_at || "") > now ||
+        Date.parse(access.complimentary_until || "") > now;
+    }
+
     function renderUsers(users, pending) {
       currentUsers = users;
       pendingUsers = pending;
@@ -287,24 +302,31 @@
       const matches = user =>
         [user.first_name, user.last_name, user.city, user.phone, user.user_id]
           .some(value => String(value ?? "").toLocaleLowerCase("sq").includes(term));
-      const users = currentUsers.filter(matches);
+      const subscribedAll = currentUsers.filter(user => hasActiveAccess(user.access));
+      const unsubscribedAll = currentUsers.filter(user => !hasActiveAccess(user.access));
+      const users = subscribedAll.filter(matches);
+      const unsubscribed = unsubscribedAll.filter(matches);
       const pending = pendingUsers.filter(matches);
       usersList.replaceChildren();
+      unsubscribedUsersList.replaceChildren();
       pendingUsersList.replaceChildren();
       usersCount.textContent = term
-        ? users.length + " / " + currentUsers.length + " përdorues"
-        : currentUsers.length + " përdorues";
+        ? users.length + " / " + subscribedAll.length + " përdorues"
+        : subscribedAll.length + " përdorues";
+      unsubscribedCount.textContent = term
+        ? unsubscribed.length + " / " + unsubscribedAll.length + " përdorues"
+        : unsubscribedAll.length + " përdorues";
       pendingCount.textContent = term
         ? pending.length + " / " + pendingUsers.length + " përdorues"
         : pendingUsers.length + " përdorues";
       usersTotal.textContent = "Gjithsej: " + (currentUsers.length + pendingUsers.length) + " përdorues";
       usersMessage.classList.remove("success");
-      if (!users.length && !pending.length) {
+      if (!users.length && !unsubscribed.length && !pending.length) {
         usersMessage.textContent = "Nuk u gjet asnjë përdorues.";
         return;
       }
       usersMessage.textContent = "";
-      for (const user of users) {
+      for (const user of [...users, ...unsubscribed]) {
         const card = document.createElement("article");
         card.className = "user-card";
         const heading = document.createElement("div");
@@ -359,7 +381,7 @@
           }
           card.appendChild(tools);
         }
-        usersList.appendChild(card);
+        (hasActiveAccess(user.access) ? usersList : unsubscribedUsersList).appendChild(card);
       }
       for (const user of pending) {
         const card = document.createElement("article");
