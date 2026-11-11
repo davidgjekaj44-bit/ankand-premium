@@ -84,7 +84,7 @@
           <label for="newPassword">Fjalëkalimi (12–72 karaktere)</label><input id="newPassword" name="password" type="password" required minlength="12" maxlength="72" autocomplete="new-password">
           <label for="newAccess">Lloji i aksesit</label>
           <select id="newAccess" name="access_type" style="width:100%;padding:13px;border-radius:9px;background:#0f172a;color:white;border:1px solid #64748b;font-size:16px">
-            <option value="none">Pa abonim aktiv</option><option value="complimentary">Akses falas me afat</option><option value="subscription">Abonim me afat</option><option value="unlimited">Akses pa afat</option>
+            <option value="none">Pa abonim aktiv</option><option value="subscription">Abonim me afat</option><option value="complimentary" data-super-only>Akses falas me afat</option><option value="unlimited" data-super-only>Akses pa afat</option>
           </select>
           <div id="newDaysGroup" class="hidden"><label for="newDays">Kohëzgjatja në ditë</label><input id="newDays" name="days" type="number" min="1" max="3650" step="1"></div>
           <button id="createUserSubmit" type="submit">Krijo përdoruesin</button>
@@ -195,6 +195,11 @@
 
     function showDashboard(admin, expiresAt) {
       adminRole = admin.role;
+      document.querySelectorAll("#newAccess option[data-super-only]").forEach(option => {
+        option.hidden = admin.role !== "super_admin";
+        option.disabled = admin.role !== "super_admin";
+      });
+      if (admin.role !== "super_admin" && ["complimentary", "unlimited"].includes(newAccess.value)) newAccess.value = "none";
       auditButton.classList.remove("hidden");
       document.getElementById("adminName").textContent = admin.username;
       document.getElementById("adminRole").textContent = admin.role;
@@ -303,8 +308,8 @@
           const tools = document.createElement("div");
           tools.className = "toolbar";
           const availableActions = adminRole === "super_admin"
-            ? [["Modifiko", "update_profile"], ["Zgjat abonimin (+12 muaj)", "extend_subscription"], ["Akses falas", "grant_complimentary"], ["Akses pa afat", "grant_unlimited"]]
-            : [["Zgjat abonimin (+12 muaj)", "extend_subscription"]];
+            ? [["Modifiko", "update_profile"], ["Rivendos fjalëkalimin", "reset_password"], ["Zgjat abonimin (+12 muaj)", "extend_subscription"], ["Akses falas", "grant_complimentary"], ["Akses pa afat", "grant_unlimited"]]
+            : [["Modifiko", "update_profile"], ["Rivendos fjalëkalimin", "reset_password"], ["Zgjat abonimin (+12 muaj)", "extend_subscription"]];
           for (const [label, action] of availableActions) {
             const btn = document.createElement("button");
             btn.type = "button";
@@ -400,7 +405,7 @@
     }
 
     function openManageForm(user, action, card) {
-      if ((adminRole !== "super_admin" && action !== "extend_subscription") || actionInProgress) return;
+      if ((adminRole !== "super_admin" && !["extend_subscription", "update_profile", "reset_password"].includes(action)) || actionInProgress) return;
       const existing = card.querySelector(".inline-form");
       if (existing) { existing.remove(); return; }
       const form = document.createElement("form");
@@ -408,6 +413,7 @@
       const title = document.createElement("strong");
       const titles = {
         update_profile: "Modifiko profilin",
+        reset_password: "Rivendos fjalëkalimin",
         extend_subscription: "Zgjat abonimin me 12 muaj",
         grant_complimentary: "Jep akses falas",
         grant_unlimited: "Jep akses pa afat"
@@ -416,7 +422,8 @@
       form.appendChild(title);
       const fields = action === "update_profile"
         ? [["first_name", "Emri"], ["last_name", "Mbiemri"], ["city", "Qyteti"], ["phone", "Telefoni"]]
-        : (action === "grant_unlimited" || action === "extend_subscription") ? [] : [["days", "Numri i ditëve (1–3650)"]];
+        : action === "grant_complimentary" ? [["days", "Numri i ditëve (1–3650)"]]
+        : action === "reset_password" ? [["new_password", "Fjalëkalimi i ri (12–72 karaktere)"]] : [];
       if (action === "extend_subscription") {
         const notice = document.createElement("p");
         notice.className = "note";
@@ -429,7 +436,9 @@
         const input = document.createElement("input");
         input.name = name;
         input.required = true;
-        if (name === "days") {
+        if (name === "new_password") {
+          input.type = "password"; input.minLength = 12; input.maxLength = 72; input.autocomplete = "new-password";
+        } else if (name === "days") {
           input.type = "number"; input.min = "1"; input.max = "3650"; input.step = "1";
         } else {
           input.type = "text"; input.maxLength = 100;
@@ -454,7 +463,9 @@
           payload[name] = name === "days" ? Number(value) : value;
         }
         const displayName = [user.first_name, user.last_name].filter(Boolean).join(" ") || user.user_id;
-        const confirmation = action === "extend_subscription"
+        const confirmation = action === "reset_password"
+          ? "Konfirmon rivendosjen e fjalëkalimit për " + displayName + "? Fjalëkalimi i vjetër nuk mund të rikuperohet."
+          : action === "extend_subscription"
           ? "Konfirmon zgjatjen e abonimit me 12 muaj për " + displayName + "?"
           : "Konfirmon veprimin: " + titles[action] + " për " + displayName + "?";
         if (!window.confirm(confirmation)) return;
@@ -468,10 +479,12 @@
           if (action === "update_profile") {
             for (const [name] of fields) user[name] = payload[name];
           } else if (user.access) {
-            if (action === "grant_unlimited") user.access.unlimited_access = true;
-            if (action === "extend_subscription" || action === "grant_complimentary") {
+            if (action === "extend_subscription") {
               // Rilexojmë të dhënat nga serveri për datën e saktë.
             }
+          }
+          if (action === "reset_password") {
+            form.elements.namedItem("new_password").value = "";
           }
           paintUsers();
           usersMessage.classList.add("success");
@@ -539,7 +552,7 @@
       mainPanel.classList.add("wide");
     });
     newAccess.addEventListener("change", () => {
-      const timed = ["complimentary", "subscription"].includes(newAccess.value);
+      const timed = ["subscription", "complimentary"].includes(newAccess.value);
       newDaysGroup.classList.toggle("hidden", !timed);
       newDays.required = timed;
       if (!timed) newDays.value = "";
@@ -551,7 +564,11 @@
       const payload = { action: "create_user" };
       for (const key of ["first_name", "last_name", "city", "phone", "username", "password", "access_type"]) payload[key] = data.get(key);
       payload.username = String(payload.username).trim().toLowerCase();
-      if (["complimentary", "subscription"].includes(payload.access_type)) payload.days = Number(data.get("days"));
+      if (adminRole !== "super_admin" && ["complimentary", "unlimited"].includes(payload.access_type)) {
+        createUserMessage.textContent = "Ky akses lejohet vetëm për super_admin.";
+        return;
+      }
+      if (["subscription", "complimentary"].includes(payload.access_type)) payload.days = Number(data.get("days"));
       if (!window.confirm("Konfirmon krijimin e përdoruesit " + payload.username + "?")) return;
       const version = requestVersion;
       actionInProgress = true;
