@@ -1,937 +1,336 @@
 <!DOCTYPE html>
 <html lang="sq">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Administratori | Ankand Premium</title>
-  <meta name="robots" content="noindex, nofollow">
-  <style>
-    * { box-sizing: border-box; }
-    body { margin: 0; min-height: 100vh; font-family: Arial, sans-serif; background: #101827; color: #f8fafc; display: flex; align-items: center; justify-content: center; padding: 20px; }
-    .panel { width: 100%; max-width: 440px; background: #1e293b; border: 1px solid #334155; border-radius: 18px; padding: 28px; box-shadow: 0 20px 50px #0005; }
-    .panel.wide { max-width: 850px; }
-    h1 { margin: 0 0 8px; font-size: 25px; text-align: center; }
-    h2 { font-size: 20px; margin: 25px 0 12px; }
-    .subtitle { text-align: center; color: #cbd5e1; margin-bottom: 26px; line-height: 1.5; }
-    label { display: block; margin: 16px 0 7px; font-weight: bold; }
-    input { width: 100%; padding: 13px; border-radius: 9px; border: 1px solid #64748b; background: #0f172a; color: white; font-size: 16px; }
-    input:focus { outline: 2px solid #38bdf8; }
-    button { width: 100%; padding: 14px; margin-top: 20px; border: 0; border-radius: 9px; background: #fbbf24; color: #111827; font-weight: bold; font-size: 16px; cursor: pointer; }
-    button:disabled { opacity: 0.6; cursor: wait; }
-    .secondary { background: #334155; color: white; }
-    .message { margin-top: 18px; text-align: center; line-height: 1.5; min-height: 22px; color: #fca5a5; }
-    .success { color: #86efac; }
-    .hidden { display: none !important; }
-    .info { padding: 15px; background: #0f172a; border-radius: 10px; line-height: 1.8; overflow-wrap: anywhere; }
-    .note { color: #cbd5e1; font-size: 14px; line-height: 1.6; margin-top: 20px; }
-    .users-list { display: grid; gap: 12px; margin-top: 15px; }
-    .user-card { background: #0f172a; border: 1px solid #334155; border-radius: 10px; padding: 15px; line-height: 1.7; overflow-wrap: anywhere; }
-    .user-card strong { color: #fbbf24; }
-    .user-meta { color: #cbd5e1; font-size: 14px; }
-    .users-heading { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
-    .users-heading h2 { margin-bottom: 0; }
-    .count { color: #cbd5e1; font-size: 14px; }
-    .account-state { margin-top: 8px; font-size: 14px; font-weight: bold; }
-    .account-state.blocked { color: #fca5a5; }
-    .account-state.allowed { color: #86efac; }
-    .account-action { margin-top: 12px; padding: 11px; font-size: 14px; }
-    .account-action.block-action { background: #fbbf24; color: #111827; }
-    .account-action.unblock-action { background: #86efac; color: #111827; }
-    .account-action.delete-action { background: #dc6464; color: #111827; }
-    .account-actions-row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 10px; margin-top: 12px; }
-    .account-actions-row .account-action { width: 100%; margin-top: 0; min-width: 0; height: 100%; padding: 11px 6px; font-size: 13px; overflow-wrap: anywhere; }
-    .card-message { min-height: 0; margin-top: 8px; text-align: left; font-size: 14px; }
-    .toolbar { display:flex; flex-wrap:wrap; gap:8px; margin:12px 0; }
-    .toolbar button { width:auto; margin:0; padding:10px 12px; font-size:14px; }
-    .inline-form { background:#162236; padding:14px; border-radius:10px; margin-top:12px; }
-    .inline-form label { font-size:14px; }
-    .inline-form button { margin-top:12px; }
-    .muted { color:#cbd5e1; font-size:13px; }
-    .search-input { margin-top:12px; }
-    button:focus-visible { outline: 3px solid #38bdf8; outline-offset: 3px; }
-  </style>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ankand Premium Shqipëri – Kosovë</title>
+<meta name="theme-color" content="#18090b">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Ankand Premium">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="apple-touch-icon" href="/icons/icon-192.png">
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f1f5f9;color:#1e293b;font-family:Segoe UI,Arial,sans-serif}header{background:#0f172a;color:#fff;text-align:center;padding:35px 20px}header h1{margin:0;font-size:clamp(24px,4vw,38px)}header p{color:#cbd5e1}.plans{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px;margin-bottom:18px}.plan{background:white;border:1px solid #cbd5e1;border-radius:11px;padding:18px}.plan strong{display:block;font-size:24px;color:#0f172a;margin:7px 0}.plan p{margin:5px 0;color:#64748b;font-size:13px}main{max-width:1400px;margin:24px auto;padding:0 18px}.layout{display:grid;grid-template-columns:minmax(280px,1fr) minmax(0,2fr);gap:24px;align-items:start}.card,.auction{background:#fff;border:1px solid #e2e8f0;border-radius:11px;padding:20px;margin-bottom:18px;box-shadow:0 4px 10px #0000000a}h2,h3{margin:0 0 14px}label{display:block;font-size:13px;font-weight:650;margin:11px 0 5px}input,select,textarea{width:100%;padding:11px;border:1px solid #cbd5e1;border-radius:7px;font:inherit}textarea{min-height:90px}button{border:0;border-radius:7px;padding:11px 15px;background:#2563eb;color:white;font-weight:700;cursor:pointer}button:disabled{opacity:.5;cursor:not-allowed}.green{background:#059669}.red{background:#b91c1c}.gray{background:#e2e8f0;color:#1e293b}.row{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:15px}.notice{padding:13px;background:#fef9c3;border:1px solid #fde68a;border-radius:8px;margin-bottom:18px;font-size:13px}.muted{color:#64748b;font-size:13px}.hidden{display:none!important}.photos{display:grid;grid-template-columns:repeat(4,1fr);gap:5px}.photos img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:6px}.bidlist{padding:0;list-style:none;max-height:180px;overflow:auto}.bidlist li{display:flex;justify-content:space-between;gap:10px;padding:6px 0;border-bottom:1px solid #e2e8f0}.status{font-size:12px;padding:5px 9px;background:#dcfce7;color:#166534;border-radius:99px;font-weight:700}#alert{display:none;padding:13px 20px;background:#dcfce7;color:#166534;position:sticky;top:0;z-index:10}#alert.error{background:#fee2e2;color:#991b1b}footer{max-width:1000px;margin:auto;padding:25px;text-align:center;color:#64748b;font-size:12px;line-height:1.6}@media(max-width:950px){.layout{grid-template-columns:1fr}}@media(max-width:600px){main{padding:0 10px}.card,.auction{padding:15px}}
+
+/* Galeria e fotografive: nje foto kryesore dhe navigim deri ne kater foto */
+.photo-gallery{margin:12px 0}.photo-stage{position:relative;background:#e2e8f0;border-radius:9px;overflow:hidden}.photo-main{display:block;width:100%;height:260px;object-fit:contain}.photo-arrow{position:absolute;top:50%;transform:translateY(-50%);background:#0f172acc;color:#fff;padding:8px 12px;font-size:22px;line-height:1}.photo-prev{left:8px}.photo-next{right:8px}.photo-count{position:absolute;bottom:8px;right:8px;background:#0f172acc;color:#fff;border-radius:15px;padding:4px 9px;font-size:12px}.photo-thumbs{display:flex;gap:7px;margin-top:8px;flex-wrap:wrap}.photo-thumb{border:2px solid transparent;background:transparent;padding:0;border-radius:6px;overflow:hidden}.photo-thumb[aria-pressed="true"]{border-color:#2563eb}.photo-thumb img{display:block;width:58px;height:50px;object-fit:cover}.photo-arrow:focus-visible,.photo-thumb:focus-visible{outline:3px solid #f59e0b;outline-offset:2px}@media(max-width:600px){.photo-main{height:220px}}
+
+/* Kreu patriotik: flamuj statike dhe sfond kuqezi me detaje te arta */
+header{position:relative;isolation:isolate;overflow:hidden;min-height:194px;padding:43px 170px;background:linear-gradient(115deg,#090909 0%,#210608 30%,#111 51%,#270609 72%,#090909 100%);border-bottom:5px solid #c5a15b;box-shadow:inset 0 -1px 0 #e9ca88,0 6px 22px #0002}
+header::before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(ellipse at 50% 8%,#b91c1c45,transparent 55%),repeating-linear-gradient(135deg,transparent 0 29px,#ffffff06 30px 31px,transparent 32px 60px);opacity:.9}
+header::after{content:"★  SHQIPËRI  •  KOSOVË  ★";display:block;margin:17px auto 0;width:max-content;max-width:100%;font-size:12px;font-weight:800;letter-spacing:3px;color:#e5c782;border-top:1px solid #c5a15b80;padding-top:10px}
+header h1{position:relative;color:#fff;text-shadow:0 2px 10px #000b;font-weight:800;letter-spacing:.3px}
+header p{position:relative;color:#f4d9db;font-weight:500}
+.header-flag{position:absolute;top:50%;transform:translateY(-50%);width:136px;height:96px;z-index:1}
+.header-flag.al{left:21px}.header-flag.xk{right:21px}
+.header-flag img{display:block;width:100%;height:100%;object-fit:fill;border:2px solid #d6b36b;border-radius:3px;box-shadow:0 7px 20px #0009;transform:none!important;animation:none!important}
+@media(max-width:650px){header{padding:30px 85px;min-height:162px}.header-flag{width:73px;height:52px}.header-flag.al{left:7px}.header-flag.xk{right:7px}header h1{font-size:clamp(17px,4.5vw,25px)}header p{font-size:11px}header::after{font-size:9px;letter-spacing:1.4px;margin-top:11px;padding-top:7px}}
+
+/* Instalimi PWA */
+.install-wrap{max-width:1400px;margin:15px auto 0;padding:0 18px}
+.install-box{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:14px 18px;box-shadow:0 3px 12px #0000000a}
+.install-box p{margin:4px 0 0;font-size:13px;color:#64748b}
+#installBtn{background:#a11b25;color:#fff}
+#installHelp{display:none;margin-top:9px;padding:12px 15px;background:#fff7ed;border:1px solid #fed7aa;border-radius:9px;font-size:14px;line-height:1.5}
+
+/* Shperndarja e ankandit dhe pamja e zmadhuar e fotografive */
+.auction:target{outline:3px solid #c5a15b;scroll-margin-top:20px}
+.photo-main{cursor:zoom-in}
+.photo-main:focus-visible{outline:3px solid #f59e0b;outline-offset:-3px}
+.auction-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.auction-actions a{display:inline-flex;align-items:center;text-decoration:none;background:#e2e8f0;color:#1e293b;border-radius:7px;padding:11px 15px;font-weight:700;font-size:14px}
+#photoViewer{border:0;padding:0;background:transparent;max-width:95vw;max-height:95vh;width:95vw;height:95vh;color:#fff}
+#photoViewer::backdrop{background:#000e}
+.photo-viewer-inner{height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px}
+#photoViewerImage{max-width:100%;max-height:calc(95vh - 100px);object-fit:contain}
+.photo-viewer-toolbar{display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap}
+.photo-viewer-toolbar button{background:#fff;color:#111827}
+#photoViewerClose{background:#b91c1c;color:#fff}
+/* Kërkim kompakt sipas kategorisë */
+.category-tools{margin:12px 0}
+.category-tools-heading{font-size:14px;margin-bottom:7px}
+.category-controls{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+.category-controls select{width:min(100%,250px);padding:8px 10px;font-size:13px}
+.category-controls button{font-size:12px;padding:9px 11px}
+</style>
 </head>
 <body>
-  <main id="mainPanel" class="panel">
-    <section id="loginView">
-      <h1>Paneli i Administratorit</h1>
-      <p class="subtitle">Ankand Premium Shqipëri – Kosovë</p>
-      <form id="loginForm">
-        <label for="username">Emri i përdoruesit</label>
-        <input id="username" name="username" type="text" value="admin_admin" autocomplete="username" minlength="3" maxlength="30" required>
-        <label for="password">Fjalëkalimi</label>
-        <input id="password" name="password" type="password" autocomplete="current-password" minlength="12" maxlength="72" required>
-        <button id="loginButton" type="submit">Hyr si administrator</button>
-      </form>
-      <p id="loginMessage" class="message" role="status"></p>
-    </section>
+<header>
+  <div class="header-flag al"><img src="https://flagcdn.com/w320/al.png" alt="Flamuri i Shqipërisë" width="128" height="90"></div>
+  <h1>Ankand Premium Shqipëri – Kosovë</h1>
+  <p>Sistemi i ankandeve me çmim rezervë të fshehur 🔒</p>
+  <div class="header-flag xk"><img src="https://flagcdn.com/w320/xk.png" alt="Flamuri i Kosovës" width="128" height="90"></div>
+</header>
+<div id="alert" role="status"></div>
+<section class="install-wrap" aria-label="Instalo aplikacionin">
+  <div class="install-box">
+    <div><strong>📱 Ankand Premium në telefonin tënd</strong><p>Instalo platformën në ekranin kryesor të telefonit.</p></div>
+    <button id="installBtn" type="button">⬇ Instalo aplikacionin</button>
+  </div>
+  <div id="installHelp" role="status" aria-live="polite"></div>
+</section>
+<main>
 
-    <section id="dashboardView" class="hidden">
-      <h1>Paneli i Administratorit</h1>
-      <p class="subtitle">Mirë se erdhe në administrim</p>
-      <div class="info">
-        <div><strong>Përdoruesi:</strong> <span id="adminName"></span></div>
-        <div><strong>Roli:</strong> <span id="adminRole"></span></div>
-        <div><strong>Sesioni skadon:</strong> <span id="sessionExpiry"></span></div>
-      </div>
-      <p class="note">Shiko përdoruesit e regjistruar. Vetëm super_admin mund të bllokojë ose zhbllokojë llogari. Admin dhe super_admin mund të zgjasin abonimet me 12 muaj. Veprimet kërkojnë konfirmim.</p>
-      <button id="createAdminButton" type="button" class="hidden">+ Shto administrator</button>
-      <section id="createAdminView" class="hidden inline-form" aria-label="Shto administrator">
-        <h2>Shto administrator</h2>
-        <p class="muted">Administratori i ri do të ketë rolin admin, jo super_admin.</p>
-        <form id="createAdminForm" autocomplete="off">
-          <label for="adminNewUsername">Emri i administratorit (3–30 karaktere)</label>
-          <input id="adminNewUsername" name="username" type="text" pattern="[a-zA-Z0-9_]{3,30}" minlength="3" maxlength="30" autocapitalize="none" autocomplete="off" required>
-          <label for="adminNewPassword">Fjalëkalimi (12–72 karaktere)</label>
-          <input id="adminNewPassword" name="password" type="password" minlength="12" maxlength="72" autocomplete="new-password" required>
-          <label for="adminNewPasswordConfirm">Përsërit fjalëkalimin</label>
-          <input id="adminNewPasswordConfirm" name="password_confirm" type="password" minlength="12" maxlength="72" autocomplete="new-password" required>
-          <button id="createAdminSubmit" type="submit">Krijo administratorin</button>
-          <p id="createAdminMessage" class="message" role="status"></p>
-        </form>
-      </section>
-      <button id="createUserButton" type="button">+ Shto përdorues</button>
-      <section id="createUserView" class="hidden inline-form" aria-label="Shto përdorues">
-        <h2>Shto përdorues</h2>
-        <form id="createUserForm" autocomplete="off">
-          <label for="newFirst">Emri</label><input id="newFirst" name="first_name" required minlength="2" maxlength="60">
-          <label for="newLast">Mbiemri</label><input id="newLast" name="last_name" required minlength="2" maxlength="60">
-          <label for="newCity">Qyteti</label><input id="newCity" name="city" required minlength="2" maxlength="80">
-          <label for="newPhone">Telefoni</label><input id="newPhone" name="phone" type="tel" required minlength="7" maxlength="24">
-          <label for="newUsername">Username (3–30 karaktere: a-z, 0-9, _)</label><input id="newUsername" name="username" required minlength="3" maxlength="30" pattern="[a-z0-9_]{3,30}" autocapitalize="none" autocomplete="off">
-          <label for="newPassword">Fjalëkalimi (12–72 karaktere)</label><input id="newPassword" name="password" type="password" required minlength="12" maxlength="72" autocomplete="new-password">
-          <label for="newAccess">Lloji i aksesit</label>
-          <select id="newAccess" name="access_type" style="width:100%;padding:13px;border-radius:9px;background:#0f172a;color:white;border:1px solid #64748b;font-size:16px">
-            <option value="none">Pa abonim aktiv</option><option value="subscription">Abonim me afat</option><option value="complimentary" data-super-only>Akses falas me afat</option><option value="unlimited" data-super-only>Akses pa afat</option>
-          </select>
-          <div id="newDaysGroup" class="hidden"><label for="newDays">Kohëzgjatja në ditë</label><input id="newDays" name="days" type="number" min="1" max="3650" step="1"></div>
-          <button id="createUserSubmit" type="submit">Krijo përdoruesin</button>
-          <p id="createUserMessage" class="message" role="status"></p>
-        </form>
-      </section>
-      <button id="usersButton" type="button">Përdoruesit</button>
-      <section id="usersView" class="hidden" aria-label="Lista e përdoruesve">
-        <div class="users-heading"><h2>Përdoruesit e abonuar</h2><span id="usersCount" class="count"></span></div>
-        <input id="userSearch" class="search-input" type="search" placeholder="Kërko sipas emrit, telefonit, qytetit ose ID-së" aria-label="Kërko përdorues">
-        <p id="usersMessage" class="message" role="status"></p>
-        <div id="usersList" class="users-list"></div>
-        <div class="users-heading"><h2>Përdoruesit e paabonuar</h2><span id="unsubscribedCount" class="count"></span></div>
-        <div id="unsubscribedUsersList" class="users-list"></div>
-        <div class="users-heading"><h2>Përdoruesit e pakonfirmuar</h2><span id="pendingCount" class="count"></span></div>
-        <div id="pendingUsersList" class="users-list"></div>
-        <p id="usersTotal" class="note"></p>
-      </section>
-      <div class="toolbar">
-        <button id="adminsButton" class="secondary" type="button">Administratorët</button>
-        <button id="auditButton" class="secondary hidden" type="button">Historiku</button>
-      </div>
-      <section id="extraView" class="hidden" aria-label="Menaxhimi i administratorëve dhe historiku">
-        <h2 id="extraTitle"></h2>
-        <p id="extraMessage" class="message" role="status"></p>
-        <div id="extraList" class="users-list"></div>
-      </section>
-      <button id="logoutButton" class="secondary" type="button">Dil nga administrimi</button>
-      <p id="dashboardMessage" class="message" role="status"></p>
-    </section>
-  </main>
+<div class="layout"><aside>
+<section class="card" id="accountPanel"><div class="row"><h2>🔑 Llogaria</h2><span class="status" id="accountStatus">Vizitor</span></div>
+<div id="guest">
+<div id="loginForm"><h3>Hyr</h3><label>Email</label><input id="loginEmail" type="email" autocomplete="email" placeholder="emri@shembull.com"><label>Fjalëkalimi</label><input id="loginPassword" type="password" autocomplete="current-password"><div class="row" style="margin-top:14px"><button id="loginBtn">Hyr</button><button id="showRegister" class="gray">Regjistrohu</button></div></div>
+<div id="registerForm" class="hidden"><h3>📝 Regjistrohu</h3><label>Emri</label><input id="regFirst" maxlength="60" autocomplete="given-name"><label>Mbiemri (privat)</label><input id="regLast" maxlength="60" autocomplete="family-name"><label>Qyteti</label><input id="regCity" maxlength="80" autocomplete="address-level2"><label>Numri i telefonit (+355 / +383)</label><input id="regPhone" type="tel" autocomplete="tel" placeholder="+355..."><label>Email</label><input id="regEmail" type="email" autocomplete="email" placeholder="emri@shembull.com"><label>Fjalëkalimi (minimumi 8 karaktere)</label><input id="regPassword" type="password" autocomplete="new-password" minlength="8"><label>Përsërit fjalëkalimin</label><input id="regConfirm" type="password" autocomplete="new-password"><p class="muted">Konfirmoni emailin përpara hyrjes. Telefoni ruhet në profilin privat në Supabase, mund të shihet nga administratori për administrimin e llogarisë dhe nuk verifikohet me SMS. Mos vendosni numrin e dikujt tjetër.</p><div class="row"><button id="registerBtn" class="green">Krijo llogarinë</button><button id="showLogin" class="gray">Kthehu te hyrja</button></div></div>
+<div style="margin-top:18px;border-top:1px solid #e2e8f0;padding-top:16px;text-align:center">
+<p class="muted">Ose hyr / regjistrohu me Google</p>
+<button id="googleBtn" type="button" style="width:100%;background:#fff;color:#1e293b;border:1px solid #cbd5e1;display:flex;align-items:center;justify-content:center;gap:10px"><svg width="19" height="19" viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.27 5.48-4.81 7.18l7.73 6C44.37 38.03 46.98 31.89 46.98 24.55z"/><path fill="#FBBC05" d="M10.53 28.59A14.41 14.41 0 0 1 9.75 24c0-1.59.27-3.13.76-4.59l-7.98-6.2A23.89 23.89 0 0 0 0 24c0 3.87.93 7.52 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.91-5.8l-7.73-6c-2.15 1.45-4.92 2.3-8.18 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>Vazhdo me Google</button>
+</div>
+</div>
+<div id="member" class="hidden"><p id="memberLabel"></p><p class="notice" id="accessStatus"></p><p class="muted">Mbiemri dhe numri i plotë i telefonit nuk shfaqen publikisht gjatë ankandit. Administratori i projektit mund të ketë qasje te të dhënat e profilit në Supabase.</p><button id="logoutBtn" class="red">Dil</button></div>
+<div id="googleProfileForm" class="hidden" style="margin-top:16px;border-top:1px solid #e2e8f0;padding-top:14px"><h3>Plotëso profilin</h3><p class="muted">Për të publikuar ankande ose për të ofertuar, plotëso të dhënat e profilit. Mbiemri dhe telefoni nuk shfaqen publikisht.</p><label>Emri</label><input id="googleFirst" maxlength="60" autocomplete="given-name"><label>Mbiemri (privat)</label><input id="googleLast" maxlength="60" autocomplete="family-name"><label>Qyteti</label><input id="googleCity" maxlength="80" autocomplete="address-level2"><label>Numri i telefonit (+355 / +383)</label><input id="googlePhone" type="tel" autocomplete="tel" placeholder="+355..."><button id="saveGoogleProfile" class="green" type="button" style="margin-top:12px">Ruaj profilin</button></div>
+</section>
+<section id="createPanel" class="card hidden"><h2>➕ Publiko ankand</h2><p class="muted">Një ankand aktiv për shitës, 7 ditë, pa ndryshime pas publikimit. Fshirja e hershme kufizohet nga rregullat e serverit.</p><label>Titulli</label><input id="title" maxlength="100"><label>Kategoria</label><select id="category"><option>Automjete</option><option>Makineri bujqësore</option><option>Elektronikë</option><option>Prona</option><option>Mobilje</option><option>Sport</option><option>Veshje</option><option>Libra</option><option>Art</option><option>Tjetër</option></select><label>Përshkrimi</label><textarea id="description" maxlength="3000"></textarea><label>Çmimi fillestar</label><input value="0 € (automatik)" disabled><label>🔒 Rezerva private (€)</label><input id="reserve" type="number" min="0" step="0.01" value="0"><label>Fotografi (maksimumi 4, nga 5 MB)</label><input id="images" type="file" accept="image/jpeg,image/png,image/webp" multiple><p class="muted">Ndalohen artikujt e paligjshëm ose të rrezikshëm.</p><button id="publishBtn" class="green">Publiko për 7 ditë</button></section>
+</aside><div>
+<section class="card"><div class="row"><h2>🛒 Ankandet publike (nga 0 €)</h2><button id="refreshBtn" class="gray">Rifresko</button></div><div class="category-tools"><div class="category-tools-heading"><strong>🔎 Kërko kategoritë</strong></div><div class="category-controls"><select id="categoryFilter" aria-label="Kërko kategoritë"><option value="">Të gjitha kategoritë</option><option value="Automjete">Automjete</option><option value="Makineri bujqësore">Makineri bujqësore</option><option value="Elektronikë">Elektronikë</option><option value="Prona">Prona</option><option value="Mobilje">Mobilje</option><option value="Sport">Sport</option><option value="Veshje">Veshje</option><option value="Libra">Libra</option><option value="Art">Art</option><option value="Tjetër">Tjetër</option></select><button id="categoryClear" type="button" class="gray">Pastro kërkimin</button></div></div><p id="categoryEmpty" class="muted hidden">Nuk ka ankande në këtë kategori.</p><div id="auctions" class="grid"><p>Po ngarkohen ankandet…</p></div><p class="muted" id="connection">Duke u lidhur…</p></section>
+<section id="notificationsPanel" class="card hidden"><h2>🔔 Njoftimet private</h2><p class="muted">Pas përfundimit, informacionet përkatëse të kontaktit u shfaqen vetëm palëve të autorizuara.</p><div id="notifications"></div></section>
+</div></div>
+</main>
+<dialog id="photoViewer" aria-label="Shiko fotografinë e zmadhuar"><div class="photo-viewer-inner"><img id="photoViewerImage" alt="Fotografia e ankandit"><div class="photo-viewer-toolbar"><button id="photoViewerPrev" type="button" aria-label="Foto e mëparshme">❮</button><span id="photoViewerCount"></span><button id="photoViewerNext" type="button" aria-label="Foto tjetër">❯</button><button id="photoViewerClose" type="button">✕ Mbyll</button></div></div></dialog>
 
-  <script>
-    "use strict";
+<footer><strong>Njoftim për përgjegjësinë</strong><p>Ankand Premium Shqipëri – Kosovë shërben si platformë ndërmjetësuese për lidhjen e shitësve me ofertuesit. Marrëveshja përfundimtare, pagesa, dorëzimi dhe gjendja e produktit janë përgjegjësi e palëve të përfshira. Platforma nuk garanton realizimin e shitblerjes pas përfundimit të ankandit.</p><p>Ofertat janë jo detyruese. Platforma është falas deri më 10/05/2027; në këtë version nuk pranohen ose përpunohen pagesa apo SMS. Ky njoftim nuk përjashton detyrimet ligjore.</p></footer>
+<script>
+'use strict';
+const SUPABASE_URL='https://bhwidixijfuhylbanjuk.supabase.co';
+const SUPABASE_KEY='sb_publishable_aTg_EeN9qT5C54_dRViJHQ_YJM9BW4B';
+// Autentikimi bëhet drejtpërdrejt përmes Supabase Auth me konfirmim emaili.
+let db=null,user=null,access=null,profile=null;
+const $=id=>document.getElementById(id);
+const escapeHtml=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const money=n=>Number(n||0).toFixed(2)+' €';
+const when=s=>s?new Date(s).toLocaleString('sq-AL'):'—';
+// Data e mbarimit është përfshirëse sipas orës së Shqipërisë/Kosovës.
+// Aksesi falas perfshin te gjithe daten 11 maj 2027, sipas ores lokale.
+const freeForAll=()=>Date.now()<Date.parse('2027-05-12T00:00:00+02:00');
+const eligible=()=>freeForAll()||access?.status==='trial'||access?.status==='active';
+function notice(text,bad=false){const el=$('alert');el.textContent=text;el.className=bad?'error':'';el.style.display='block';clearTimeout(notice.t);notice.t=setTimeout(()=>el.style.display='none',9000)}
+function normalizePhone(s){const p=String(s||'').replace(/[\s().-]/g,'');if(!/^\+(355|383)\d{7,10}$/.test(p))throw Error('Shkruani numrin me +355 ose +383.');return p}
+function setBusy(id,busy){$(id).disabled=busy}
+async function loadLibrary(){if(window.supabase?.createClient)return;for(const src of ['https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js','https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.min.js']){try{await new Promise((ok,fail)=>{const s=document.createElement('script');let done=false;const timer=setTimeout(()=>{if(!done){done=true;s.remove();fail(Error('CDN timeout'))}},9000);s.onload=()=>{if(!done){done=true;clearTimeout(timer);ok()}};s.onerror=()=>{if(!done){done=true;clearTimeout(timer);fail(Error('CDN unavailable'))}};s.src=src;document.head.appendChild(s)});if(window.supabase?.createClient)return}catch(e){console.warn(e)}}throw Error('Nuk u ngarkua biblioteka Supabase.')}
+async function rpc(fn,args={}){if(!db)throw Error('Supabase nuk është gati.');const result=await Promise.race([db.rpc(fn,args),new Promise((_,rej)=>setTimeout(()=>rej(Error('Supabase nuk u përgjigj brenda 15 sekondave.')),15000))]);if(result.error)throw Error(fn+': '+result.error.message);return result.data}
+async function savePendingProfile(){
+  if(!user||profile)return;
+  const m=user.user_metadata||{};
+  if(!m.first_name||!m.last_name||!m.city||!m.phone)return;
+  await rpc('ap_save_profile',{p_first:m.first_name,p_last:m.last_name,p_city:m.city,p_phone:m.phone});
+  profile=await rpc('ap_my_profile');
+}
+$('showRegister').onclick=()=>{$('loginForm').classList.add('hidden');$('registerForm').classList.remove('hidden')};
+$('showLogin').onclick=()=>{$('registerForm').classList.add('hidden');$('loginForm').classList.remove('hidden')};
+$('registerBtn').onclick=async()=>{
+  setBusy('registerBtn',true);
+  try{
+    if(!db)throw Error('Supabase nuk është gati.');
+    const first_name=$('regFirst').value.trim(),last_name=$('regLast').value.trim(),city=$('regCity').value.trim();
+    const phone=normalizePhone($('regPhone').value),email=$('regEmail').value.trim().toLowerCase(),password=$('regPassword').value;
+    if(!first_name||!last_name||!city)throw Error('Plotësoni emrin, mbiemrin dhe qytetin.');
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))throw Error('Shkruani një email të vlefshëm.');
+    if(password.length<8)throw Error('Fjalëkalimi duhet të ketë të paktën 8 karaktere.');
+    if(password!==$('regConfirm').value)throw Error('Fjalëkalimet nuk përputhen.');
+    const {data,error}=await db.auth.signUp({email,password,options:{emailRedirectTo:location.origin+location.pathname,data:{first_name,last_name,city,phone}}});
+    if(error)throw error;
+    if(data.session){await refreshAccount();notice('Regjistrimi u krye. Kontrolloni konfigurimin Confirm email në Supabase.');}
+    else{ $('registerForm').classList.add('hidden');$('loginForm').classList.remove('hidden');notice('Nëse adresa është e pranueshme, do të merrni një email konfirmimi. Hapni lidhjen dhe pastaj hyni.'); }
+  }catch(e){notice(e.message,true)}finally{setBusy('registerBtn',false)}
+};
+$('loginBtn').onclick=async()=>{
+  setBusy('loginBtn',true);
+  try{
+    if(!db)throw Error('Supabase nuk është gati.');
+    const email=$('loginEmail').value.trim().toLowerCase(),password=$('loginPassword').value;
+    const {error}=await db.auth.signInWithPassword({email,password});
+    if(error)throw error;
+    await refreshAccount();notice('Hyrja u krye.');
+  }catch(e){notice(e.message,true)}finally{setBusy('loginBtn',false)}
+};
+$('googleBtn').onclick=async()=>{
+  try{
+    if(!db)throw Error('Supabase nuk është gati.');
+    setBusy('googleBtn',true);
+    const {error}=await db.auth.signInWithOAuth({provider:'google',options:{redirectTo:location.origin+location.pathname}});
+    if(error)throw error;
+  }catch(e){notice('Hyrja me Google: '+e.message,true);setBusy('googleBtn',false)}
+};
+$('saveGoogleProfile').onclick=async()=>{
+  setBusy('saveGoogleProfile',true);
+  try{
+    if(!user)throw Error('Duhet të hyni në llogari.');
+    const first=$('googleFirst').value.trim(),last=$('googleLast').value.trim(),city=$('googleCity').value.trim();
+    const phone=normalizePhone($('googlePhone').value);
+    if(!first||!last||!city)throw Error('Plotësoni emrin, mbiemrin dhe qytetin.');
+    await rpc('ap_save_profile',{p_first:first,p_last:last,p_city:city,p_phone:phone});
+    await refreshAccount();notice('Profili u ruajt. Tani mund të përdorni platformën.');
+  }catch(e){notice(e.message,true)}finally{setBusy('saveGoogleProfile',false)}
+};
+$('logoutBtn').onclick=async()=>{try{const {error}=await db.auth.signOut();if(error)throw error;await refreshAccount();notice('Dolët nga llogaria.')}catch(e){notice(e.message,true)}};
+async function refreshAccount(){if(!db)return;const {data,error}=await db.auth.getSession();if(error)throw error;user=data.session?.user||null;access=null;profile=null;$('guest').classList.toggle('hidden',!!user);$('googleProfileForm').classList.add('hidden');$('member').classList.toggle('hidden',!user);$('createPanel').classList.toggle('hidden',!user);$('notificationsPanel').classList.toggle('hidden',!user);$('accountStatus').textContent=user?'I identifikuar':'Vizitor';$('publishBtn').disabled=true;if(user){$('memberLabel').textContent='Llogaria juaj';try{profile=await rpc('ap_my_profile');await savePendingProfile();$('googleProfileForm').classList.toggle('hidden',!!profile);
+if(!profile){const name=String(user.user_metadata?.full_name||user.user_metadata?.name||'').trim().split(/\s+/);$('googleFirst').value=$('googleFirst').value||name[0]||'';$('googleLast').value=$('googleLast').value||name.slice(1).join(' ');}
+access=await rpc('ap_access_state');$('accessStatus').textContent=freeForAll()?'Akses falas aktiv — Aktiv deri më: 11/05/2027. Publikimi dhe ofertimi janë falas, sipas rregullave të platformës.':access?.status==='trial'?'Provë falas deri më '+when(access.trial_ends_at):access?.status==='active'?(access.unlimited_access?'Qasje aktive pa afat':'Qasje aktive deri më '+when(access.complimentary_until)):'Në pritje të pagesës për zgjatjen e abonimit.';$('publishBtn').disabled=!profile||!eligible();await loadNotifications()}catch(e){notice(e.message,true)}}await loadAuctions()}
+function imageUrl(path){return db.storage.from('ap-auction-photos').getPublicUrl(path).data.publicUrl}
+$('publishBtn').onclick=async()=>{setBusy('publishBtn',true);const uploaded=[];try{if(!user||!profile||!eligible())throw Error('Duhet profil dhe qasje aktive.');const title=$('title').value.trim(),reserve=Number($('reserve').value),files=[...$('images').files];if(!title)throw Error('Shkruani titullin.');if(!Number.isFinite(reserve)||reserve<0)throw Error('Rezerva është e pavlefshme.');if(files.length>4)throw Error('Maksimumi 4 fotografi.');for(const file of files){if(!['image/jpeg','image/png','image/webp'].includes(file.type)||file.size>5*1024*1024)throw Error('Foto e pavlefshme ose mbi 5 MB.');const ext=file.type==='image/jpeg'?'jpg':file.type==='image/png'?'png':'webp',path=user.id+'/'+crypto.randomUUID()+'.'+ext;const {error}=await db.storage.from('ap-auction-photos').upload(path,file,{contentType:file.type,upsert:false});if(error)throw error;uploaded.push(path)}await rpc('ap_create_auction',{p_title:title,p_description:$('description').value,p_category:$('category').value,p_reserve:reserve,p_images:uploaded});$('title').value='';$('description').value='';$('images').value='';notice('Ankandi virtual u publikua.');await loadAuctions()}catch(e){if(uploaded.length){const {error}=await db.storage.from('ap-auction-photos').remove(uploaded);if(error)console.warn('Pastrimi i fotove:',error)}notice(e.message,true)}finally{$('publishBtn').disabled=!eligible()}};
+function galleryHtml(paths){
+  const photos=(Array.isArray(paths)?paths:[]).slice(0,4);
+  if(!photos.length)return '<div class="muted">Nuk ka fotografi.</div>';
+  const urls=photos.map(p=>escapeHtml(imageUrl(p)));
+  const controls=urls.length>1;
+  return '<div class="photo-gallery" data-gallery data-index="0">'+
+    '<div class="photo-stage"><img class="photo-main" loading="lazy" alt="Foto 1 nga '+urls.length+'" src="'+urls[0]+'">'+
+    (controls?'<button type="button" class="photo-arrow photo-prev" data-gallery-move="-1" aria-label="Foto e mëparshme">&#8249;</button><button type="button" class="photo-arrow photo-next" data-gallery-move="1" aria-label="Foto tjetër">&#8250;</button><span class="photo-count">1 / '+urls.length+'</span>':'')+
+    '</div>'+
+    (controls?'<div class="photo-thumbs">'+urls.map((url,i)=>'<button type="button" class="photo-thumb" data-gallery-select="'+i+'" aria-label="Shfaq foton '+(i+1)+'" aria-pressed="'+(i===0)+'"><img loading="lazy" alt="" src="'+url+'"></button>').join('')+'</div>':'')+
+    '</div>';
+}
+function showGalleryPhoto(gallery,index){
+  const thumbs=[...gallery.querySelectorAll('[data-gallery-select]')];
+  if(!thumbs.length)return;
+  const i=(index+thumbs.length)%thumbs.length;
+  const main=gallery.querySelector('.photo-main');
+  main.src=thumbs[i].querySelector('img').src;
+  main.alt='Foto '+(i+1)+' nga '+thumbs.length;
+  gallery.dataset.index=String(i);
+  gallery.querySelector('.photo-count').textContent=(i+1)+' / '+thumbs.length;
+  thumbs.forEach((b,n)=>b.setAttribute('aria-pressed',String(n===i)));
+}
+$('auctions').addEventListener('click',event=>{
+  const btn=event.target.closest('[data-gallery-move],[data-gallery-select]');
+  if(!btn){const photo=event.target.closest('.photo-main');if(photo){openPhotoViewer(photo.closest('[data-gallery]'));}return;}
+  const gallery=btn.closest('[data-gallery]');
+  if(!gallery)return;
+  if(btn.hasAttribute('data-gallery-select'))showGalleryPhoto(gallery,Number(btn.dataset.gallerySelect));
+  else showGalleryPhoto(gallery,Number(gallery.dataset.index||0)+Number(btn.dataset.galleryMove));
+});
 
-    const API = "https://bhwidixijfuhylbanjuk.supabase.co/functions/v1/admin-auth";
-    const MANAGE_API = "https://bhwidixijfuhylbanjuk.supabase.co/functions/v1/admin-manage";
-    const USERS_API = "https://bhwidixijfuhylbanjuk.supabase.co/functions/v1/admin-users";
+// Lidhje e veçante per secilin ankand; funksionon edhe kur vizitori nuk eshte regjistruar.
+function auctionLink(id){const url=new URL(location.origin+location.pathname);url.searchParams.set('auction',id);return url.href}
+async function shareAuction(id){
+  const url=auctionLink(id);
+  const card=document.getElementById('ankand-'+id);
+  const title=card?.querySelector('h3')?.textContent||'Ankand Premium Shqipëri – Kosovë';
+  try{
+    if(navigator.share){await navigator.share({title,text:'Shiko këtë ankand: '+title,url});return;}
+  }catch(e){if(e.name==='AbortError')return;console.warn(e)}
+  try{await navigator.clipboard.writeText(url);notice('Lidhja e produktit u kopjua! Dërgoje në WhatsApp, Messenger ose kudo.');}
+  catch(e){window.prompt('Kopjo këtë lidhje dhe dërgoje:',url)}
+}
+let viewerGallery=null;
+function openPhotoViewer(gallery){
+  if(!gallery)return;
+  const dlg=$('photoViewer');
+  if(typeof dlg.showModal!=='function'){notice('Shfletuesi nuk mbështet zmadhimin e fotografisë.',true);return}
+  viewerGallery=gallery;
+  updatePhotoViewer();
+  if(!dlg.open)dlg.showModal();
+}
+function updatePhotoViewer(){
+  if(!viewerGallery)return;
+  const img=viewerGallery.querySelector('.photo-main');
+  $('photoViewerImage').src=img.src;
+  $('photoViewerImage').alt=img.alt;
+  const thumbs=viewerGallery.querySelectorAll('[data-gallery-select]');
+  $('photoViewerCount').textContent=thumbs.length?(Number(viewerGallery.dataset.index||0)+1)+' / '+thumbs.length:'1 / 1';
+  $('photoViewerPrev').disabled=thumbs.length<2;
+  $('photoViewerNext').disabled=thumbs.length<2;
+}
+function moveViewer(direction){
+  if(!viewerGallery)return;
+  const thumbs=viewerGallery.querySelectorAll('[data-gallery-select]');
+  if(thumbs.length>1){showGalleryPhoto(viewerGallery,Number(viewerGallery.dataset.index||0)+direction);updatePhotoViewer()}
+}
+$('photoViewerPrev').onclick=()=>moveViewer(-1);
+$('photoViewerNext').onclick=()=>moveViewer(1);
+$('photoViewerClose').onclick=()=>$('photoViewer').close();
+$('photoViewer').addEventListener('click',e=>{if(e.target===$('photoViewer'))$('photoViewer').close()});
+function focusLinkedAuction(){
+  const id=new URLSearchParams(location.search).get('auction');
+  if(!id)return;
+  const card=document.getElementById('ankand-'+id);
+  if(card){if(card.classList.contains('hidden')){$('categoryClear').click();}card.scrollIntoView({behavior:'smooth',block:'start'});card.style.outline='3px solid #c5a15b';}
+  else if(!$('auctions').querySelector('.auction'))return;
+  else notice('Ky ankand nuk gjendet më në listë ose ka përfunduar.',true);
+}
 
-    const mainPanel = document.getElementById("mainPanel");
-    const loginView = document.getElementById("loginView");
-    const dashboardView = document.getElementById("dashboardView");
-    const loginForm = document.getElementById("loginForm");
-    const loginButton = document.getElementById("loginButton");
-    const loginMessage = document.getElementById("loginMessage");
-    const dashboardMessage = document.getElementById("dashboardMessage");
-    const logoutButton = document.getElementById("logoutButton");
-    const usersButton = document.getElementById("usersButton");
-    const usersView = document.getElementById("usersView");
-    const usersList = document.getElementById("usersList");
-    const usersMessage = document.getElementById("usersMessage");
-    const usersCount = document.getElementById("usersCount");
-    const unsubscribedCount = document.getElementById("unsubscribedCount");
-    const unsubscribedUsersList = document.getElementById("unsubscribedUsersList");
-
-    // Tokeni mbahet vetëm në memorien e faqes, jo në localStorage.
-    let sessionToken = null;
-    let adminRole = null;
-    let currentUsers = [];
-    let pendingUsers = [];
-    const pendingUsersList = document.getElementById("pendingUsersList");
-    const pendingCount = document.getElementById("pendingCount");
-    const usersTotal = document.getElementById("usersTotal");
-    let actionInProgress = false;
-    let requestVersion = 0;
-    const userSearch = document.getElementById("userSearch");
-    const adminsButton = document.getElementById("adminsButton");
-    const auditButton = document.getElementById("auditButton");
-    const extraView = document.getElementById("extraView");
-    const extraTitle = document.getElementById("extraTitle");
-    const extraMessage = document.getElementById("extraMessage");
-    const extraList = document.getElementById("extraList");
-
-    async function apiRequest(body) {
-      const response = await fetch(API, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
-        cache: "no-store"
-      });
-      let result;
-      try { result = await response.json(); }
-      catch { throw new Error("Përgjigje e pavlefshme nga serveri."); }
-      if (!response.ok) {
-        if (response.status === 401) throw new Error("Të dhënat e hyrjes nuk janë të sakta.");
-        if (response.status === 429) throw new Error("Shumë tentativa. Provo më vonë.");
-        throw new Error("Shërbimi nuk është i disponueshëm.");
-      }
-      return result;
-    }
-
-    function clearUsers() {
-      usersView.classList.add("hidden");
-      usersList.replaceChildren();
-      unsubscribedUsersList.replaceChildren();
-      unsubscribedCount.textContent = "";
-      currentUsers = [];
-      pendingUsers = [];
-      pendingUsersList.replaceChildren();
-      pendingCount.textContent = "";
-      usersTotal.textContent = "";
-      userSearch.value = "";
-      usersMessage.textContent = "";
-      usersMessage.classList.remove("success");
-      usersCount.textContent = "";
-      usersButton.disabled = false;
-      usersButton.textContent = "Përdoruesit";
-      mainPanel.classList.remove("wide");
-    }
-
-    function showLogin() {
-      requestVersion++;
-      sessionToken = null;
-      adminRole = null;
-      actionInProgress = false;
-      extraView.classList.add("hidden");
-      createAdminView.classList.add("hidden");
-      createAdminForm.reset();
-      createUserView.classList.add("hidden");
-      createUserForm.reset();
-      extraList.replaceChildren();
-      clearUsers();
-      dashboardView.classList.add("hidden");
-      loginView.classList.remove("hidden");
-      document.getElementById("password").value = "";
-    }
-
-    function showDashboard(admin, expiresAt) {
-      adminRole = admin.role;
-      createAdminButton.classList.toggle("hidden", admin.role !== "super_admin");
-      adminsButton.classList.toggle("hidden", admin.role !== "super_admin");
-      document.querySelectorAll("#newAccess option[data-super-only]").forEach(option => {
-        option.hidden = admin.role !== "super_admin";
-        option.disabled = admin.role !== "super_admin";
-      });
-      if (admin.role !== "super_admin" && ["complimentary", "unlimited"].includes(newAccess.value)) newAccess.value = "none";
-      auditButton.classList.remove("hidden");
-      document.getElementById("adminName").textContent = admin.username;
-      document.getElementById("adminRole").textContent = admin.role;
-      document.getElementById("sessionExpiry").textContent = new Date(expiresAt).toLocaleString("sq-AL");
-      dashboardMessage.textContent = "";
-      loginView.classList.add("hidden");
-      dashboardView.classList.remove("hidden");
-    }
-
-    function addField(card, label, value) {
-      const line = document.createElement("div");
-      line.className = "user-meta";
-      const name = document.createElement("strong");
-      name.textContent = label + ": ";
-      const content = document.createElement("span");
-      content.textContent = value == null || value === "" ? "—" : String(value);
-      line.append(name, content);
-      card.appendChild(line);
-    }
-
-    function formatExpiry(value) {
-      if (!value) return "—";
-      const d = new Date(value);
-      return Number.isNaN(d.getTime()) ? "—" : d.toLocaleDateString("sq-AL", { day: "2-digit", month: "2-digit", year: "numeric" });
-    }
-
-    function accessExpiry(access) {
-      if (!access || access.payment_suspended || access.unlimited_access) return null;
-      const now = Date.now();
-      if (Date.parse(access.complimentary_until || "") > now) return access.complimentary_until;
-      if (Date.parse(access.subscription_ends_at || "") > now) return access.subscription_ends_at;
-      return null;
-    }
-
-    function accessStatus(access) {
-      if (!access) return "Pa të dhëna aksesi";
-      if (access.payment_suspended) return "I pezulluar";
-      if (access.unlimited_access) return "Akses i pakufizuar";
-      const now = Date.now();
-      const complimentary = Date.parse(access.complimentary_until || "");
-      const subscription = Date.parse(access.subscription_ends_at || "");
-      if (complimentary > now) return "Akses falas aktiv";
-      if (subscription > now) return "Abonim aktiv";
-      return "Pa akses aktiv";
-    }
-
-    // Klasifikimi bazohet te aksesi aktiv, jo te ekzistenca e nje rreshti ne ap_access.
-    function hasActiveAccess(access) {
-      if (!access || access.payment_suspended) return false;
-      if (access.unlimited_access === true) return true;
-      const now = Date.now();
-      return Date.parse(access.subscription_ends_at || "") > now ||
-        Date.parse(access.complimentary_until || "") > now;
-    }
-
-    function renderUsers(users, pending) {
-      currentUsers = users;
-      pendingUsers = pending;
-      paintUsers();
-    }
-
-    function paintUsers() {
-      const term = userSearch.value.trim().toLocaleLowerCase("sq");
-      const matches = user =>
-        [user.first_name, user.last_name, user.city, user.phone, user.user_id]
-          .some(value => String(value ?? "").toLocaleLowerCase("sq").includes(term));
-      const subscribedAll = currentUsers.filter(user => hasActiveAccess(user.access));
-      const unsubscribedAll = currentUsers.filter(user => !hasActiveAccess(user.access));
-      const users = subscribedAll.filter(matches);
-      const unsubscribed = unsubscribedAll.filter(matches);
-      const pending = pendingUsers.filter(matches);
-      usersList.replaceChildren();
-      unsubscribedUsersList.replaceChildren();
-      pendingUsersList.replaceChildren();
-      usersCount.textContent = term
-        ? users.length + " / " + subscribedAll.length + " përdorues"
-        : subscribedAll.length + " përdorues";
-      unsubscribedCount.textContent = term
-        ? unsubscribed.length + " / " + unsubscribedAll.length + " përdorues"
-        : unsubscribedAll.length + " përdorues";
-      pendingCount.textContent = term
-        ? pending.length + " / " + pendingUsers.length + " përdorues"
-        : pendingUsers.length + " përdorues";
-      usersTotal.textContent = "Gjithsej: " + (currentUsers.length + pendingUsers.length) + " përdorues";
-      usersMessage.classList.remove("success");
-      if (!users.length && !unsubscribed.length && !pending.length) {
-        usersMessage.textContent = "Nuk u gjet asnjë përdorues.";
-        return;
-      }
-      usersMessage.textContent = "";
-      for (const user of [...users, ...unsubscribed]) {
-        const card = document.createElement("article");
-        card.className = "user-card";
-        const heading = document.createElement("div");
-        const strong = document.createElement("strong");
-        const displayName = [user.first_name, user.last_name]
-          .filter(Boolean).join(" ") || "Pa emër";
-        strong.textContent = displayName;
-        heading.appendChild(strong);
-        card.appendChild(heading);
-        addField(card, "Qyteti", user.city);
-        addField(card, "Telefoni", user.phone);
-        addField(card, "Aksesi në ankande", accessStatus(user.access));
-        if (accessExpiry(user.access)) addField(card, "Aktiv deri më", formatExpiry(accessExpiry(user.access)));
-        addField(card, "ID", user.user_id);
-
-        const status = document.createElement("div");
-        status.className = "account-state " +
-          (user.blocked ? "blocked" : "allowed");
-        status.textContent = user.blocked
-          ? "Llogaria: E bllokuar"
-          : "Llogaria: E pabllokuar";
-        card.appendChild(status);
-
-        if (adminRole === "super_admin") {
-          const actionButton = document.createElement("button");
-          actionButton.type = "button";
-          actionButton.className = "account-action " +
-            (user.blocked ? "unblock-action" : "block-action");
-          actionButton.textContent = user.blocked
-            ? "Zhblloko" : "Blloko llogarinë";
-          const actionMessage = document.createElement("p");
-          actionMessage.className = "message card-message";
-          actionMessage.setAttribute("role", "status");
-          actionButton.addEventListener("click", () =>
-            changeAccountStatus(user, displayName, actionButton, actionMessage)
-          );
-          const actionRow = document.createElement("div");
-          actionRow.className = "account-actions-row";
-          actionRow.appendChild(actionButton);
-          card.appendChild(actionRow);
-          appendDeleteButton(card, user, displayName, actionRow);
-          card.appendChild(actionMessage);
-        }
-        if (!user.blocked) {
-          const tools = document.createElement("div");
-          tools.className = "toolbar";
-          const availableActions = adminRole === "super_admin"
-            ? [["Modifiko", "update_profile"], ["Rivendos fjalëkalimin", "reset_password"], ["Zgjat abonimin (+12 muaj)", "extend_subscription"], ["Akses falas", "grant_complimentary"], ["Akses pa afat", "grant_unlimited"]]
-            : [["Modifiko", "update_profile"], ["Rivendos fjalëkalimin", "reset_password"], ["Zgjat abonimin (+12 muaj)", "extend_subscription"]];
-          for (const [label, action] of availableActions) {
-            const btn = document.createElement("button");
-            btn.type = "button";
-            btn.className = "secondary";
-            btn.textContent = label;
-            btn.addEventListener("click", () => openManageForm(user, action, card));
-            tools.appendChild(btn);
-          }
-          card.appendChild(tools);
-        }
-        (hasActiveAccess(user.access) ? usersList : unsubscribedUsersList).appendChild(card);
-      }
-      for (const user of pending) {
-        const card = document.createElement("article");
-        card.className = "user-card";
-        const name = document.createElement("strong");
-        name.textContent = [user.first_name, user.last_name].filter(Boolean).join(" ") || "Pa emër";
-        card.appendChild(name);
-        addField(card, "Qyteti", user.city);
-        addField(card, "Telefoni", user.phone);
-        addField(card, "ID", user.user_id);
-        const state = document.createElement("div");
-        state.className = "account-state blocked";
-        state.textContent = "Identiteti: I pakonfirmuar";
-        card.appendChild(state);
-        if (adminRole === "super_admin") appendDeleteButton(card, user, name.textContent);
-        pendingUsersList.appendChild(card);
-      }
-    }
-
-    function appendDeleteButton(card, user, displayName, buttonContainer = card) {
-      const button = document.createElement("button");
-      button.type = "button";
-      button.className = "account-action delete-action";
-      button.textContent = "Fshij përgjithmonë";
-      const message = document.createElement("p");
-      message.className = "message card-message";
-      message.setAttribute("role", "status");
-      button.addEventListener("click", async () => {
-        if (!sessionToken || adminRole !== "super_admin" || actionInProgress) return;
-        if (typeof user.user_id !== "string") return;
-        const question = `A je i sigurt?\n\nDo të FSHISH PËRGJITHMONË përdoruesin ${displayName}?\nID: ${user.user_id}\n\nKy veprim nuk mund të zhbëhet. Nëse ka ankande ose oferta, serveri do ta refuzojë.`;
-        if (!window.confirm(question)) return;
-        const typed = window.prompt('Për të konfirmuar, shkruaj saktësisht: FSHI PERGJITHMONE');
-        if (typed !== "FSHI PERGJITHMONE") {
-          if (typed !== null) message.textContent = "Konfirmimi nuk përputhet. Nuk u fshi asgjë.";
-          return;
-        }
-        const version = requestVersion;
-        const token = sessionToken;
-        actionInProgress = true;
-        button.disabled = true;
-        message.classList.remove("success");
-        message.textContent = "Duke kontrolluar dhe fshirë…";
+// Filtrim vetëm në shfletues: nuk ndryshon ofertat ose të dhënat në Supabase.
+let selectedCategory='';
+function applyCategoryFilter(){
+  let visible=0;
+  for(const card of $('auctions').querySelectorAll('.auction')){
+    const match=!selectedCategory||card.dataset.category===selectedCategory;
+    card.classList.toggle('hidden',!match);
+    if(match)visible++;
+  }
+  $('categoryFilter').value=selectedCategory;
+  $('categoryEmpty').classList.toggle('hidden',!selectedCategory||visible>0||!$('auctions').querySelector('.auction'));
+}
+$('categoryFilter').onchange=()=>{selectedCategory=$('categoryFilter').value;applyCategoryFilter()};
+$('categoryClear').onclick=()=>{selectedCategory='';applyCategoryFilter()};
+async function loadAuctions(){const target=$('auctions');try{$('connection').textContent='Duke ngarkuar ankandet…';const auctions=await rpc('ap_list_auctions')||[];target.replaceChildren();$('connection').textContent='Lidhja me Supabase është aktive · '+auctions.length+' ankande.';if(!auctions.length){target.textContent='Nuk ka ankande për momentin.';return}for(const a of auctions){const article=document.createElement('article');article.className='auction';article.dataset.category=String(a.category||'');const active=a.status==='active'&&new Date(a.ends_at)>new Date();const images=galleryHtml(a.image_paths);article.innerHTML='<div class="row"><h3>'+escapeHtml(a.title)+'</h3><span class="status">'+(active?'Aktiv':'Përfunduar')+'</span></div>'+images+'<p>'+escapeHtml(a.description)+'</p><p class="muted">'+escapeHtml(a.category)+' · Shitësi: '+escapeHtml(a.first_name)+' · '+escapeHtml(a.city)+' · '+escapeHtml(a.phone_mask)+'</p><p><strong>Oferta më e lartë: '+money(a.current_price)+'</strong> · '+Number(a.bid_count||0)+' oferta</p><p class="muted">Mbyllet: '+when(a.ends_at)+'</p><p class="muted">'+(active?'Rezerva është private.':a.reserve_reached?'Rezerva u arrit.':'Rezerva nuk u arrit.')+'</p><div id="bids-'+a.id+'" class="muted">Po ngarkohen ofertat…</div><div class="row" style="margin-top:12px">'+(active&&!a.is_mine?'<input id="amount-'+a.id+'" type="number" min="0.01" step="0.01" placeholder="Oferta (€)" style="max-width:140px"><button data-bid="'+a.id+'" '+(user&&profile&&eligible()?'':'disabled')+'>Oferto</button>':'')+(a.can_delete?'<button class="red" data-delete="'+a.id+'">Fshi</button>':'')+(a.is_mine?'<button class="gray" data-reserve="'+a.id+'">Rezerva ime</button>':'')+ '</div><div class="auction-actions"><button type="button" data-share="'+escapeHtml(a.id)+'">🔗 Shpërndaj</button>'+(user?'':'<a href="#accountPanel" data-register="1">📝 Regjistrohu për të ofertuar</a>')+'</div>';article.id='ankand-'+a.id;target.appendChild(article);loadBids(a.id)}applyCategoryFilter();target.querySelectorAll('[data-bid]').forEach(b=>b.onclick=()=>placeBid(b.dataset.bid));target.querySelectorAll('[data-delete]').forEach(b=>b.onclick=()=>deleteAuction(b.dataset.delete));target.querySelectorAll('[data-reserve]').forEach(b=>b.onclick=()=>showReserve(b.dataset.reserve));target.querySelectorAll('[data-share]').forEach(b=>b.onclick=()=>shareAuction(b.dataset.share));target.querySelectorAll('[data-register]').forEach(b=>b.onclick=()=>{$('loginForm').classList.add('hidden');$('registerForm').classList.remove('hidden')});focusLinkedAuction()}catch(e){target.textContent='Gabim: '+e.message;$('connection').textContent='Lidhja nuk u realizua.';console.error(e)}}
+async function loadBids(id){const box=$('bids-'+id);if(!box)return;try{const bids=await rpc('ap_list_bids',{p_auction:id})||[];if(!bids.length){box.textContent='Ende pa oferta.';return}const ul=document.createElement('ul');ul.className='bidlist';for(const b of bids){const li=document.createElement('li'),person=document.createElement('span'),amount=document.createElement('strong');person.textContent=(b.first_name||'Ofertues')+' · '+(b.city||'');amount.textContent=money(b.amount);li.append(person,amount);ul.appendChild(li)}box.replaceChildren(ul)}catch(e){box.textContent=e.message}}
+async function placeBid(id){try{if(!user||!profile||!eligible())throw Error('Hyni me llogari aktive.');const amount=Number($('amount-'+id).value);if(!Number.isFinite(amount)||amount<=0)throw Error('Oferta duhet të jetë mbi 0 €.');await rpc('ap_place_bid',{p_auction:id,p_amount:amount});notice('Oferta virtuale u regjistrua.');await loadAuctions()}catch(e){notice(e.message,true)}}
+async function showReserve(id){try{const n=await rpc('ap_my_reserve',{p_auction:id});notice('Rezerva private: '+money(n))}catch(e){notice(e.message,true)}}
+async function deleteAuction(id){if(!confirm('Ta fshini këtë ankand?'))return;try{await rpc('ap_delete_early',{p_auction:id});notice('Ankandi u fshi nga databaza.');await loadAuctions()}catch(e){notice(e.message,true)}}
+async function loadNotifications(){const box=$('notifications');try{const notes=await rpc('ap_my_notifications')||[];box.replaceChildren();if(!notes.length){box.textContent='Nuk ka njoftime.';return}for(const n of notes){const p=document.createElement('p');p.className='notice';p.textContent=when(n.created_at)+' — '+(n.message||'');box.appendChild(p)}}catch(e){box.textContent=e.message}}
+$('refreshBtn').onclick=async()=>{await loadAuctions();if(user)await loadNotifications()};
+async function start(){try{await loadLibrary();db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});db.auth.onAuthStateChange(()=>setTimeout(()=>refreshAccount().catch(e=>notice(e.message,true)),0));await refreshAccount()}catch(e){console.error(e);$('connection').textContent='Gabim: '+e.message;$('auctions').textContent='Nuk u arrit lidhja me Supabase.';notice(e.message,true)}}
+start();
+</script>
+<script>
+(function(){
+  'use strict';
+  let installPrompt = null;
+  const btn = document.getElementById('installBtn');
+  const help = document.getElementById('installHelp');
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+    (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  const isStandalone = window.matchMedia('(display-mode: standalone)').matches ||
+    navigator.standalone === true;
+  function showHelp(message){
+    help.textContent = message;
+    help.style.display = 'block';
+  }
+  if (isStandalone) {
+    btn.textContent = '✓ Aplikacioni është instaluar';
+    btn.disabled = true;
+  } else {
+    btn.addEventListener('click', async function(){
+      if (installPrompt) {
+        const prompt = installPrompt;
+        installPrompt = null;
         try {
-          const result = await manageRequest({
-            action: "delete_user", user_id: user.user_id,
-            confirm: true, confirm_text: typed
-          });
-          if (version !== requestVersion || token !== sessionToken) return;
-          if (result.action !== "delete_user" || result.user_id !== user.user_id) {
-            throw new Error("Serveri nuk konfirmoi fshirjen.");
-          }
-          currentUsers = currentUsers.filter(item => item.user_id !== user.user_id);
-          pendingUsers = pendingUsers.filter(item => item.user_id !== user.user_id);
-          paintUsers();
-          usersMessage.classList.add("success");
-          usersMessage.textContent = `Përdoruesi ${displayName} u fshi përgjithmonë.` +
-            (result.audit_logged === false ? " Kujdes: historiku përfundimtar nuk u regjistrua." : "");
-        } catch (error) {
-          if (version === requestVersion && token === sessionToken) {
-            message.textContent = error.message || "Fshirja dështoi.";
-          }
-        } finally {
-          actionInProgress = false;
-          if (version === requestVersion && token === sessionToken) button.disabled = false;
+          await prompt.prompt();
+          const result = await prompt.userChoice;
+          if (result.outcome !== 'accepted') showHelp('Instalimi u anulua. Mund ta provosh përsëri nga menuja e shfletuesit.');
+        } catch (err) {
+          showHelp('Hap menynë e Chrome dhe zgjidh "Instalo aplikacionin" ose "Shto në ekranin kryesor".');
         }
+      } else if (isIOS) {
+        showHelp('Në iPhone: hape faqen në Safari, shtyp Share (katrori me shigjetë lart), zgjidh "Add to Home Screen" / "Shto në ekranin kryesor", pastaj "Add".');
+      } else {
+        showHelp('Në Android: hape faqen në Chrome, shtyp tri pikat ⋮ dhe zgjidh "Install app" ose "Add to Home screen". Në kompjuter: kontrollo menynë e Chrome për "Install page as app".');
+      }
+    });
+  }
+  window.addEventListener('beforeinstallprompt', function(event){
+    event.preventDefault();
+    installPrompt = event;
+  });
+  window.addEventListener('appinstalled', function(){
+    installPrompt = null;
+    btn.textContent = '✓ Aplikacioni është instaluar';
+    btn.disabled = true;
+    help.style.display = 'none';
+  });
+  if ('serviceWorker' in navigator && window.isSecureContext) {
+    window.addEventListener('load', function(){
+      navigator.serviceWorker.register('/sw.js').catch(function(err){
+        console.warn('PWA service worker:', err);
       });
-      buttonContainer.appendChild(button);
-      card.appendChild(message);
-    }
-
-    async function changeAccountStatus(user, displayName, button, message) {
-      if (!sessionToken || adminRole !== "super_admin" || actionInProgress) return;
-      if (typeof user.user_id !== "string") return;
-      const action = user.blocked ? "unblock" : "block";
-      const question = action === "block"
-        ? `A dëshiron të BLLOKOSH llogarinë e ${displayName}?\nID: ${user.user_id}`
-        : `A dëshiron të ZHBLLOKOSH llogarinë e ${displayName}?\nID: ${user.user_id}`;
-      if (!window.confirm(question)) return;
-
-      const token = sessionToken;
-      const version = requestVersion;
-      actionInProgress = true;
-      button.disabled = true;
-      message.classList.remove("success");
-      message.textContent = "Duke ruajtur ndryshimin…";
-      try {
-        const response = await fetch(USERS_API, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": "Bearer " + token
-          },
-          body: JSON.stringify({ action, user_id: user.user_id }),
-          cache: "no-store"
-        });
-        let result;
-        try { result = await response.json(); }
-        catch { throw new Error("Përgjigje e pavlefshme nga serveri."); }
-        if (version !== requestVersion || token !== sessionToken) return;
-        if (response.status === 401) {
-          showLogin();
-          loginMessage.textContent = "Sesioni ka skaduar. Hyr përsëri.";
-          return;
-        }
-        if (response.status === 403) throw new Error("Nuk ke leje për këtë veprim.");
-        if (!response.ok || result.ok !== true || result.action !== action ||
-            result.user_id !== user.user_id) {
-          throw new Error("Ndryshimi nuk u konfirmua nga serveri.");
-        }
-        user.blocked = action === "block";
-        paintUsers();
-        usersMessage.classList.add("success");
-        usersMessage.textContent = action === "block"
-          ? `Llogaria e ${displayName} u bllokua.`
-          : `Llogaria e ${displayName} u zhbllokua.`;
-      } catch (error) {
-        if (version === requestVersion && token === sessionToken) {
-          message.textContent = error.message || "Ndryshimi dështoi.";
-        }
-      } finally {
-        actionInProgress = false;
-        if (version === requestVersion && token === sessionToken) button.disabled = false;
-      }
-    }
-
-    userSearch.addEventListener("input", paintUsers);
-
-    async function manageRequest(payload) {
-      const token = sessionToken;
-      if (!token) throw new Error("Hyr përsëri.");
-      const response = await fetch(MANAGE_API, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "Authorization": "Bearer " + token },
-        body: JSON.stringify(payload),
-        cache: "no-store"
-      });
-      let result;
-      try { result = await response.json(); }
-      catch { throw new Error("Përgjigje e pavlefshme nga serveri."); }
-      if (response.status === 401) {
-        showLogin();
-        throw new Error("Sesioni ka skaduar. Hyr përsëri.");
-      }
-      if (response.status === 403) throw new Error("Nuk ke leje për këtë veprim.");
-      if (!response.ok || result.ok !== true) {
-        throw new Error(result.error || "Veprimi dështoi.");
-      }
-      return result;
-    }
-
-    function openManageForm(user, action, card) {
-      if ((adminRole !== "super_admin" && !["extend_subscription", "update_profile", "reset_password"].includes(action)) || actionInProgress) return;
-      const existing = card.querySelector(".inline-form");
-      if (existing) { existing.remove(); return; }
-      const form = document.createElement("form");
-      form.className = "inline-form";
-      const title = document.createElement("strong");
-      const titles = {
-        update_profile: "Modifiko profilin",
-        reset_password: "Rivendos fjalëkalimin",
-        extend_subscription: "Zgjat abonimin me 12 muaj",
-        grant_complimentary: "Jep akses falas",
-        grant_unlimited: "Jep akses pa afat"
-      };
-      title.textContent = titles[action];
-      form.appendChild(title);
-      const fields = action === "update_profile"
-        ? [["first_name", "Emri"], ["last_name", "Mbiemri"], ["city", "Qyteti"], ["phone", "Telefoni"]]
-        : action === "grant_complimentary" ? [["days", "Numri i ditëve (1–3650)"]]
-        : action === "reset_password" ? [["new_password", "Fjalëkalimi i ri (12–72 karaktere)"]] : [];
-      if (action === "extend_subscription") {
-        const notice = document.createElement("p");
-        notice.className = "note";
-        notice.textContent = "Abonimi zgjatet automatikisht me 12 muaj kalendarikë. Nuk nevojitet numër ditësh.";
-        form.appendChild(notice);
-      }
-      for (const [name, labelText] of fields) {
-        const label = document.createElement("label");
-        label.textContent = labelText;
-        const input = document.createElement("input");
-        input.name = name;
-        input.required = true;
-        if (name === "new_password") {
-          input.type = "password"; input.minLength = 12; input.maxLength = 72; input.autocomplete = "new-password";
-        } else if (name === "days") {
-          input.type = "number"; input.min = "1"; input.max = "3650"; input.step = "1";
-        } else {
-          input.type = "text"; input.maxLength = 100;
-          input.value = user[name] || "";
-        }
-        label.appendChild(input);
-        form.appendChild(label);
-      }
-      const submit = document.createElement("button");
-      submit.type = "submit";
-      submit.textContent = "Konfirmo ndryshimin";
-      const msg = document.createElement("p");
-      msg.className = "message";
-      msg.setAttribute("role", "status");
-      form.append(submit, msg);
-      form.addEventListener("submit", async event => {
-        event.preventDefault();
-        if (actionInProgress) return;
-        const payload = { action, user_id: user.user_id };
-        for (const [name] of fields) {
-          const value = form.elements.namedItem(name).value.trim();
-          payload[name] = name === "days" ? Number(value) : value;
-        }
-        const displayName = [user.first_name, user.last_name].filter(Boolean).join(" ") || user.user_id;
-        const confirmation = action === "reset_password"
-          ? "Konfirmon rivendosjen e fjalëkalimit për " + displayName + "? Fjalëkalimi i vjetër nuk mund të rikuperohet."
-          : action === "extend_subscription"
-          ? "Konfirmon zgjatjen e abonimit me 12 muaj për " + displayName + "?"
-          : "Konfirmon veprimin: " + titles[action] + " për " + displayName + "?";
-        if (!window.confirm(confirmation)) return;
-        const version = requestVersion;
-        actionInProgress = true;
-        submit.disabled = true;
-        msg.textContent = "Duke ruajtur…";
-        try {
-          const result = await manageRequest(payload);
-          if (version !== requestVersion) return;
-          if (action === "update_profile") {
-            for (const [name] of fields) user[name] = payload[name];
-          } else if (user.access) {
-            if (action === "extend_subscription") {
-              // Rilexojmë të dhënat nga serveri për datën e saktë.
-            }
-          }
-          if (action === "reset_password") {
-            form.elements.namedItem("new_password").value = "";
-          }
-          paintUsers();
-          usersMessage.classList.add("success");
-          usersMessage.textContent = result.audit_logged === false
-            ? "Ndryshimi u ruajt, por historiku nuk u regjistrua. Kontakto administratorin."
-            : "Ndryshimi u ruajt. Mbyll dhe rihap listën për të parë datat e reja.";
-        } catch (error) {
-          if (version === requestVersion) msg.textContent = error.message || "Gabim.";
-        } finally {
-          actionInProgress = false;
-          submit.disabled = false;
-        }
-      });
-      card.appendChild(form);
-    }
-
-    async function openExtra(action) {
-      if (!sessionToken || actionInProgress) return;
-      extraView.classList.remove("hidden");
-      mainPanel.classList.add("wide");
-      extraList.replaceChildren();
-      extraTitle.textContent = action === "list_admins" ? "Administratorët" : (adminRole === "super_admin" ? "Historiku i veprimeve (100 të fundit)" : "Historiku im (100 veprimet e fundit)");
-      extraMessage.textContent = "Duke ngarkuar…";
-      const version = requestVersion;
-      try {
-        const result = await manageRequest({ action });
-        if (version !== requestVersion) return;
-        const entries = action === "list_admins" ? result.admins : result.entries;
-        if (!Array.isArray(entries)) throw new Error("Formati i të dhënave është i pavlefshëm.");
-        extraMessage.textContent = entries.length ? "" : "Nuk ka të dhëna.";
-        for (const entry of entries) {
-          const card = document.createElement("div");
-          card.className = "user-card";
-          if (action === "list_admins") {
-            addField(card, "Emri", entry.username);
-            addField(card, "Roli", entry.role);
-            const isDeleted = Boolean(entry.deleted_at);
-            addField(card, "Gjendja", isDeleted ? "I fshirë" : (entry.is_active ? "Aktiv" : "I bllokuar"));
-            addField(card, "Krijuar", entry.created_at ? new Date(entry.created_at).toLocaleString("sq-AL") : "—");
-            if (isDeleted) addField(card, "Fshirë më", new Date(entry.deleted_at).toLocaleString("sq-AL"));
-            // Veprimet shfaqen vetëm për super_admin dhe vetëm për llogaritë admin.
-            if (adminRole === "super_admin" && entry.role === "admin" && !isDeleted) {
-              const actions = document.createElement("div");
-              actions.className = "toolbar";
-              const choices = entry.is_active
-                ? [{ action: "block_admin", label: "Blloko" }, { action: "delete_admin", label: "Fshij" }]
-                : [{ action: "unblock_admin", label: "Zhblloko" }, { action: "delete_admin", label: "Fshij" }];
-              for (const choice of choices) {
-                const button = document.createElement("button");
-                button.type = "button";
-                button.className = "secondary";
-                button.textContent = choice.label;
-                button.addEventListener("click", async () => {
-                  if (!sessionToken || adminRole !== "super_admin" || actionInProgress) return;
-                  const promptText = choice.action === "delete_admin"
-                    ? `A je i sigurt që dëshiron të FSHISH administratorin “${entry.username}”? Kjo llogari nuk mund të zhbllokohet më. Historiku ruhet.`
-                    : `A je i sigurt që dëshiron të ${choice.label.toLowerCase()} administratorin “${entry.username}”?`;
-                  if (!window.confirm(promptText)) return;
-                  const currentVersion = requestVersion;
-                  actionInProgress = true;
-                  button.disabled = true;
-                  extraMessage.classList.remove("success");
-                  extraMessage.textContent = "Duke ruajtur ndryshimin…";
-                  try {
-                    const outcome = await manageRequest({
-                      action: choice.action,
-                      admin_id: entry.id,
-                      confirm: true
-                    });
-                    if (currentVersion !== requestVersion) return;
-                    await openExtraAfterAdminAction();
-                    if (currentVersion !== requestVersion) return;
-                    extraMessage.classList.add("success");
-                    extraMessage.textContent = `${choice.label}: ${entry.username}.` +
-                      (outcome.audit_logged === false ? " Kujdes: regjistrimi në historik dështoi." : "");
-                  } catch (error) {
-                    if (currentVersion === requestVersion) {
-                      extraMessage.textContent = error.message || "Veprimi dështoi.";
-                    }
-                  } finally {
-                    actionInProgress = false;
-                    button.disabled = false;
-                  }
-                });
-                actions.appendChild(button);
-              }
-              card.appendChild(actions);
-            }
-          } else {
-            addField(card, "Veprimi", entry.action);
-            if (adminRole === "super_admin") addField(card, "ID e administratorit", entry.admin_id);
-            if (entry.action === "extend_subscription") addField(card, "Kohëzgjatja", "12 muaj");
-            addField(card, "Objekti", entry.target_type);
-            addField(card, "ID", entry.target_id);
-            addField(card, "Koha", entry.created_at ? new Date(entry.created_at).toLocaleString("sq-AL") : "—");
-          }
-          extraList.appendChild(card);
-        }
-      } catch (error) {
-        if (version === requestVersion) extraMessage.textContent = error.message || "Gabim.";
-      }
-    }
-
-    async function openExtraAfterAdminAction() {
-      // Rifreskojmë listën pasi veprimi në server ka përfunduar.
-      actionInProgress = false;
-      try {
-        await openExtra("list_admins");
-      } finally {
-        actionInProgress = true;
-      }
-    }
-
-    const createAdminButton = document.getElementById("createAdminButton");
-    const createAdminView = document.getElementById("createAdminView");
-    const createAdminForm = document.getElementById("createAdminForm");
-    const createAdminSubmit = document.getElementById("createAdminSubmit");
-    const createAdminMessage = document.getElementById("createAdminMessage");
-
-    createAdminButton.addEventListener("click", () => {
-      if (adminRole !== "super_admin" || actionInProgress) return;
-      createAdminView.classList.toggle("hidden");
-      mainPanel.classList.add("wide");
-      createAdminMessage.textContent = "";
     });
-
-    createAdminForm.addEventListener("submit", async event => {
-      event.preventDefault();
-      if (!sessionToken || adminRole !== "super_admin" || actionInProgress) return;
-      const username = document.getElementById("adminNewUsername").value.trim();
-      const password = document.getElementById("adminNewPassword").value;
-      const confirmation = document.getElementById("adminNewPasswordConfirm").value;
-      createAdminMessage.classList.remove("success");
-      if (password !== confirmation) {
-        createAdminMessage.textContent = "Fjalëkalimet nuk përputhen.";
-        return;
-      }
-      if (!window.confirm(`Të krijohet administratori ${username} me rolin admin?`)) return;
-      const version = requestVersion;
-      const token = sessionToken;
-      actionInProgress = true;
-      createAdminSubmit.disabled = true;
-      createAdminMessage.textContent = "Duke krijuar administratorin…";
-      try {
-        const result = await manageRequest({ action: "create_admin", username, password });
-        if (version !== requestVersion || token !== sessionToken) return;
-        if (result.action !== "create_admin" || result.role !== "admin" || !result.admin_id) {
-          throw new Error("Serveri nuk konfirmoi krijimin e administratorit.");
-        }
-        createAdminForm.reset();
-        createAdminMessage.classList.add("success");
-        createAdminMessage.textContent = result.audit_logged === false
-          ? "Administratori u krijua, por regjistrimi në historik dështoi."
-          : `Administratori ${result.username} u krijua me sukses.`;
-      } catch (error) {
-        if (version === requestVersion && token === sessionToken) {
-          createAdminMessage.textContent = error.message || "Krijimi dështoi.";
-        }
-      } finally {
-        actionInProgress = false;
-        createAdminSubmit.disabled = false;
-      }
-    });
-
-    const createUserButton = document.getElementById("createUserButton");
-    const createUserView = document.getElementById("createUserView");
-    const createUserForm = document.getElementById("createUserForm");
-    const newAccess = document.getElementById("newAccess");
-    const newDaysGroup = document.getElementById("newDaysGroup");
-    const newDays = document.getElementById("newDays");
-    const createUserMessage = document.getElementById("createUserMessage");
-    const createUserSubmit = document.getElementById("createUserSubmit");
-
-    createUserButton.addEventListener("click", () => {
-      createUserView.classList.toggle("hidden");
-      mainPanel.classList.add("wide");
-    });
-    newAccess.addEventListener("change", () => {
-      const timed = ["subscription", "complimentary"].includes(newAccess.value);
-      newDaysGroup.classList.toggle("hidden", !timed);
-      newDays.required = timed;
-      if (!timed) newDays.value = "";
-    });
-    createUserForm.addEventListener("submit", async (event) => {
-      event.preventDefault();
-      if (!sessionToken || actionInProgress) return;
-      const data = new FormData(createUserForm);
-      const payload = { action: "create_user" };
-      for (const key of ["first_name", "last_name", "city", "phone", "username", "password", "access_type"]) payload[key] = data.get(key);
-      payload.username = String(payload.username).trim().toLowerCase();
-      if (adminRole !== "super_admin" && ["complimentary", "unlimited"].includes(payload.access_type)) {
-        createUserMessage.textContent = "Ky akses lejohet vetëm për super_admin.";
-        return;
-      }
-      if (["subscription", "complimentary"].includes(payload.access_type)) payload.days = Number(data.get("days"));
-      if (!window.confirm("Konfirmon krijimin e përdoruesit " + payload.username + "?")) return;
-      const version = requestVersion;
-      actionInProgress = true;
-      createUserSubmit.disabled = true;
-      createUserMessage.classList.remove("success");
-      createUserMessage.textContent = "Duke krijuar llogarinë…";
-      try {
-        const result = await manageRequest(payload);
-        if (version !== requestVersion) return;
-        createUserForm.reset();
-        newDaysGroup.classList.add("hidden");
-        newDays.required = false;
-        createUserMessage.classList.add("success");
-        createUserMessage.textContent = result.audit_logged === false
-          ? "Llogaria u krijua, por historiku nuk u regjistrua."
-          : "Llogaria u krijua me sukses. Jepi përdoruesit të dhënat e hyrjes në mënyrë private.";
-      } catch (error) {
-        if (version === requestVersion) createUserMessage.textContent = error.message || "Krijimi dështoi.";
-      } finally {
-        actionInProgress = false;
-        createUserSubmit.disabled = false;
-      }
-    });
-
-    adminsButton.addEventListener("click", () => openExtra("list_admins"));
-    auditButton.addEventListener("click", () => openExtra("audit_log"));
-
-    loginForm.addEventListener("submit", async function (event) {
-      event.preventDefault();
-      loginMessage.textContent = "";
-      loginButton.disabled = true;
-      const username = document.getElementById("username").value.trim();
-      const password = document.getElementById("password").value;
-      try {
-        const result = await apiRequest({ action: "login", username, password });
-        if (typeof result.token !== "string" || !result.admin || !result.expires_at) {
-          throw new Error("Përgjigje e paplotë nga serveri.");
-        }
-        sessionToken = result.token;
-        document.getElementById("password").value = "";
-        showDashboard(result.admin, result.expires_at);
-      } catch (error) {
-        loginMessage.textContent = error.message || "Hyrja dështoi.";
-      } finally {
-        loginButton.disabled = false;
-      }
-    });
-
-    usersButton.addEventListener("click", async function () {
-      if (!sessionToken) {
-        showLogin();
-        return;
-      }
-      if (!usersView.classList.contains("hidden")) {
-        if (actionInProgress) return;
-        requestVersion++;
-        clearUsers();
-        return;
-      }
-      usersView.classList.remove("hidden");
-      mainPanel.classList.add("wide");
-      usersButton.disabled = true;
-      usersMessage.textContent = "Duke ngarkuar përdoruesit…";
-      const version = ++requestVersion;
-      const token = sessionToken;
-      try {
-        const response = await fetch(USERS_API, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": "Bearer " + token
-          },
-          body: JSON.stringify({}),
-          cache: "no-store"
-        });
-        let result;
-        try { result = await response.json(); }
-        catch { throw new Error("Përgjigje e pavlefshme nga serveri."); }
-        if (version !== requestVersion || token !== sessionToken) return;
-        if (response.status === 401) {
-          showLogin();
-          loginMessage.textContent = "Sesioni ka skaduar. Hyr përsëri.";
-          return;
-        }
-        if (response.status === 403) throw new Error("Nuk ke leje për të parë përdoruesit.");
-        if (!response.ok) throw new Error("Lista e përdoruesve nuk u ngarkua.");
-        if (!Array.isArray(result.users) || !Array.isArray(result.pending_users)) {
-          throw new Error("Formati i listave është i pavlefshëm. Kontrollo versionin e admin-users.");
-        }
-        renderUsers(result.users, result.pending_users);
-        usersButton.textContent = "Mbyll listën e përdoruesve";
-      } catch (error) {
-        if (version === requestVersion && token === sessionToken) {
-          usersMessage.textContent = error.message || "Gabim gjatë ngarkimit.";
-        }
-      } finally {
-        if (version === requestVersion && token === sessionToken) usersButton.disabled = false;
-      }
-    });
-
-    logoutButton.addEventListener("click", async function () {
-      dashboardMessage.textContent = "";
-      logoutButton.disabled = true;
-      try {
-        if (sessionToken) await apiRequest({ action: "logout", token: sessionToken });
-        showLogin();
-      } catch {
-        dashboardMessage.textContent = "Dalja në server dështoi. Mbyll faqen dhe provo përsëri.";
-      } finally {
-        logoutButton.disabled = false;
-      }
-    });
-
-    // Kur mbyllet ose rifreskohet faqja, tokeni nuk ruhet.
-    showLogin();
-  </script>
+  }
+})();
+</script>
 </body>
 </html>
