@@ -95,9 +95,9 @@ header p{position:relative;color:#f4d9db;font-weight:500}
 <div id="member" class="hidden"><p id="memberLabel"></p><p class="notice" id="accessStatus"></p><p class="muted">Mbiemri dhe numri i plotë i telefonit nuk shfaqen publikisht gjatë ankandit. Administratori i projektit mund të ketë qasje te të dhënat e profilit në Supabase.</p><button id="logoutBtn" class="red">Dil</button></div>
 <div id="googleProfileForm" class="hidden" style="margin-top:16px;border-top:1px solid #e2e8f0;padding-top:14px"><h3>Plotëso profilin</h3><p class="muted">Për të publikuar ankande ose për të ofertuar, plotëso të dhënat e profilit. Mbiemri dhe telefoni nuk shfaqen publikisht.</p><label>Emri</label><input id="googleFirst" maxlength="60" autocomplete="given-name"><label>Mbiemri (privat)</label><input id="googleLast" maxlength="60" autocomplete="family-name"><label>Qyteti</label><input id="googleCity" maxlength="80" autocomplete="address-level2"><label>Numri i telefonit (+355 / +383)</label><input id="googlePhone" type="tel" autocomplete="tel" placeholder="+355..."><button id="saveGoogleProfile" class="green" type="button" style="margin-top:12px">Ruaj profilin</button></div>
 </section>
-<section id="createPanel" class="card hidden"><h2>➕ Publiko ankand</h2><p class="muted">Një ankand aktiv për shitës, 7 ditë, pa ndryshime pas publikimit. Fshirja e hershme kufizohet nga rregullat e serverit.</p><label>Titulli</label><input id="title" maxlength="100"><label>Kategoria</label><select id="category"><option>Automjete</option><option>Makineri bujqësore</option><option>Elektronikë</option><option>Prona</option><option>Mobilje</option><option>Sport</option><option>Veshje</option><option>Libra</option><option>Art</option><option>Tjetër</option></select><label>Përshkrimi</label><textarea id="description" maxlength="3000"></textarea><label>Çmimi fillestar</label><input value="0 € (automatik)" disabled><label>🔒 Rezerva private (€)</label><input id="reserve" type="number" min="0" step="0.01" value="0"><label>Fotografi (maksimumi 4, deri në 20 MB secila)</label><input id="images" type="file" accept="image/jpeg,image/png,image/webp" multiple><p class="muted">Ndalohen artikujt e paligjshëm ose të rrezikshëm.</p><button id="publishBtn" class="green">Publiko për 7 ditë</button></section>
+<section id="createPanel" class="card hidden"><h2>➕ Publiko ankand</h2><p class="muted">Mund të publikoni disa ankande njëkohësisht, secili për 7 ditë, pa ndryshime pas publikimit. Fshirja e hershme kufizohet nga rregullat e serverit.</p><label>Titulli</label><input id="title" maxlength="100"><label>Kategoria</label><select id="category"><option>Automjete</option><option>Makineri bujqësore</option><option>Elektronikë</option><option>Prona</option><option>Mobilje</option><option>Sport</option><option>Veshje</option><option>Libra</option><option>Art</option><option>Tjetër</option></select><label>Përshkrimi</label><textarea id="description" maxlength="3000"></textarea><label>Çmimi fillestar</label><input value="0 € (automatik)" disabled><label>🔒 Rezerva private (€)</label><input id="reserve" type="number" min="0" step="0.01" value="0"><label>Fotografi (maksimumi 4, deri në 20 MB secila)</label><input id="images" type="file" accept="image/jpeg,image/png,image/webp" multiple><p class="muted">Ndalohen artikujt e paligjshëm ose të rrezikshëm.</p><button id="publishBtn" class="green">Publiko për 7 ditë</button></section>
 </aside><div>
-<section class="card"><div class="row"><h2>🛒 Ankandet publike (nga 0 €)</h2><button id="refreshBtn" class="gray">Rifresko</button></div><div class="category-tools"><div class="category-tools-heading"><strong>🔎 Kërko kategoritë</strong></div><div class="category-controls"><select id="categoryFilter" aria-label="Kërko kategoritë"><option value="">Të gjitha kategoritë</option><option value="Automjete">Automjete</option><option value="Makineri bujqësore">Makineri bujqësore</option><option value="Elektronikë">Elektronikë</option><option value="Prona">Prona</option><option value="Mobilje">Mobilje</option><option value="Sport">Sport</option><option value="Veshje">Veshje</option><option value="Libra">Libra</option><option value="Art">Art</option><option value="Tjetër">Tjetër</option></select><button id="categoryClear" type="button" class="gray">Pastro kërkimin</button></div></div><p id="categoryEmpty" class="muted hidden">Nuk ka ankande në këtë kategori.</p><div id="auctions" class="grid"><p>Po ngarkohen ankandet…</p></div><p class="muted" id="connection">Duke u lidhur…</p></section>
+<section class="card"><div class="row"><h2>🛒 Ankandet për anëtarët (nga 0 €)</h2><button id="refreshBtn" class="gray">Rifresko</button></div><div class="category-tools"><div class="category-tools-heading"><strong>🔎 Kërko kategoritë</strong></div><div class="category-controls"><select id="categoryFilter" aria-label="Kërko kategoritë"><option value="">Të gjitha kategoritë</option><option value="Automjete">Automjete</option><option value="Makineri bujqësore">Makineri bujqësore</option><option value="Elektronikë">Elektronikë</option><option value="Prona">Prona</option><option value="Mobilje">Mobilje</option><option value="Sport">Sport</option><option value="Veshje">Veshje</option><option value="Libra">Libra</option><option value="Art">Art</option><option value="Tjetër">Tjetër</option></select><button id="categoryClear" type="button" class="gray">Pastro kërkimin</button></div></div><p id="categoryEmpty" class="muted hidden">Nuk ka ankande në këtë kategori.</p><div id="auctions" class="grid"><p>Po ngarkohen ankandet…</p></div><p class="muted" id="connection">Duke u lidhur…</p></section>
 <section id="notificationsPanel" class="card hidden"><h2>🔔 Njoftimet private</h2><p class="muted">Pas përfundimit, informacionet përkatëse të kontaktit u shfaqen vetëm palëve të autorizuara.</p><div id="notifications"></div></section>
 </div></div>
 </main>
@@ -112,6 +112,7 @@ const SUPABASE_KEY='sb_publishable_aTg_EeN9qT5C54_dRViJHQ_YJM9BW4B';
 const TURNSTILE_SITE_KEY="0x4AAAAAAF9JuLRraPkKiWE9";
 let turnstileWidgetId=null;
 let db=null,user=null,access=null,profile=null;
+let auctionLoadVersion=0;
 const $=id=>document.getElementById(id);
 const escapeHtml=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const money=n=>Number(n||0).toFixed(2)+' €';
@@ -247,16 +248,26 @@ $('saveGoogleProfile').onclick=async()=>{
     await refreshAccount();notice('Profili u ruajt. Tani mund të përdorni platformën.');
   }catch(e){notice(e.message,true)}finally{setBusy('saveGoogleProfile',false)}
 };
-$('logoutBtn').onclick=async()=>{try{const {error}=await db.auth.signOut();if(error)throw error;await refreshAccount();notice('Dolët nga llogaria.')}catch(e){notice(e.message,true)}};
+$('logoutBtn').onclick=async()=>{try{++auctionLoadVersion;$('auctions').textContent='Për të parë ankandet, regjistrohuni ose hyni në llogarinë tuaj.';const {error}=await db.auth.signOut();if(error)throw error;await refreshAccount();notice('Dolët nga llogaria.')}catch(e){notice(e.message,true)}};
 async function refreshAccount(){if(!db)return;const {data,error}=await db.auth.getSession();if(error)throw error;user=data.session?.user||null;access=null;profile=null;$('guest').classList.toggle('hidden',!!user);$('googleProfileForm').classList.add('hidden');$('member').classList.toggle('hidden',!user);$('createPanel').classList.toggle('hidden',!user);$('notificationsPanel').classList.toggle('hidden',!user);$('accountStatus').textContent=user?'I identifikuar':'Vizitor';$('publishBtn').disabled=true;if(user){$('memberLabel').textContent='Llogaria juaj';try{profile=await rpc('ap_my_profile');await savePendingProfile();$('googleProfileForm').classList.toggle('hidden',!!profile);
 if(!profile){const name=String(user.user_metadata?.full_name||user.user_metadata?.name||'').trim().split(/\s+/);$('googleFirst').value=$('googleFirst').value||name[0]||'';$('googleLast').value=$('googleLast').value||name.slice(1).join(' ');}
 access=await rpc('ap_access_state');$('accessStatus').textContent=access?.status==='active'&&freeForAll()?'Aksesi në ankande: Akses falas aktiv\nAktiv deri më: 10/05/2027':access?.status==='trial'?'Provë falas deri më '+when(access.trial_ends_at):access?.status==='active'?(access.unlimited_access?'Aksesi në ankande: Akses aktiv pa afat':'Aksesi në ankande: Abonim aktiv deri më '+when(access.subscription_ends_at||access.complimentary_until)):'Aksesi në ankande: Në pritje të pagesës';$('publishBtn').disabled=!profile||!eligible();await loadNotifications()}catch(e){notice(e.message,true)}}await loadAuctions()}
-function imageUrl(path){return db.storage.from('ap-auction-photos').getPublicUrl(path).data.publicUrl}
+// Fotografitë lexohen vetëm me lidhje të përkohshme për sesionet e identifikuara.
+async function signedPhotoUrls(auctions){
+  const paths=[...new Set(auctions.flatMap(a=>Array.isArray(a.image_paths)?a.image_paths.slice(0,4):[]).filter(p=>typeof p==='string'&&p))];
+  const entries=await Promise.all(paths.map(async path=>{
+    const {data,error}=await db.storage.from('ap-auction-photos').createSignedUrl(path,3600);
+    if(error)throw Error('Fotografia nuk mund të hapet: '+error.message);
+    return [path,data.signedUrl];
+  }));
+  return new Map(entries);
+}
 $('publishBtn').onclick=async()=>{setBusy('publishBtn',true);const uploaded=[];try{if(!user||!profile||!eligible())throw Error('Duhet profil dhe qasje aktive.');const title=$('title').value.trim(),reserve=Number($('reserve').value),files=[...$('images').files];if(!title)throw Error('Shkruani titullin.');if(!Number.isFinite(reserve)||reserve<0)throw Error('Rezerva është e pavlefshme.');if(files.length>4)throw Error('Maksimumi 4 fotografi.');for(const file of files){if(!['image/jpeg','image/png','image/webp'].includes(file.type)||file.size>20*1024*1024)throw Error('Foto e pavlefshme ose mbi 20 MB.');const ext=file.type==='image/jpeg'?'jpg':file.type==='image/png'?'png':'webp',path=user.id+'/'+crypto.randomUUID()+'.'+ext;const {error}=await db.storage.from('ap-auction-photos').upload(path,file,{contentType:file.type,upsert:false});if(error)throw error;uploaded.push(path)}await rpc('ap_create_auction',{p_title:title,p_description:$('description').value,p_category:$('category').value,p_reserve:reserve,p_images:uploaded});$('title').value='';$('description').value='';$('images').value='';notice('Ankandi virtual u publikua.');await loadAuctions()}catch(e){if(uploaded.length){const {error}=await db.storage.from('ap-auction-photos').remove(uploaded);if(error)console.warn('Pastrimi i fotove:',error)}notice(e.message,true)}finally{$('publishBtn').disabled=!eligible()}};
-function galleryHtml(paths){
+function galleryHtml(paths,photoUrls){
   const photos=(Array.isArray(paths)?paths:[]).slice(0,4);
   if(!photos.length)return '<div class="muted">Nuk ka fotografi.</div>';
-  const urls=photos.map(p=>escapeHtml(imageUrl(p)));
+  const urls=photos.map(p=>escapeHtml(photoUrls.get(p)||'')).filter(Boolean);
+  if(!urls.length)return '<div class="muted">Fotografitë nuk u ngarkuan.</div>';
   const controls=urls.length>1;
   return '<div class="photo-gallery" data-gallery data-index="0">'+
     '<div class="photo-stage"><img class="photo-main" loading="lazy" alt="Foto 1 nga '+urls.length+'" src="'+urls[0]+'">'+
@@ -285,7 +296,7 @@ $('auctions').addEventListener('click',event=>{
   else showGalleryPhoto(gallery,Number(gallery.dataset.index||0)+Number(btn.dataset.galleryMove));
 });
 
-// Lidhje e veçante per secilin ankand; funksionon edhe kur vizitori nuk eshte regjistruar.
+// Lidhje e veçantë për secilin ankand; kërkon hyrje në llogari për ta parë.
 function auctionLink(id){const url=new URL(location.origin+location.pathname);url.searchParams.set('auction',id);return url.href}
 async function shareAuction(id){
   const url=auctionLink(id);
@@ -348,7 +359,51 @@ function applyCategoryFilter(){
 }
 $('categoryFilter').onchange=()=>{selectedCategory=$('categoryFilter').value;applyCategoryFilter()};
 $('categoryClear').onclick=()=>{selectedCategory='';applyCategoryFilter()};
-async function loadAuctions(){const target=$('auctions');try{$('connection').textContent='Duke ngarkuar ankandet…';const auctions=await rpc('ap_list_auctions')||[];target.replaceChildren();$('connection').textContent='Lidhja me Supabase është aktive · '+auctions.length+' ankande.';if(!auctions.length){target.textContent='Nuk ka ankande për momentin.';return}for(const a of auctions){const article=document.createElement('article');article.className='auction';article.dataset.category=String(a.category||'');const active=a.status==='active'&&new Date(a.ends_at)>new Date();const images=galleryHtml(a.image_paths);article.innerHTML='<div class="row"><h3>'+escapeHtml(a.title)+'</h3><span class="status">'+(active?'Aktiv':'Përfunduar')+'</span></div>'+images+'<p>'+escapeHtml(a.description)+'</p><p class="muted">'+escapeHtml(a.category)+' · Shitësi: '+escapeHtml(a.first_name)+' · '+escapeHtml(a.city)+' · '+escapeHtml(a.phone_mask)+'</p><p><strong>Oferta më e lartë: '+money(a.current_price)+'</strong> · '+Number(a.bid_count||0)+' oferta</p><p class="muted">Mbyllet: '+when(a.ends_at)+'</p><p class="muted">'+(active?'Rezerva është private.':a.reserve_reached?'Rezerva u arrit.':'Rezerva nuk u arrit.')+'</p><div id="bids-'+a.id+'" class="muted">Po ngarkohen ofertat…</div><div class="row" style="margin-top:12px">'+(active&&!a.is_mine?'<input id="amount-'+a.id+'" type="number" min="0.01" step="0.01" placeholder="Oferta (€)" style="max-width:140px"><button data-bid="'+a.id+'" '+(user&&profile&&eligible()?'':'disabled')+'>Oferto</button>':'')+(a.can_delete?'<button class="red" data-delete="'+a.id+'">Fshi</button>':'')+(a.is_mine?'<button class="gray" data-reserve="'+a.id+'">Rezerva ime</button>':'')+ '</div><div class="auction-actions"><button type="button" data-share="'+escapeHtml(a.id)+'">🔗 Shpërndaj</button>'+(user?'':'<a href="#accountPanel" data-register="1">📝 Regjistrohu për të ofertuar</a>')+'</div>';article.id='ankand-'+a.id;target.appendChild(article);loadBids(a.id)}applyCategoryFilter();target.querySelectorAll('[data-bid]').forEach(b=>b.onclick=()=>placeBid(b.dataset.bid));target.querySelectorAll('[data-delete]').forEach(b=>b.onclick=()=>deleteAuction(b.dataset.delete));target.querySelectorAll('[data-reserve]').forEach(b=>b.onclick=()=>showReserve(b.dataset.reserve));target.querySelectorAll('[data-share]').forEach(b=>b.onclick=()=>shareAuction(b.dataset.share));target.querySelectorAll('[data-register]').forEach(b=>b.onclick=()=>{$('loginForm').classList.add('hidden');$('registerForm').classList.remove('hidden')});focusLinkedAuction()}catch(e){target.textContent='Gabim: '+e.message;$('connection').textContent='Lidhja nuk u realizua.';console.error(e)}}
+async function loadAuctions(){
+  const version=++auctionLoadVersion;
+  const target=$('auctions');
+  // Mos i kërko dhe mos i shfaq ankandet pa një sesion të identifikuar.
+  if(!user){
+    target.textContent='Për të parë ankandet, regjistrohuni ose hyni në llogarinë tuaj.';
+    $('connection').textContent='Publikimet shfaqen vetëm për përdoruesit e identifikuar.';
+    $('categoryEmpty').classList.add('hidden');
+    return;
+  }
+  const sessionUserId=user.id;
+  target.textContent='Po ngarkohen ankandet…';
+  try{
+    $('connection').textContent='Duke ngarkuar ankandet…';
+    const auctions=await rpc('ap_list_auctions')||[];
+    if(version!==auctionLoadVersion||!user||user.id!==sessionUserId)return;
+    const photoUrls=await signedPhotoUrls(auctions);
+    if(version!==auctionLoadVersion||!user||user.id!==sessionUserId)return;
+    target.replaceChildren();
+    $('connection').textContent='Lidhja me Supabase është aktive · '+auctions.length+' ankande.';
+    if(!auctions.length){target.textContent='Nuk ka ankande për momentin.';return}
+    for(const a of auctions){
+      const article=document.createElement('article');
+      article.className='auction';
+      article.dataset.category=String(a.category||'');
+      const active=a.status==='active'&&new Date(a.ends_at)>new Date();
+      const images=galleryHtml(a.image_paths,photoUrls);
+      article.innerHTML='<div class="row"><h3>'+escapeHtml(a.title)+'</h3><span class="status">'+(active?'Aktiv':'Përfunduar')+'</span></div>'+images+'<p>'+escapeHtml(a.description)+'</p><p class="muted">'+escapeHtml(a.category)+' · Shitësi: '+escapeHtml(a.first_name)+' · '+escapeHtml(a.city)+' · '+escapeHtml(a.phone_mask)+'</p><p><strong>Oferta më e lartë: '+money(a.current_price)+'</strong> · '+Number(a.bid_count||0)+' oferta</p><p class="muted">Mbyllet: '+when(a.ends_at)+'</p><p class="muted">'+(active?'Rezerva është private.':a.reserve_reached?'Rezerva u arrit.':'Rezerva nuk u arrit.')+'</p><div id="bids-'+a.id+'" class="muted">Po ngarkohen ofertat…</div><div class="row" style="margin-top:12px">'+(active&&!a.is_mine?'<input id="amount-'+a.id+'" type="number" min="0.01" step="0.01" placeholder="Oferta (€)" style="max-width:140px"><button data-bid="'+a.id+'" '+(user&&profile&&eligible()?'':'disabled')+'>Oferto</button>':'')+(a.can_delete?'<button class="red" data-delete="'+a.id+'">Fshi</button>':'')+(a.is_mine?'<button class="gray" data-reserve="'+a.id+'">Rezerva ime</button>':'')+ '</div><div class="auction-actions"><button type="button" data-share="'+escapeHtml(a.id)+'">🔗 Shpërndaj</button></div>';
+      article.id='ankand-'+a.id;
+      target.appendChild(article);
+      loadBids(a.id);
+    }
+    applyCategoryFilter();
+    target.querySelectorAll('[data-bid]').forEach(b=>b.onclick=()=>placeBid(b.dataset.bid));
+    target.querySelectorAll('[data-delete]').forEach(b=>b.onclick=()=>deleteAuction(b.dataset.delete));
+    target.querySelectorAll('[data-reserve]').forEach(b=>b.onclick=()=>showReserve(b.dataset.reserve));
+    target.querySelectorAll('[data-share]').forEach(b=>b.onclick=()=>shareAuction(b.dataset.share));
+    focusLinkedAuction();
+  }catch(e){
+    if(version!==auctionLoadVersion||!user||user.id!==sessionUserId)return;
+    target.textContent='Gabim: '+e.message;
+    $('connection').textContent='Lidhja nuk u realizua.';
+    console.error(e);
+  }
+}
 async function loadBids(id){const box=$('bids-'+id);if(!box)return;try{const bids=await rpc('ap_list_bids',{p_auction:id})||[];if(!bids.length){box.textContent='Ende pa oferta.';return}const ul=document.createElement('ul');ul.className='bidlist';for(const b of bids){const li=document.createElement('li'),person=document.createElement('span'),amount=document.createElement('strong');person.textContent=(b.first_name||'Ofertues')+' · '+(b.city||'');amount.textContent=money(b.amount);li.append(person,amount);ul.appendChild(li)}box.replaceChildren(ul)}catch(e){box.textContent=e.message}}
 async function placeBid(id){try{if(!user||!profile||!eligible())throw Error('Hyni me llogari aktive.');const amount=Number($('amount-'+id).value);if(!Number.isFinite(amount)||amount<=0)throw Error('Oferta duhet të jetë mbi 0 €.');await rpc('ap_place_bid',{p_auction:id,p_amount:amount});notice('Oferta virtuale u regjistrua.');await loadAuctions()}catch(e){notice(e.message,true)}}
 async function showReserve(id){try{const n=await rpc('ap_my_reserve',{p_auction:id});notice('Rezerva private: '+money(n))}catch(e){notice(e.message,true)}}
