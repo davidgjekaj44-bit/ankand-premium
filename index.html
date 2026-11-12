@@ -262,7 +262,31 @@ async function signedPhotoUrls(auctions){
   }));
   return new Map(entries);
 }
-$('publishBtn').onclick=async()=>{setBusy('publishBtn',true);const uploaded=[];try{if(!user||!profile||!eligible())throw Error('Duhet profil dhe qasje aktive.');const title=$('title').value.trim(),reserve=Number($('reserve').value),files=[...$('images').files];if(!title)throw Error('Shkruani titullin.');if(!Number.isFinite(reserve)||reserve<0)throw Error('Rezerva është e pavlefshme.');if(files.length>4)throw Error('Maksimumi 4 fotografi.');for(const file of files){if(!['image/jpeg','image/png','image/webp'].includes(file.type)||file.size>20*1024*1024)throw Error('Foto e pavlefshme ose mbi 20 MB.');const ext=file.type==='image/jpeg'?'jpg':file.type==='image/png'?'png':'webp',path=user.id+'/'+crypto.randomUUID()+'.'+ext;const {error}=await db.storage.from('ap-auction-photos').upload(path,file,{contentType:file.type,upsert:false});if(error)throw error;uploaded.push(path)}await rpc('ap_create_auction',{p_title:title,p_description:$('description').value,p_category:$('category').value,p_reserve:reserve,p_images:uploaded});$('title').value='';$('description').value='';$('images').value='';notice('Ankandi virtual u publikua.');await loadAuctions()}catch(e){if(uploaded.length){const {error}=await db.storage.from('ap-auction-photos').remove(uploaded);if(error)console.warn('Pastrimi i fotove:',error)}notice(e.message,true)}finally{$('publishBtn').disabled=!eligible()}};
+// Optimizim i kujdesshëm: ruaj origjinalin kur kompresimi nuk ndihmon.
+async function optimizeAuctionPhoto(file){
+  if(file.size < 700*1024 || file.type==='image/png') return file;
+  let bitmap;
+  try{
+    bitmap=await createImageBitmap(file,{imageOrientation:'from-image'});
+    const longest=Math.max(bitmap.width,bitmap.height);
+    const scale=Math.min(1,2560/longest);
+    const width=Math.max(1,Math.round(bitmap.width*scale));
+    const height=Math.max(1,Math.round(bitmap.height*scale));
+    const canvas=document.createElement('canvas');
+    canvas.width=width;canvas.height=height;
+    const ctx=canvas.getContext('2d',{alpha:false});
+    if(!ctx)return file;
+    ctx.imageSmoothingEnabled=true;
+    ctx.imageSmoothingQuality='high';
+    ctx.drawImage(bitmap,0,0,width,height);
+    const blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/jpeg',0.94));
+    canvas.width=0;canvas.height=0;
+    if(!blob || blob.size>=file.size*0.9)return file;
+    return new File([blob],file.name.replace(/\.[^.]+$/, '')+'.jpg',{type:'image/jpeg',lastModified:file.lastModified});
+  }catch(e){console.warn('Optimizimi i fotografisë u anashkalua:',e);return file}
+  finally{if(bitmap)bitmap.close()}
+}
+$('publishBtn').onclick=async()=>{setBusy('publishBtn',true);const uploaded=[];try{if(!user||!profile||!eligible())throw Error('Duhet profil dhe qasje aktive.');const title=$('title').value.trim(),reserve=Number($('reserve').value),files=[...$('images').files];if(!title)throw Error('Shkruani titullin.');if(!Number.isFinite(reserve)||reserve<0)throw Error('Rezerva është e pavlefshme.');if(files.length>4)throw Error('Maksimumi 4 fotografi.');for(const file of files){if(!['image/jpeg','image/png','image/webp'].includes(file.type)||file.size>20*1024*1024)throw Error('Foto e pavlefshme ose mbi 20 MB.');const photo=await optimizeAuctionPhoto(file);const ext=photo.type==='image/jpeg'?'jpg':photo.type==='image/png'?'png':'webp',path=user.id+'/'+crypto.randomUUID()+'.'+ext;const {error}=await db.storage.from('ap-auction-photos').upload(path,photo,{contentType:photo.type,upsert:false});if(error)throw error;uploaded.push(path)}await rpc('ap_create_auction',{p_title:title,p_description:$('description').value,p_category:$('category').value,p_reserve:reserve,p_images:uploaded});$('title').value='';$('description').value='';$('images').value='';notice('Ankandi virtual u publikua.');await loadAuctions()}catch(e){if(uploaded.length){const {error}=await db.storage.from('ap-auction-photos').remove(uploaded);if(error)console.warn('Pastrimi i fotove:',error)}notice(e.message,true)}finally{$('publishBtn').disabled=!eligible()}};
 function galleryHtml(paths,photoUrls){
   const photos=(Array.isArray(paths)?paths:[]).slice(0,4);
   if(!photos.length)return '<div class="muted">Nuk ka fotografi.</div>';
