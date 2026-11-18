@@ -58,7 +58,7 @@
       <p class="subtitle">Ankand Premium Shqipëri – Kosovë</p>
       <form id="loginForm">
         <label for="username">Emri i përdoruesit</label>
-        <input id="username" name="username" type="text" value="admin_admin" autocomplete="username" minlength="3" maxlength="30" required>
+        <input id="username" name="username" type="text" autocomplete="username" minlength="3" maxlength="30" required>
         <label for="password">Fjalëkalimi</label>
         <input id="password" name="password" type="password" autocomplete="current-password" minlength="12" maxlength="72" required>
         <button id="loginButton" type="submit">Hyr si administrator</button>
@@ -74,7 +74,7 @@
         <div><strong>Roli:</strong> <span id="adminRole"></span></div>
         <div><strong>Sesioni skadon:</strong> <span id="sessionExpiry"></span></div>
       </div>
-      <p class="note">Aksesi falas vlen deri më 11/05/2027. Nga 12/05/2027, përdoruesit pa abonim aktiv kalojnë në pritje të pagesës. Vetëm super_admin mund të bllokojë ose zhbllokojë llogari. Admin dhe super_admin mund të zgjasin abonimet me 12 muaj.</p>
+      <p class="note">Platforma synon përdorim falas pa afat. Rregullat e aksesit duhet të përputhen edhe në Supabase. Vetëm super_admin mund të bllokojë ose zhbllokojë llogari.</p>
       <button id="createAdminButton" type="button" class="hidden">+ Shto administrator</button>
       <section id="createAdminView" class="hidden inline-form" aria-label="Shto administrator">
         <h2>Shto administrator</h2>
@@ -101,19 +101,17 @@
           <label for="newUsername">Username (3–30 karaktere: a-z, 0-9, _)</label><input id="newUsername" name="username" required minlength="3" maxlength="30" pattern="[a-z0-9_]{3,30}" autocapitalize="none" autocomplete="off">
           <label for="newPassword">Fjalëkalimi (12–72 karaktere)</label><input id="newPassword" name="password" type="password" required minlength="12" maxlength="72" autocomplete="new-password">
           <input type="hidden" name="access_type" value="none">
-          <p class="note">Aksesi falas është aktiv deri më 11/05/2027, sipas rregullave të platformës. Pas kësaj date, nëse nuk ka abonim aktiv, statusi është «Në pritje të pagesës». Abonimi zgjatet nga lista e përdoruesve me butonin «Zgjat abonimin (+12 muaj)».</p>
+          <p class="note">Përdoruesi krijohet pa pagesë. Aktivizimi dhe bllokimi kontrollohen nga serveri.</p>
           <button id="createUserSubmit" type="submit">Krijo përdoruesin</button>
           <p id="createUserMessage" class="message" role="status"></p>
         </form>
       </section>
       <button id="usersButton" type="button">Përdoruesit</button>
       <section id="usersView" class="hidden" aria-label="Lista e përdoruesve">
-        <div class="users-heading"><h2>Përdoruesit e abonuar</h2><span id="usersCount" class="count"></span></div>
+        <div class="users-heading"><h2>Të gjithë përdoruesit</h2><span id="usersCount" class="count"></span></div>
         <input id="userSearch" class="search-input" type="search" placeholder="Kërko sipas emrit, telefonit, qytetit ose ID-së" aria-label="Kërko përdorues">
         <p id="usersMessage" class="message" role="status"></p>
         <div id="usersList" class="users-list"></div>
-        <div class="users-heading"><h2>Përdoruesit e paabonuar</h2><span id="unsubscribedCount" class="count"></span></div>
-        <div id="unsubscribedUsersList" class="users-list"></div>
         <div class="users-heading"><h2>Përdoruesit e pakonfirmuar</h2><span id="pendingCount" class="count"></span></div>
         <div id="pendingUsersList" class="users-list"></div>
         <p id="usersTotal" class="note"></p>
@@ -152,8 +150,6 @@
     const usersList = document.getElementById("usersList");
     const usersMessage = document.getElementById("usersMessage");
     const usersCount = document.getElementById("usersCount");
-    const unsubscribedCount = document.getElementById("unsubscribedCount");
-    const unsubscribedUsersList = document.getElementById("unsubscribedUsersList");
 
     // Tokeni mbahet vetëm në memorien e faqes, jo në localStorage.
     let sessionToken = null;
@@ -194,8 +190,7 @@
     function clearUsers() {
       usersView.classList.add("hidden");
       usersList.replaceChildren();
-      unsubscribedUsersList.replaceChildren();
-      unsubscribedCount.textContent = "";
+
       currentUsers = [];
       pendingUsers = [];
       pendingUsersList.replaceChildren();
@@ -251,47 +246,16 @@
       card.appendChild(line);
     }
 
+    function maskAdminPhone(value) {
+      const phone = String(value || "");
+      if (!phone) return "—";
+      return phone.slice(0, Math.min(6, phone.length)) + "••••";
+    }
+
     function formatExpiry(value) {
       if (!value) return "—";
       const d = new Date(value);
       return Number.isNaN(d.getTime()) ? "—" : d.toLocaleDateString("sq-AL", { day: "2-digit", month: "2-digit", year: "numeric" });
-    }
-
-    // Mesnata pas datës 11/05/2027, sipas orës së Shqipërisë/Kosovës.
-    const FREE_ACCESS_END = Date.parse("2027-05-12T00:00:00+02:00");
-
-    function accessExpiry(access) {
-      if (!access || access.payment_suspended || access.unlimited_access) return null;
-      const now = Date.now();
-      const complimentary = Date.parse(access.complimentary_until || "");
-      const subscription = Date.parse(access.subscription_ends_at || "");
-      // Shfaqet afati më i largët që mbetet aktiv, jo vetëm periudha falas.
-      if (subscription > now && subscription > complimentary) return access.subscription_ends_at;
-      if (complimentary > now) return access.complimentary_until;
-      if (subscription > now) return access.subscription_ends_at;
-      return null;
-    }
-
-    function accessStatus(access) {
-      if (!access) return "Në pritje të të dhënave të aksesit";
-      if (access.payment_suspended) return "I pezulluar";
-      if (access.unlimited_access) return "Akses aktiv pa afat";
-      const now = Date.now();
-      const complimentary = Date.parse(access.complimentary_until || "");
-      const subscription = Date.parse(access.subscription_ends_at || "");
-      if (subscription > now && subscription > complimentary) return "Abonim aktiv";
-      if (complimentary > now) return "Akses falas aktiv";
-      if (subscription > now) return "Abonim aktiv";
-      return "Në pritje të pagesës";
-    }
-
-    // Përputhet me kushtet e funksionit Supabase ap_access_state.
-    function hasActiveAccess(access) {
-      if (!access || access.payment_suspended) return false;
-      if (access.unlimited_access === true) return true;
-      const now = Date.now();
-      return Date.parse(access.subscription_ends_at || "") > now ||
-        Date.parse(access.complimentary_until || "") > now;
     }
 
     function renderUsers(users, pending) {
@@ -305,31 +269,25 @@
       const matches = user =>
         [user.first_name, user.last_name, user.city, user.phone, user.user_id]
           .some(value => String(value ?? "").toLocaleLowerCase("sq").includes(term));
-      const subscribedAll = currentUsers.filter(user => hasActiveAccess(user.access));
-      const unsubscribedAll = currentUsers.filter(user => !hasActiveAccess(user.access));
-      const users = subscribedAll.filter(matches);
-      const unsubscribed = unsubscribedAll.filter(matches);
+      const users = currentUsers.filter(matches);
       const pending = pendingUsers.filter(matches);
       usersList.replaceChildren();
-      unsubscribedUsersList.replaceChildren();
+
       pendingUsersList.replaceChildren();
       usersCount.textContent = term
-        ? users.length + " / " + subscribedAll.length + " përdorues"
-        : subscribedAll.length + " përdorues";
-      unsubscribedCount.textContent = term
-        ? unsubscribed.length + " / " + unsubscribedAll.length + " përdorues"
-        : unsubscribedAll.length + " përdorues";
+        ? users.length + " / " + currentUsers.length + " përdorues"
+        : currentUsers.length + " përdorues";
       pendingCount.textContent = term
         ? pending.length + " / " + pendingUsers.length + " përdorues"
         : pendingUsers.length + " përdorues";
       usersTotal.textContent = "Gjithsej: " + (currentUsers.length + pendingUsers.length) + " përdorues";
       usersMessage.classList.remove("success");
-      if (!users.length && !unsubscribed.length && !pending.length) {
+      if (!users.length && !pending.length) {
         usersMessage.textContent = "Nuk u gjet asnjë përdorues.";
         return;
       }
       usersMessage.textContent = "";
-      for (const user of [...users, ...unsubscribed]) {
+      for (const user of users) {
         const card = document.createElement("article");
         card.className = "user-card";
         const heading = document.createElement("div");
@@ -340,9 +298,7 @@
         heading.appendChild(strong);
         card.appendChild(heading);
         addField(card, "Qyteti", user.city);
-        addField(card, "Telefoni", user.phone);
-        addField(card, "Aksesi në ankande", accessStatus(user.access));
-        if (accessExpiry(user.access)) addField(card, "Aktiv deri më", formatExpiry(accessExpiry(user.access)));
+        addField(card, "Telefoni", maskAdminPhone(user.phone));
         addField(card, "ID", user.user_id);
 
         const status = document.createElement("div");
@@ -376,7 +332,7 @@
         if (!user.blocked) {
           const tools = document.createElement("div");
           tools.className = "toolbar";
-          const availableActions = [["Modifiko", "update_profile"], ["Rivendos fjalëkalimin", "reset_password"], ["Zgjat abonimin (+12 muaj)", "extend_subscription"]];
+          const availableActions = [["Modifiko", "update_profile"], ["Rivendos fjalëkalimin", "reset_password"]];
           for (const [label, action] of availableActions) {
             const btn = document.createElement("button");
             btn.type = "button";
@@ -387,7 +343,7 @@
           }
           card.appendChild(tools);
         }
-        (hasActiveAccess(user.access) ? usersList : unsubscribedUsersList).appendChild(card);
+        usersList.appendChild(card);
       }
       for (const user of pending) {
         const card = document.createElement("article");
@@ -396,7 +352,7 @@
         name.textContent = [user.first_name, user.last_name].filter(Boolean).join(" ") || "Pa emër";
         card.appendChild(name);
         addField(card, "Qyteti", user.city);
-        addField(card, "Telefoni", user.phone);
+        addField(card, "Telefoni", maskAdminPhone(user.phone));
         addField(card, "ID", user.user_id);
         const state = document.createElement("div");
         state.className = "account-state blocked";
@@ -548,23 +504,13 @@
       const title = document.createElement("strong");
       const titles = {
         update_profile: "Modifiko profilin",
-        reset_password: "Rivendos fjalëkalimin",
-        extend_subscription: "Zgjat abonimin me 12 muaj",
-        grant_complimentary: "Jep akses falas",
-        grant_unlimited: "Jep akses pa afat"
+        reset_password: "Rivendos fjalëkalimin"
       };
       title.textContent = titles[action];
       form.appendChild(title);
       const fields = action === "update_profile"
         ? [["first_name", "Emri"], ["last_name", "Mbiemri"], ["city", "Qyteti"], ["phone", "Telefoni"]]
-        : action === "grant_complimentary" ? [["days", "Numri i ditëve (1–3650)"]]
         : action === "reset_password" ? [["new_password", "Fjalëkalimi i ri (12–72 karaktere)"]] : [];
-      if (action === "extend_subscription") {
-        const notice = document.createElement("p");
-        notice.className = "note";
-        notice.textContent = "Abonimi zgjatet automatikisht me 12 muaj kalendarikë. Nuk nevojitet numër ditësh.";
-        form.appendChild(notice);
-      }
       for (const [name, labelText] of fields) {
         const label = document.createElement("label");
         label.textContent = labelText;
@@ -573,8 +519,6 @@
         input.required = true;
         if (name === "new_password") {
           input.type = "password"; input.minLength = 12; input.maxLength = 72; input.autocomplete = "new-password";
-        } else if (name === "days") {
-          input.type = "number"; input.min = "1"; input.max = "3650"; input.step = "1";
         } else {
           input.type = "text"; input.maxLength = 100;
           input.value = user[name] || "";
@@ -595,13 +539,11 @@
         const payload = { action, user_id: user.user_id };
         for (const [name] of fields) {
           const value = form.elements.namedItem(name).value.trim();
-          payload[name] = name === "days" ? Number(value) : value;
+          payload[name] = value;
         }
         const displayName = [user.first_name, user.last_name].filter(Boolean).join(" ") || user.user_id;
         const confirmation = action === "reset_password"
           ? "Konfirmon rivendosjen e fjalëkalimit për " + displayName + "? Fjalëkalimi i vjetër nuk mund të rikuperohet."
-          : action === "extend_subscription"
-          ? "Konfirmon zgjatjen e abonimit me 12 muaj për " + displayName + "?"
           : "Konfirmon veprimin: " + titles[action] + " për " + displayName + "?";
         if (!window.confirm(confirmation)) return;
         const version = requestVersion;
@@ -613,10 +555,6 @@
           if (version !== requestVersion) return;
           if (action === "update_profile") {
             for (const [name] of fields) user[name] = payload[name];
-          } else if (user.access) {
-            if (action === "extend_subscription") {
-              // Rilexojmë të dhënat nga serveri për datën e saktë.
-            }
           }
           if (action === "reset_password") {
             form.elements.namedItem("new_password").value = "";
@@ -711,7 +649,6 @@
           } else {
             addField(card, "Veprimi", entry.action);
             if (adminRole === "super_admin") addField(card, "ID e administratorit", entry.admin_id);
-            if (entry.action === "extend_subscription") addField(card, "Kohëzgjatja", "12 muaj");
             addField(card, "Objekti", entry.target_type);
             addField(card, "ID", entry.target_id);
             addField(card, "Koha", entry.created_at ? new Date(entry.created_at).toLocaleString("sq-AL") : "—");
