@@ -49,7 +49,8 @@
     .muted { color:#cbd5e1; font-size:13px; }
     .search-input { margin-top:12px; }
     button:focus-visible { outline: 3px solid #38bdf8; outline-offset: 3px; }
-  </style>
+  #chatAdminView select,#chatAdminView textarea{width:100%;padding:10px;background:#0f172a;color:white;border:1px solid #64748b;border-radius:8px;font:inherit}#chatAdminList button{margin:0;text-align:left;overflow-wrap:anywhere}#chatMessages{max-height:340px;overflow:auto;display:grid;gap:8px;margin:12px 0}#chatMessages article{padding:10px;background:#0f172a;border-radius:9px;white-space:pre-wrap;overflow-wrap:anywhere}#chatMessages article.admin{background:#164e63}
+</style>
 </head>
 <body>
   <main id="mainPanel" class="panel">
@@ -125,6 +126,11 @@
         <p id="extraMessage" class="message" role="status"></p>
         <div id="extraList" class="users-list"></div>
       </section>
+<button id="chatAdminButton" type="button">💬 Live Chat (test)</button>
+<section id="chatAdminView" class="hidden inline-form" aria-label="Live Chat">
+<h2>Live Chat</h2><div class="toolbar"><button id="chatPresence" type="button">Aktivizo Online</button><button id="chatRefresh" type="button">Rifresko</button></div>
+<p id="chatAdminStatus" role="status" class="muted"></p><label for="chatFilter">Bisedat</label><select id="chatFilter"><option value="all">Të gjitha</option><option value="open">Të hapura</option><option value="closed">Të mbyllura</option></select>
+<div id="chatAdminList" class="users-list"></div><div id="chatDetail" class="hidden"><h2 id="chatTitle"></h2><div id="chatTools" class="toolbar"></div><div id="chatMessages" role="log"></div><form id="chatSendForm"><label for="chatText">Përgjigjja</label><textarea id="chatText" maxlength="3000" rows="3" required></textarea><button id="chatSend" type="submit">Dërgo</button></form></div></section>
       <button id="logoutButton" class="secondary" type="button">Dil nga administrimi</button>
       <p id="dashboardMessage" class="message" role="status"></p>
     </section>
@@ -206,6 +212,7 @@
     }
 
     function showLogin() {
+      chatReset();
       requestVersion++;
       sessionToken = null;
       adminRole = null;
@@ -844,6 +851,7 @@
       dashboardMessage.textContent = "";
       logoutButton.disabled = true;
       try {
+        if (sessionToken && chatAvailable) { try { await chatRequest("presence", {available:false}); } catch {} }
         if (sessionToken) await apiRequest({ action: "logout", token: sessionToken });
         showLogin();
       } catch {
@@ -852,6 +860,37 @@
         logoutButton.disabled = false;
       }
     });
+
+
+    const chatEl = id => document.getElementById(id);
+    const chatAPI = API.replace(/admin-auth$/, 'ap-chat-admin');
+    let chatSelected=null, chatAvailable=false, chatBusy=false, chatEpoch=0, chatLastHeartbeat=0;
+    function chatReset(){chatEpoch++;chatSelected=null;chatAvailable=false;chatBusy=false;chatLastHeartbeat=0;chatEl('chatAdminView').classList.add('hidden');chatEl('chatDetail').classList.add('hidden');chatEl('chatAdminList').replaceChildren();chatEl('chatMessages').replaceChildren();chatEl('chatTools').replaceChildren();chatEl('chatText').value='';chatEl('chatTitle').textContent='';chatEl('chatAdminStatus').textContent='';chatEl('chatPresence').textContent='Aktivizo Online';chatEl('chatAdminButton').textContent='💬 Live Chat (test)';}
+    async function chatRequest(action, extra={}){
+      const token=sessionToken, epoch=chatEpoch;if(!token)throw Error('Hyr përsëri.');
+      const controller=new AbortController(), timer=setTimeout(()=>controller.abort(),15000);
+      try{const res=await fetch(chatAPI,{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+token},body:JSON.stringify({action,...extra}),cache:'no-store',signal:controller.signal});
+      const data=await res.json();if(token!==sessionToken||epoch!==chatEpoch)throw Error('Sesioni ndryshoi.');if(res.status===401){showLogin();throw Error('Sesioni ka skaduar.');}if(!res.ok||data.ok!==true)throw Error(data.error||'Veprimi dështoi.');return data;}finally{clearTimeout(timer)}
+    }
+    async function chatRun(fn){if(chatBusy||!sessionToken)return;const epoch=chatEpoch;chatBusy=true;try{await fn();if(epoch===chatEpoch)chatEl('chatAdminStatus').textContent='';}catch(e){if(epoch===chatEpoch)chatEl('chatAdminStatus').textContent=e.message;}finally{if(epoch===chatEpoch)chatBusy=false;}}
+    async function chatLoad(){
+      const result=await chatRequest('list',{status:chatEl('chatFilter').value});
+      const list=chatEl('chatAdminList');list.replaceChildren();let unread=0;
+      for(const c of result.conversations){unread+=Number(c.unread_count)||0;const b=document.createElement('button');b.type='button';b.className='secondary';b.textContent=(c.username||c.guest_name||'Përdorues')+' · '+(c.status==='open'?'Hapur':'Mbyllur')+' · '+(c.assigned_admin||'Pa administrator')+' · '+c.unread_count+' të palexuara';b.onclick=()=>chatRun(async()=>{chatSelected=c.id;chatEl('chatText').value='';await chatLoad();});list.append(b);}
+      chatEl('chatAdminButton').textContent='💬 Live Chat (test) · '+unread;
+      const c=result.conversations.find(x=>x.id===chatSelected);chatEl('chatDetail').classList.toggle('hidden',!c);if(!c){chatSelected=null;chatEl('chatMessages').replaceChildren();chatEl('chatText').value='';return;}
+      const detail=await chatRequest('messages',{conversation_id:c.id});const current=detail.conversation;
+      chatEl('chatTitle').textContent=c.username||c.guest_name||'Biseda';const box=chatEl('chatMessages');const near=box.scrollHeight-box.scrollTop-box.clientHeight<60;box.replaceChildren();for(const m of detail.messages){const a=document.createElement('article');a.className=m.sender_type==='admin'?'admin':'';const meta=document.createElement('div');meta.className='muted';meta.textContent=(m.sender_type==='admin'?'Administrator':'Vizitor / përdorues')+' · '+new Date(m.created_at).toLocaleString('sq-AL');const text=document.createElement('div');text.textContent=m.message;a.append(meta,text);box.append(a);}if(near)box.scrollTop=box.scrollHeight;
+      const own=current.assigned_admin_id===result.admin.id, free=!current.assigned_admin_id, superRole=result.admin.role==='super_admin', open=current.status==='open';
+      chatEl('chatSendForm').classList.toggle('hidden',!open||!(own||free));const tools=chatEl('chatTools');tools.replaceChildren();
+      const choices=[];if(open&&free)choices.push(['assign','Merr bisedën']);if(!free&&(own||superRole))choices.push(['release','Liro bisedën']);if(free||own||superRole)choices.push(open?['close','Mbyll']:['reopen','Rihap']);if(!open&&superRole)choices.push(['delete','Fshi përgjithmonë']);if(c.unread_count)choices.push(['read','Shëno si të lexuara']);
+      for(const [action,label] of choices){const b=document.createElement('button');b.type='button';b.className='secondary';b.textContent=label;b.onclick=()=>chatRun(async()=>{if(action==='delete'&&!confirm('Fshi përgjithmonë këtë bisedë?'))return;await chatRequest(action,{conversation_id:c.id,confirm:action==='delete'});await chatLoad();});tools.append(b);}
+    }
+    chatEl('chatAdminButton').onclick=()=>{const v=chatEl('chatAdminView');v.classList.toggle('hidden');if(!v.classList.contains('hidden')){mainPanel.classList.add('wide');chatRun(chatLoad);}else{chatSelected=null;chatEl('chatMessages').replaceChildren();chatEl('chatText').value='';chatEl('chatDetail').classList.add('hidden');}};
+    chatEl('chatRefresh').onclick=()=>chatRun(chatLoad);chatEl('chatFilter').onchange=()=>chatRun(chatLoad);
+    chatEl('chatPresence').onclick=()=>chatRun(async()=>{const next=!chatAvailable;await chatRequest('presence',{available:next});chatAvailable=next;chatLastHeartbeat=Date.now();chatEl('chatPresence').textContent=next?'Kalo Offline':'Aktivizo Online';});
+    chatEl('chatSendForm').onsubmit=e=>{e.preventDefault();chatRun(async()=>{const message=chatEl('chatText').value.trim();if(!message||!chatSelected)return;await chatRequest('send',{conversation_id:chatSelected,message});chatEl('chatText').value='';await chatLoad();});};
+    setInterval(()=>{if(!sessionToken||document.hidden)return;chatRun(async()=>{if(chatAvailable&&Date.now()-chatLastHeartbeat>=30000){await chatRequest('presence',{available:true});chatLastHeartbeat=Date.now();}if(!chatEl('chatAdminView').classList.contains('hidden'))await chatLoad();});},8000);
 
     // Kur mbyllet ose rifreskohet faqja, tokeni nuk ruhet.
     showLogin();
