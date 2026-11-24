@@ -74,7 +74,7 @@
         <div><strong>Roli:</strong> <span id="adminRole"></span></div>
         <div><strong>Sesioni skadon:</strong> <span id="sessionExpiry"></span></div>
       </div>
-      <p class="note">Platforma synon përdorim falas pa afat. Rregullat e aksesit duhet të përputhen edhe në Supabase. Vetëm super_admin mund të bllokojë ose zhbllokojë llogari.</p>
+      <p class="note">Platforma synon përdorim falas pa afat. Rregullat e aksesit duhet të përputhen edhe në Supabase. Vetëm super_admin mund të shohë kontaktet e plota, të modifikojë profilet, të rivendosë fjalëkalime dhe të bllokojë ose zhbllokojë llogari në këtë ndërfaqe.</p>
       <button id="createAdminButton" type="button" class="hidden">+ Shto administrator</button>
       <section id="createAdminView" class="hidden inline-form" aria-label="Shto administrator">
         <h2>Shto administrator</h2>
@@ -109,7 +109,7 @@
       <button id="usersButton" type="button">Përdoruesit</button>
       <section id="usersView" class="hidden" aria-label="Lista e përdoruesve">
         <div class="users-heading"><h2>Të gjithë përdoruesit</h2><span id="usersCount" class="count"></span></div>
-        <input id="userSearch" class="search-input" type="search" placeholder="Kërko sipas emrit, telefonit, qytetit ose ID-së" aria-label="Kërko përdorues">
+        <input id="userSearch" class="search-input" type="search" placeholder="Kërko sipas emrit, username, telefonit, qytetit ose ID-së" aria-label="Kërko përdorues">
         <p id="usersMessage" class="message" role="status"></p>
         <div id="usersList" class="users-list"></div>
         <div class="users-heading"><h2>Përdoruesit e pakonfirmuar</h2><span id="pendingCount" class="count"></span></div>
@@ -249,14 +249,9 @@
     function maskAdminPhone(value) {
       const phone = String(value || "");
       if (!phone) return "—";
-      return phone.slice(0, Math.min(6, phone.length)) + "••••";
+      return phone.length > 6 ? phone.slice(0, 6) + "••••" : "••••";
     }
 
-    function formatExpiry(value) {
-      if (!value) return "—";
-      const d = new Date(value);
-      return Number.isNaN(d.getTime()) ? "—" : d.toLocaleDateString("sq-AL", { day: "2-digit", month: "2-digit", year: "numeric" });
-    }
 
     function renderUsers(users, pending) {
       currentUsers = users;
@@ -267,7 +262,7 @@
     function paintUsers() {
       const term = userSearch.value.trim().toLocaleLowerCase("sq");
       const matches = user =>
-        [user.first_name, user.last_name, user.city, user.phone, user.user_id]
+        [user.first_name, user.last_name, user.city, user.user_id, user.phone, ...(adminRole === "super_admin" ? [user.username] : [])]
           .some(value => String(value ?? "").toLocaleLowerCase("sq").includes(term));
       const users = currentUsers.filter(matches);
       const pending = pendingUsers.filter(matches);
@@ -297,8 +292,12 @@
         strong.textContent = displayName;
         heading.appendChild(strong);
         card.appendChild(heading);
-        addField(card, "Qyteti", user.city);
+        if (adminRole === "super_admin") {
+          addField(card, "Username", user.username || "Nuk disponohet");
+          addField(card, "Fjalëkalimi", "I mbrojtur");
+        }
         addField(card, "Telefoni", user.phone);
+        addField(card, "Qyteti", user.city);
         addField(card, "ID", user.user_id);
 
         const status = document.createElement("div");
@@ -329,7 +328,7 @@
           appendDeleteButton(card, user, displayName, actionRow);
           card.appendChild(actionMessage);
         }
-        if (!user.blocked) {
+        if (!user.blocked && adminRole === "super_admin") {
           const tools = document.createElement("div");
           tools.className = "toolbar";
           const availableActions = [["Modifiko", "update_profile"], ["Rivendos fjalëkalimin", "reset_password"]];
@@ -351,8 +350,12 @@
         const name = document.createElement("strong");
         name.textContent = [user.first_name, user.last_name].filter(Boolean).join(" ") || "Pa emër";
         card.appendChild(name);
-        addField(card, "Qyteti", user.city);
+        if (adminRole === "super_admin") {
+          addField(card, "Username", user.username || "Nuk disponohet");
+          addField(card, "Fjalëkalimi", "I mbrojtur");
+        }
         addField(card, "Telefoni", user.phone);
+        addField(card, "Qyteti", user.city);
         addField(card, "ID", user.user_id);
         const state = document.createElement("div");
         state.className = "account-state blocked";
@@ -496,7 +499,7 @@
     }
 
     function openManageForm(user, action, card) {
-      if ((adminRole !== "super_admin" && !["extend_subscription", "update_profile", "reset_password"].includes(action)) || actionInProgress) return;
+      if (!sessionToken || adminRole !== "super_admin" || !["update_profile", "reset_password"].includes(action) || actionInProgress) return;
       const existing = card.querySelector(".inline-form");
       if (existing) { existing.remove(); return; }
       const form = document.createElement("form");
@@ -535,10 +538,11 @@
       form.append(submit, msg);
       form.addEventListener("submit", async event => {
         event.preventDefault();
-        if (actionInProgress) return;
+        if (!sessionToken || adminRole !== "super_admin" || actionInProgress) return;
         const payload = { action, user_id: user.user_id };
         for (const [name] of fields) {
-          const value = form.elements.namedItem(name).value.trim();
+          const raw = form.elements.namedItem(name).value;
+          const value = name === "new_password" ? raw : raw.trim();
           payload[name] = value;
         }
         const displayName = [user.first_name, user.last_name].filter(Boolean).join(" ") || user.user_id;
