@@ -1,0 +1,909 @@
+<!DOCTYPE html>
+<html lang="sq">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Administratori | Ankand Premium</title>
+  <meta name="robots" content="noindex, nofollow">
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; min-height: 100vh; font-family: Arial, sans-serif; background: #101827; color: #f8fafc; display: flex; align-items: center; justify-content: center; padding: 20px; }
+    .panel { width: 100%; max-width: 440px; background: #1e293b; border: 1px solid #334155; border-radius: 18px; padding: 28px; box-shadow: 0 20px 50px #0005; }
+    .panel.wide { max-width: 850px; }
+    h1 { margin: 0 0 8px; font-size: 25px; text-align: center; }
+    h2 { font-size: 20px; margin: 25px 0 12px; }
+    .subtitle { text-align: center; color: #cbd5e1; margin-bottom: 26px; line-height: 1.5; }
+    label { display: block; margin: 16px 0 7px; font-weight: bold; }
+    input { width: 100%; padding: 13px; border-radius: 9px; border: 1px solid #64748b; background: #0f172a; color: white; font-size: 16px; }
+    input:focus { outline: 2px solid #38bdf8; }
+    button { width: 100%; padding: 14px; margin-top: 20px; border: 0; border-radius: 9px; background: #fbbf24; color: #111827; font-weight: bold; font-size: 16px; cursor: pointer; }
+    button:disabled { opacity: 0.6; cursor: wait; }
+    .secondary { background: #334155; color: white; }
+    .message { margin-top: 18px; text-align: center; line-height: 1.5; min-height: 22px; color: #fca5a5; }
+    .success { color: #86efac; }
+    .hidden { display: none !important; }
+    .info { padding: 15px; background: #0f172a; border-radius: 10px; line-height: 1.8; overflow-wrap: anywhere; }
+    .note { color: #cbd5e1; font-size: 14px; line-height: 1.6; margin-top: 20px; }
+    .users-list { display: grid; gap: 12px; margin-top: 15px; }
+    .user-card { background: #0f172a; border: 1px solid #334155; border-radius: 10px; padding: 15px; line-height: 1.7; overflow-wrap: anywhere; }
+    .user-card strong { color: #fbbf24; }
+    .user-meta { color: #cbd5e1; font-size: 14px; }
+    .users-heading { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+    .users-heading h2 { margin-bottom: 0; }
+    .count { color: #cbd5e1; font-size: 14px; }
+    .account-state { margin-top: 8px; font-size: 14px; font-weight: bold; }
+    .account-state.blocked { color: #fca5a5; }
+    .account-state.allowed { color: #86efac; }
+    .account-action { margin-top: 12px; padding: 11px; font-size: 14px; }
+    .account-action.block-action { background: #fbbf24; color: #111827; }
+    .account-action.unblock-action { background: #86efac; color: #111827; }
+    .account-action.delete-action { background: #dc6464; color: #111827; }
+    .account-actions-row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 10px; margin-top: 12px; }
+    .account-actions-row .account-action { width: 100%; margin-top: 0; min-width: 0; height: 100%; padding: 11px 6px; font-size: 13px; overflow-wrap: anywhere; }
+    .card-message { min-height: 0; margin-top: 8px; text-align: left; font-size: 14px; }
+    .toolbar { display:flex; flex-wrap:wrap; gap:8px; margin:12px 0; }
+    .toolbar button { width:auto; margin:0; padding:10px 12px; font-size:14px; }
+    .inline-form { background:#162236; padding:14px; border-radius:10px; margin-top:12px; }
+    .inline-form label { font-size:14px; }
+    .inline-form button { margin-top:12px; }
+    .muted { color:#cbd5e1; font-size:13px; }
+    .search-input { margin-top:12px; }
+    button:focus-visible { outline: 3px solid #38bdf8; outline-offset: 3px; }
+  #chatAdminView select,#chatAdminView textarea{width:100%;padding:10px;background:#0f172a;color:white;border:1px solid #64748b;border-radius:8px;font:inherit}#chatAdminList button{margin:0;text-align:left;overflow-wrap:anywhere}#chatMessages{max-height:340px;overflow:auto;display:grid;gap:8px;margin:12px 0}#chatMessages article{padding:10px;background:#0f172a;border-radius:9px;white-space:pre-wrap;overflow-wrap:anywhere}#chatMessages article.admin{background:#164e63}#chatMessages article.bot{background:#14532d}
+</style>
+</head>
+<body>
+  <main id="mainPanel" class="panel">
+    <section id="loginView">
+      <h1>Paneli i Administratorit</h1>
+      <p class="subtitle">Ankand Premium Shqipëri – Kosovë</p>
+      <form id="loginForm">
+        <label for="username">Emri i përdoruesit</label>
+        <input id="username" name="username" type="text" autocomplete="username" minlength="3" maxlength="30" required>
+        <label for="password">Fjalëkalimi</label>
+        <input id="password" name="password" type="password" autocomplete="current-password" minlength="12" maxlength="72" required>
+        <button id="loginButton" type="submit">Hyr si administrator</button>
+      </form>
+      <p id="loginMessage" class="message" role="status"></p>
+    </section>
+
+    <section id="dashboardView" class="hidden">
+      <h1>Paneli i Administratorit</h1>
+      <p class="subtitle">Mirë se erdhe në administrim</p>
+      <div class="info">
+        <div><strong>Përdoruesi:</strong> <span id="adminName"></span></div>
+        <div><strong>Roli:</strong> <span id="adminRole"></span></div>
+        <div><strong>Sesioni skadon:</strong> <span id="sessionExpiry"></span></div>
+      </div>
+      <p class="note">Platforma synon përdorim falas pa afat. Rregullat e aksesit duhet të përputhen edhe në Supabase. Vetëm super_admin mund të shohë kontaktet e plota, të modifikojë profilet, të rivendosë fjalëkalime dhe të bllokojë ose zhbllokojë llogari në këtë ndërfaqe.</p>
+      <button id="createAdminButton" type="button" class="hidden">+ Shto administrator</button>
+      <section id="createAdminView" class="hidden inline-form" aria-label="Shto administrator">
+        <h2>Shto administrator</h2>
+        <p class="muted">Administratori i ri do të ketë rolin admin, jo super_admin.</p>
+        <form id="createAdminForm" autocomplete="off">
+          <label for="adminNewUsername">Emri i administratorit (3–30 karaktere)</label>
+          <input id="adminNewUsername" name="username" type="text" pattern="[a-zA-Z0-9_]{3,30}" minlength="3" maxlength="30" autocapitalize="none" autocomplete="off" required>
+          <label for="adminNewPassword">Fjalëkalimi (12–72 karaktere)</label>
+          <input id="adminNewPassword" name="password" type="password" minlength="12" maxlength="72" autocomplete="new-password" required>
+          <label for="adminNewPasswordConfirm">Përsërit fjalëkalimin</label>
+          <input id="adminNewPasswordConfirm" name="password_confirm" type="password" minlength="12" maxlength="72" autocomplete="new-password" required>
+          <button id="createAdminSubmit" type="submit">Krijo administratorin</button>
+          <p id="createAdminMessage" class="message" role="status"></p>
+        </form>
+      </section>
+      <button id="createUserButton" type="button">+ Shto përdorues</button>
+      <section id="createUserView" class="hidden inline-form" aria-label="Shto përdorues">
+        <h2>Shto përdorues</h2>
+        <form id="createUserForm" autocomplete="off">
+          <label for="newFirst">Emri</label><input id="newFirst" name="first_name" required minlength="2" maxlength="60">
+          <label for="newLast">Mbiemri</label><input id="newLast" name="last_name" required minlength="2" maxlength="60">
+          <label for="newCity">Qyteti</label><input id="newCity" name="city" required minlength="2" maxlength="80">
+          <label for="newPhone">Telefoni</label><input id="newPhone" name="phone" type="tel" required minlength="7" maxlength="24">
+          <label for="newUsername">Username (3–30 karaktere: a-z, 0-9, _)</label><input id="newUsername" name="username" required minlength="3" maxlength="30" pattern="[a-z0-9_]{3,30}" autocapitalize="none" autocomplete="off">
+          <label for="newPassword">Fjalëkalimi (12–72 karaktere)</label><input id="newPassword" name="password" type="password" required minlength="12" maxlength="72" autocomplete="new-password">
+          <input type="hidden" name="access_type" value="none">
+          <p class="note">Përdoruesi krijohet pa pagesë. Aktivizimi dhe bllokimi kontrollohen nga serveri.</p>
+          <button id="createUserSubmit" type="submit">Krijo përdoruesin</button>
+          <p id="createUserMessage" class="message" role="status"></p>
+        </form>
+      </section>
+      <button id="usersButton" type="button">Përdoruesit</button>
+      <section id="usersView" class="hidden" aria-label="Lista e përdoruesve">
+        <div class="users-heading"><h2>Të gjithë përdoruesit</h2><span id="usersCount" class="count"></span></div>
+        <input id="userSearch" class="search-input" type="search" placeholder="Kërko sipas emrit, username, telefonit, qytetit ose ID-së" aria-label="Kërko përdorues">
+        <p id="usersMessage" class="message" role="status"></p>
+        <div id="usersList" class="users-list"></div>
+        <div class="users-heading"><h2>Përdoruesit e pakonfirmuar</h2><span id="pendingCount" class="count"></span></div>
+        <div id="pendingUsersList" class="users-list"></div>
+        <p id="usersTotal" class="note"></p>
+      </section>
+      <div class="toolbar">
+        <button id="adminsButton" class="secondary" type="button">Administratorët</button>
+        <button id="auditButton" class="secondary hidden" type="button">Historiku</button>
+      </div>
+      <section id="extraView" class="hidden" aria-label="Menaxhimi i administratorëve dhe historiku">
+        <h2 id="extraTitle"></h2>
+        <p id="extraMessage" class="message" role="status"></p>
+        <div id="extraList" class="users-list"></div>
+      </section>
+<button id="chatAdminButton" type="button">💬 Live Chat (test)</button>
+<section id="chatAdminView" class="hidden inline-form" aria-label="Live Chat">
+<h2>Live Chat</h2><div class="toolbar"><button id="chatPresence" type="button">Aktivizo Online</button><button id="chatRefresh" type="button">Rifresko</button></div>
+<p id="chatAdminStatus" role="status" class="muted"></p><label for="chatFilter">Bisedat</label><select id="chatFilter"><option value="needs_admin">Kërkojnë administrator</option><option value="all">Të gjitha</option><option value="automatic">Automatike</option><option value="waiting_admin">Në pritje</option><option value="human">Me administrator</option><option value="resolved">Të përfunduara</option></select>
+<div id="chatAdminList" class="users-list"></div><div id="chatDetail" class="hidden"><h2 id="chatTitle"></h2><div id="chatTools" class="toolbar"></div><div id="chatMessages" role="log"></div><form id="chatSendForm"><label for="chatText">Përgjigjja</label><textarea id="chatText" maxlength="3000" rows="3" required></textarea><button id="chatSend" type="submit">Dërgo</button></form></div></section>
+      <button id="logoutButton" class="secondary" type="button">Dil nga administrimi</button>
+      <p id="dashboardMessage" class="message" role="status"></p>
+    </section>
+  </main>
+
+  <script>
+    "use strict";
+
+    const API = "https://bhwidixijfuhylbanjuk.supabase.co/functions/v1/admin-auth";
+    const MANAGE_API = "https://bhwidixijfuhylbanjuk.supabase.co/functions/v1/admin-manage";
+    const USERS_API = "https://bhwidixijfuhylbanjuk.supabase.co/functions/v1/admin-users";
+
+    const mainPanel = document.getElementById("mainPanel");
+    const loginView = document.getElementById("loginView");
+    const dashboardView = document.getElementById("dashboardView");
+    const loginForm = document.getElementById("loginForm");
+    const loginButton = document.getElementById("loginButton");
+    const loginMessage = document.getElementById("loginMessage");
+    const dashboardMessage = document.getElementById("dashboardMessage");
+    const logoutButton = document.getElementById("logoutButton");
+    const usersButton = document.getElementById("usersButton");
+    const usersView = document.getElementById("usersView");
+    const usersList = document.getElementById("usersList");
+    const usersMessage = document.getElementById("usersMessage");
+    const usersCount = document.getElementById("usersCount");
+
+    // Tokeni mbahet vetëm në memorien e faqes, jo në localStorage.
+    let sessionToken = null;
+    let adminRole = null;
+    let currentUsers = [];
+    let pendingUsers = [];
+    const pendingUsersList = document.getElementById("pendingUsersList");
+    const pendingCount = document.getElementById("pendingCount");
+    const usersTotal = document.getElementById("usersTotal");
+    let actionInProgress = false;
+    let requestVersion = 0;
+    const userSearch = document.getElementById("userSearch");
+    const adminsButton = document.getElementById("adminsButton");
+    const auditButton = document.getElementById("auditButton");
+    const extraView = document.getElementById("extraView");
+    const extraTitle = document.getElementById("extraTitle");
+    const extraMessage = document.getElementById("extraMessage");
+    const extraList = document.getElementById("extraList");
+
+    async function apiRequest(body) {
+      const response = await fetch(API, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+        cache: "no-store"
+      });
+      let result;
+      try { result = await response.json(); }
+      catch { throw new Error("Përgjigje e pavlefshme nga serveri."); }
+      if (!response.ok) {
+        if (response.status === 401) throw new Error("Të dhënat e hyrjes nuk janë të sakta.");
+        if (response.status === 429) throw new Error("Shumë tentativa. Provo më vonë.");
+        throw new Error("Shërbimi nuk është i disponueshëm.");
+      }
+      return result;
+    }
+
+    function clearUsers() {
+      usersView.classList.add("hidden");
+      usersList.replaceChildren();
+
+      currentUsers = [];
+      pendingUsers = [];
+      pendingUsersList.replaceChildren();
+      pendingCount.textContent = "";
+      usersTotal.textContent = "";
+      userSearch.value = "";
+      usersMessage.textContent = "";
+      usersMessage.classList.remove("success");
+      usersCount.textContent = "";
+      usersButton.disabled = false;
+      usersButton.textContent = "Përdoruesit";
+      mainPanel.classList.remove("wide");
+    }
+
+    function showLogin() {
+      chatReset();
+      requestVersion++;
+      sessionToken = null;
+      adminRole = null;
+      actionInProgress = false;
+      extraView.classList.add("hidden");
+      createAdminView.classList.add("hidden");
+      createAdminForm.reset();
+      createUserView.classList.add("hidden");
+      createUserForm.reset();
+      extraList.replaceChildren();
+      clearUsers();
+      dashboardView.classList.add("hidden");
+      loginView.classList.remove("hidden");
+      document.getElementById("password").value = "";
+    }
+
+    function showDashboard(admin, expiresAt) {
+      adminRole = admin.role;
+      createAdminButton.classList.toggle("hidden", admin.role !== "super_admin");
+      adminsButton.classList.toggle("hidden", admin.role !== "super_admin");
+      auditButton.classList.remove("hidden");
+      document.getElementById("adminName").textContent = admin.username;
+      document.getElementById("adminRole").textContent = admin.role;
+      document.getElementById("sessionExpiry").textContent = new Date(expiresAt).toLocaleString("sq-AL");
+      dashboardMessage.textContent = "";
+      loginView.classList.add("hidden");
+      dashboardView.classList.remove("hidden");
+    }
+
+    function addField(card, label, value) {
+      const line = document.createElement("div");
+      line.className = "user-meta";
+      const name = document.createElement("strong");
+      name.textContent = label + ": ";
+      const content = document.createElement("span");
+      content.textContent = value == null || value === "" ? "—" : String(value);
+      line.append(name, content);
+      card.appendChild(line);
+    }
+
+    function maskAdminPhone(value) {
+      const phone = String(value || "");
+      if (!phone) return "—";
+      return phone.length > 6 ? phone.slice(0, 6) + "••••" : "••••";
+    }
+
+
+    function renderUsers(users, pending) {
+      currentUsers = users;
+      pendingUsers = pending;
+      paintUsers();
+    }
+
+    function paintUsers() {
+      const term = userSearch.value.trim().toLocaleLowerCase("sq");
+      const matches = user =>
+        [user.first_name, user.last_name, user.city, user.user_id, user.phone, ...(adminRole === "super_admin" ? [user.username] : [])]
+          .some(value => String(value ?? "").toLocaleLowerCase("sq").includes(term));
+      const users = currentUsers.filter(matches);
+      const pending = pendingUsers.filter(matches);
+      usersList.replaceChildren();
+
+      pendingUsersList.replaceChildren();
+      usersCount.textContent = term
+        ? users.length + " / " + currentUsers.length + " përdorues"
+        : currentUsers.length + " përdorues";
+      pendingCount.textContent = term
+        ? pending.length + " / " + pendingUsers.length + " përdorues"
+        : pendingUsers.length + " përdorues";
+      usersTotal.textContent = "Gjithsej: " + (currentUsers.length + pendingUsers.length) + " përdorues";
+      usersMessage.classList.remove("success");
+      if (!users.length && !pending.length) {
+        usersMessage.textContent = "Nuk u gjet asnjë përdorues.";
+        return;
+      }
+      usersMessage.textContent = "";
+      for (const user of users) {
+        const card = document.createElement("article");
+        card.className = "user-card";
+        const heading = document.createElement("div");
+        const strong = document.createElement("strong");
+        const displayName = [user.first_name, user.last_name]
+          .filter(Boolean).join(" ") || "Pa emër";
+        strong.textContent = displayName;
+        heading.appendChild(strong);
+        card.appendChild(heading);
+        if (adminRole === "super_admin") {
+          addField(card, "Username", user.username || "Nuk disponohet");
+          addField(card, "Fjalëkalimi", "I mbrojtur");
+        }
+        addField(card, "Telefoni", user.phone);
+        addField(card, "Qyteti", user.city);
+        addField(card, "ID", user.user_id);
+
+        const status = document.createElement("div");
+        status.className = "account-state " +
+          (user.blocked ? "blocked" : "allowed");
+        status.textContent = user.blocked
+          ? "Llogaria: E bllokuar"
+          : "Llogaria: E pabllokuar";
+        card.appendChild(status);
+
+        if (adminRole === "super_admin") {
+          const actionButton = document.createElement("button");
+          actionButton.type = "button";
+          actionButton.className = "account-action " +
+            (user.blocked ? "unblock-action" : "block-action");
+          actionButton.textContent = user.blocked
+            ? "Zhblloko" : "Blloko llogarinë";
+          const actionMessage = document.createElement("p");
+          actionMessage.className = "message card-message";
+          actionMessage.setAttribute("role", "status");
+          actionButton.addEventListener("click", () =>
+            changeAccountStatus(user, displayName, actionButton, actionMessage)
+          );
+          const actionRow = document.createElement("div");
+          actionRow.className = "account-actions-row";
+          actionRow.appendChild(actionButton);
+          card.appendChild(actionRow);
+          appendDeleteButton(card, user, displayName, actionRow);
+          card.appendChild(actionMessage);
+        }
+        if (!user.blocked && adminRole === "super_admin") {
+          const tools = document.createElement("div");
+          tools.className = "toolbar";
+          const availableActions = [["Modifiko", "update_profile"], ["Rivendos fjalëkalimin", "reset_password"]];
+          for (const [label, action] of availableActions) {
+            const btn = document.createElement("button");
+            btn.type = "button";
+            btn.className = "secondary";
+            btn.textContent = label;
+            btn.addEventListener("click", () => openManageForm(user, action, card));
+            tools.appendChild(btn);
+          }
+          card.appendChild(tools);
+        }
+        usersList.appendChild(card);
+      }
+      for (const user of pending) {
+        const card = document.createElement("article");
+        card.className = "user-card";
+        const name = document.createElement("strong");
+        name.textContent = [user.first_name, user.last_name].filter(Boolean).join(" ") || "Pa emër";
+        card.appendChild(name);
+        if (adminRole === "super_admin") {
+          addField(card, "Username", user.username || "Nuk disponohet");
+          addField(card, "Fjalëkalimi", "I mbrojtur");
+        }
+        addField(card, "Telefoni", user.phone);
+        addField(card, "Qyteti", user.city);
+        addField(card, "ID", user.user_id);
+        const state = document.createElement("div");
+        state.className = "account-state blocked";
+        state.textContent = "Identiteti: I pakonfirmuar";
+        card.appendChild(state);
+        if (adminRole === "super_admin") appendDeleteButton(card, user, name.textContent);
+        pendingUsersList.appendChild(card);
+      }
+    }
+
+    function appendDeleteButton(card, user, displayName, buttonContainer = card) {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "account-action delete-action";
+      button.textContent = "Fshij përgjithmonë";
+      const message = document.createElement("p");
+      message.className = "message card-message";
+      message.setAttribute("role", "status");
+      button.addEventListener("click", async () => {
+        if (!sessionToken || adminRole !== "super_admin" || actionInProgress) return;
+        if (typeof user.user_id !== "string") return;
+        const question = `A je i sigurt?\n\nDo të FSHISH PËRGJITHMONË përdoruesin ${displayName}?\nID: ${user.user_id}\n\nKy veprim nuk mund të zhbëhet. Nëse ka ankande ose oferta, serveri do ta refuzojë.`;
+        if (!window.confirm(question)) return;
+        const typed = window.prompt('Për të konfirmuar, shkruaj saktësisht: FSHI PERGJITHMONE');
+        if (typed !== "FSHI PERGJITHMONE") {
+          if (typed !== null) message.textContent = "Konfirmimi nuk përputhet. Nuk u fshi asgjë.";
+          return;
+        }
+        const version = requestVersion;
+        const token = sessionToken;
+        actionInProgress = true;
+        button.disabled = true;
+        message.classList.remove("success");
+        message.textContent = "Duke kontrolluar dhe fshirë…";
+        try {
+          const result = await manageRequest({
+            action: "delete_user", user_id: user.user_id,
+            confirm: true, confirm_text: typed
+          });
+          if (version !== requestVersion || token !== sessionToken) return;
+          if (result.action !== "delete_user" || result.user_id !== user.user_id) {
+            throw new Error("Serveri nuk konfirmoi fshirjen.");
+          }
+          currentUsers = currentUsers.filter(item => item.user_id !== user.user_id);
+          pendingUsers = pendingUsers.filter(item => item.user_id !== user.user_id);
+          paintUsers();
+          usersMessage.classList.add("success");
+          usersMessage.textContent = `Përdoruesi ${displayName} u fshi përgjithmonë.` +
+            (result.audit_logged === false ? " Kujdes: historiku përfundimtar nuk u regjistrua." : "");
+        } catch (error) {
+          if (version === requestVersion && token === sessionToken) {
+            message.textContent = error.message || "Fshirja dështoi.";
+          }
+        } finally {
+          actionInProgress = false;
+          if (version === requestVersion && token === sessionToken) button.disabled = false;
+        }
+      });
+      buttonContainer.appendChild(button);
+      card.appendChild(message);
+    }
+
+    async function changeAccountStatus(user, displayName, button, message) {
+      if (!sessionToken || adminRole !== "super_admin" || actionInProgress) return;
+      if (typeof user.user_id !== "string") return;
+      const action = user.blocked ? "unblock" : "block";
+      const question = action === "block"
+        ? `A dëshiron të BLLOKOSH llogarinë e ${displayName}?\nID: ${user.user_id}`
+        : `A dëshiron të ZHBLLOKOSH llogarinë e ${displayName}?\nID: ${user.user_id}`;
+      if (!window.confirm(question)) return;
+
+      const token = sessionToken;
+      const version = requestVersion;
+      actionInProgress = true;
+      button.disabled = true;
+      message.classList.remove("success");
+      message.textContent = "Duke ruajtur ndryshimin…";
+      try {
+        const response = await fetch(USERS_API, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + token
+          },
+          body: JSON.stringify({ action, user_id: user.user_id }),
+          cache: "no-store"
+        });
+        let result;
+        try { result = await response.json(); }
+        catch { throw new Error("Përgjigje e pavlefshme nga serveri."); }
+        if (version !== requestVersion || token !== sessionToken) return;
+        if (response.status === 401) {
+          showLogin();
+          loginMessage.textContent = "Sesioni ka skaduar. Hyr përsëri.";
+          return;
+        }
+        if (response.status === 403) throw new Error("Nuk ke leje për këtë veprim.");
+        if (!response.ok || result.ok !== true || result.action !== action ||
+            result.user_id !== user.user_id) {
+          throw new Error("Ndryshimi nuk u konfirmua nga serveri.");
+        }
+        user.blocked = action === "block";
+        paintUsers();
+        usersMessage.classList.add("success");
+        usersMessage.textContent = action === "block"
+          ? `Llogaria e ${displayName} u bllokua.`
+          : `Llogaria e ${displayName} u zhbllokua.`;
+      } catch (error) {
+        if (version === requestVersion && token === sessionToken) {
+          message.textContent = error.message || "Ndryshimi dështoi.";
+        }
+      } finally {
+        actionInProgress = false;
+        if (version === requestVersion && token === sessionToken) button.disabled = false;
+      }
+    }
+
+    userSearch.addEventListener("input", paintUsers);
+
+    async function manageRequest(payload) {
+      const token = sessionToken;
+      if (!token) throw new Error("Hyr përsëri.");
+      const response = await fetch(MANAGE_API, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Authorization": "Bearer " + token },
+        body: JSON.stringify(payload),
+        cache: "no-store"
+      });
+      let result;
+      try { result = await response.json(); }
+      catch { throw new Error("Përgjigje e pavlefshme nga serveri."); }
+      if (response.status === 401) {
+        showLogin();
+        throw new Error("Sesioni ka skaduar. Hyr përsëri.");
+      }
+      if (response.status === 403) throw new Error("Nuk ke leje për këtë veprim.");
+      if (!response.ok || result.ok !== true) {
+        throw new Error(result.error || "Veprimi dështoi.");
+      }
+      return result;
+    }
+
+    function openManageForm(user, action, card) {
+      if (!sessionToken || adminRole !== "super_admin" || !["update_profile", "reset_password"].includes(action) || actionInProgress) return;
+      const existing = card.querySelector(".inline-form");
+      if (existing) { existing.remove(); return; }
+      const form = document.createElement("form");
+      form.className = "inline-form";
+      const title = document.createElement("strong");
+      const titles = {
+        update_profile: "Modifiko profilin",
+        reset_password: "Rivendos fjalëkalimin"
+      };
+      title.textContent = titles[action];
+      form.appendChild(title);
+      const fields = action === "update_profile"
+        ? [["first_name", "Emri"], ["last_name", "Mbiemri"], ["city", "Qyteti"], ["phone", "Telefoni"]]
+        : action === "reset_password" ? [["new_password", "Fjalëkalimi i ri (12–72 karaktere)"]] : [];
+      for (const [name, labelText] of fields) {
+        const label = document.createElement("label");
+        label.textContent = labelText;
+        const input = document.createElement("input");
+        input.name = name;
+        input.required = true;
+        if (name === "new_password") {
+          input.type = "password"; input.minLength = 12; input.maxLength = 72; input.autocomplete = "new-password";
+        } else {
+          input.type = "text"; input.maxLength = 100;
+          input.value = user[name] || "";
+        }
+        label.appendChild(input);
+        form.appendChild(label);
+      }
+      const submit = document.createElement("button");
+      submit.type = "submit";
+      submit.textContent = "Konfirmo ndryshimin";
+      const msg = document.createElement("p");
+      msg.className = "message";
+      msg.setAttribute("role", "status");
+      form.append(submit, msg);
+      form.addEventListener("submit", async event => {
+        event.preventDefault();
+        if (!sessionToken || adminRole !== "super_admin" || actionInProgress) return;
+        const payload = { action, user_id: user.user_id };
+        for (const [name] of fields) {
+          const raw = form.elements.namedItem(name).value;
+          const value = name === "new_password" ? raw : raw.trim();
+          payload[name] = value;
+        }
+        const displayName = [user.first_name, user.last_name].filter(Boolean).join(" ") || user.user_id;
+        const confirmation = action === "reset_password"
+          ? "Konfirmon rivendosjen e fjalëkalimit për " + displayName + "? Fjalëkalimi i vjetër nuk mund të rikuperohet."
+          : "Konfirmon veprimin: " + titles[action] + " për " + displayName + "?";
+        if (!window.confirm(confirmation)) return;
+        const version = requestVersion;
+        actionInProgress = true;
+        submit.disabled = true;
+        msg.textContent = "Duke ruajtur…";
+        try {
+          const result = await manageRequest(payload);
+          if (version !== requestVersion) return;
+          if (action === "update_profile") {
+            for (const [name] of fields) user[name] = payload[name];
+          }
+          if (action === "reset_password") {
+            form.elements.namedItem("new_password").value = "";
+          }
+          paintUsers();
+          usersMessage.classList.add("success");
+          usersMessage.textContent = result.audit_logged === false
+            ? "Ndryshimi u ruajt, por historiku nuk u regjistrua. Kontakto administratorin."
+            : "Ndryshimi u ruajt. Mbyll dhe rihap listën për të parë datat e reja.";
+        } catch (error) {
+          if (version === requestVersion) msg.textContent = error.message || "Gabim.";
+        } finally {
+          actionInProgress = false;
+          submit.disabled = false;
+        }
+      });
+      card.appendChild(form);
+    }
+
+    async function openExtra(action) {
+      if (!sessionToken || actionInProgress) return;
+      extraView.classList.remove("hidden");
+      mainPanel.classList.add("wide");
+      extraList.replaceChildren();
+      extraTitle.textContent = action === "list_admins" ? "Administratorët" : (adminRole === "super_admin" ? "Historiku i veprimeve (100 të fundit)" : "Historiku im (100 veprimet e fundit)");
+      extraMessage.textContent = "Duke ngarkuar…";
+      const version = requestVersion;
+      try {
+        const result = await manageRequest({ action });
+        if (version !== requestVersion) return;
+        const entries = action === "list_admins" ? result.admins : result.entries;
+        if (!Array.isArray(entries)) throw new Error("Formati i të dhënave është i pavlefshëm.");
+        extraMessage.textContent = entries.length ? "" : "Nuk ka të dhëna.";
+        for (const entry of entries) {
+          const card = document.createElement("div");
+          card.className = "user-card";
+          if (action === "list_admins") {
+            addField(card, "Emri", entry.username);
+            addField(card, "Roli", entry.role);
+            const isDeleted = Boolean(entry.deleted_at);
+            addField(card, "Gjendja", isDeleted ? "I fshirë" : (entry.is_active ? "Aktiv" : "I bllokuar"));
+            addField(card, "Krijuar", entry.created_at ? new Date(entry.created_at).toLocaleString("sq-AL") : "—");
+            if (isDeleted) addField(card, "Fshirë më", new Date(entry.deleted_at).toLocaleString("sq-AL"));
+            // Veprimet shfaqen vetëm për super_admin dhe vetëm për llogaritë admin.
+            if (adminRole === "super_admin" && entry.role === "admin" && !isDeleted) {
+              const actions = document.createElement("div");
+              actions.className = "toolbar";
+              const choices = entry.is_active
+                ? [{ action: "block_admin", label: "Blloko" }, { action: "delete_admin", label: "Fshij" }]
+                : [{ action: "unblock_admin", label: "Zhblloko" }, { action: "delete_admin", label: "Fshij" }];
+              for (const choice of choices) {
+                const button = document.createElement("button");
+                button.type = "button";
+                button.className = "secondary";
+                button.textContent = choice.label;
+                button.addEventListener("click", async () => {
+                  if (!sessionToken || adminRole !== "super_admin" || actionInProgress) return;
+                  const promptText = choice.action === "delete_admin"
+                    ? `A je i sigurt që dëshiron të FSHISH administratorin “${entry.username}”? Kjo llogari nuk mund të zhbllokohet më. Historiku ruhet.`
+                    : `A je i sigurt që dëshiron të ${choice.label.toLowerCase()} administratorin “${entry.username}”?`;
+                  if (!window.confirm(promptText)) return;
+                  const currentVersion = requestVersion;
+                  actionInProgress = true;
+                  button.disabled = true;
+                  extraMessage.classList.remove("success");
+                  extraMessage.textContent = "Duke ruajtur ndryshimin…";
+                  try {
+                    const outcome = await manageRequest({
+                      action: choice.action,
+                      admin_id: entry.id,
+                      confirm: true
+                    });
+                    if (currentVersion !== requestVersion) return;
+                    await openExtraAfterAdminAction();
+                    if (currentVersion !== requestVersion) return;
+                    extraMessage.classList.add("success");
+                    extraMessage.textContent = `${choice.label}: ${entry.username}.` +
+                      (outcome.audit_logged === false ? " Kujdes: regjistrimi në historik dështoi." : "");
+                  } catch (error) {
+                    if (currentVersion === requestVersion) {
+                      extraMessage.textContent = error.message || "Veprimi dështoi.";
+                    }
+                  } finally {
+                    actionInProgress = false;
+                    button.disabled = false;
+                  }
+                });
+                actions.appendChild(button);
+              }
+              card.appendChild(actions);
+            }
+          } else {
+            addField(card, "Veprimi", entry.action);
+            if (adminRole === "super_admin") addField(card, "ID e administratorit", entry.admin_id);
+            addField(card, "Objekti", entry.target_type);
+            addField(card, "ID", entry.target_id);
+            addField(card, "Koha", entry.created_at ? new Date(entry.created_at).toLocaleString("sq-AL") : "—");
+          }
+          extraList.appendChild(card);
+        }
+      } catch (error) {
+        if (version === requestVersion) extraMessage.textContent = error.message || "Gabim.";
+      }
+    }
+
+    async function openExtraAfterAdminAction() {
+      // Rifreskojmë listën pasi veprimi në server ka përfunduar.
+      actionInProgress = false;
+      try {
+        await openExtra("list_admins");
+      } finally {
+        actionInProgress = true;
+      }
+    }
+
+    const createAdminButton = document.getElementById("createAdminButton");
+    const createAdminView = document.getElementById("createAdminView");
+    const createAdminForm = document.getElementById("createAdminForm");
+    const createAdminSubmit = document.getElementById("createAdminSubmit");
+    const createAdminMessage = document.getElementById("createAdminMessage");
+
+    createAdminButton.addEventListener("click", () => {
+      if (adminRole !== "super_admin" || actionInProgress) return;
+      createAdminView.classList.toggle("hidden");
+      mainPanel.classList.add("wide");
+      createAdminMessage.textContent = "";
+    });
+
+    createAdminForm.addEventListener("submit", async event => {
+      event.preventDefault();
+      if (!sessionToken || adminRole !== "super_admin" || actionInProgress) return;
+      const username = document.getElementById("adminNewUsername").value.trim();
+      const password = document.getElementById("adminNewPassword").value;
+      const confirmation = document.getElementById("adminNewPasswordConfirm").value;
+      createAdminMessage.classList.remove("success");
+      if (password !== confirmation) {
+        createAdminMessage.textContent = "Fjalëkalimet nuk përputhen.";
+        return;
+      }
+      if (!window.confirm(`Të krijohet administratori ${username} me rolin admin?`)) return;
+      const version = requestVersion;
+      const token = sessionToken;
+      actionInProgress = true;
+      createAdminSubmit.disabled = true;
+      createAdminMessage.textContent = "Duke krijuar administratorin…";
+      try {
+        const result = await manageRequest({ action: "create_admin", username, password });
+        if (version !== requestVersion || token !== sessionToken) return;
+        if (result.action !== "create_admin" || result.role !== "admin" || !result.admin_id) {
+          throw new Error("Serveri nuk konfirmoi krijimin e administratorit.");
+        }
+        createAdminForm.reset();
+        createAdminMessage.classList.add("success");
+        createAdminMessage.textContent = result.audit_logged === false
+          ? "Administratori u krijua, por regjistrimi në historik dështoi."
+          : `Administratori ${result.username} u krijua me sukses.`;
+      } catch (error) {
+        if (version === requestVersion && token === sessionToken) {
+          createAdminMessage.textContent = error.message || "Krijimi dështoi.";
+        }
+      } finally {
+        actionInProgress = false;
+        createAdminSubmit.disabled = false;
+      }
+    });
+
+    const createUserButton = document.getElementById("createUserButton");
+    const createUserView = document.getElementById("createUserView");
+    const createUserForm = document.getElementById("createUserForm");
+    const createUserMessage = document.getElementById("createUserMessage");
+    const createUserSubmit = document.getElementById("createUserSubmit");
+
+    createUserButton.addEventListener("click", () => {
+      createUserView.classList.toggle("hidden");
+      mainPanel.classList.add("wide");
+    });
+    createUserForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      if (!sessionToken || actionInProgress) return;
+      const data = new FormData(createUserForm);
+      const payload = { action: "create_user" };
+      for (const key of ["first_name", "last_name", "city", "phone", "username", "password", "access_type"]) payload[key] = data.get(key);
+      payload.username = String(payload.username).trim().toLowerCase();
+      if (!window.confirm("Konfirmon krijimin e përdoruesit " + payload.username + "?")) return;
+      const version = requestVersion;
+      actionInProgress = true;
+      createUserSubmit.disabled = true;
+      createUserMessage.classList.remove("success");
+      createUserMessage.textContent = "Duke krijuar llogarinë…";
+      try {
+        const result = await manageRequest(payload);
+        if (version !== requestVersion) return;
+        createUserForm.reset();
+        createUserMessage.classList.add("success");
+        createUserMessage.textContent = result.audit_logged === false
+          ? "Llogaria u krijua, por historiku nuk u regjistrua."
+          : "Llogaria u krijua me sukses. Jepi përdoruesit të dhënat e hyrjes në mënyrë private.";
+      } catch (error) {
+        if (version === requestVersion) createUserMessage.textContent = error.message || "Krijimi dështoi.";
+      } finally {
+        actionInProgress = false;
+        createUserSubmit.disabled = false;
+      }
+    });
+
+    adminsButton.addEventListener("click", () => openExtra("list_admins"));
+    auditButton.addEventListener("click", () => openExtra("audit_log"));
+
+    loginForm.addEventListener("submit", async function (event) {
+      event.preventDefault();
+      loginMessage.textContent = "";
+      loginButton.disabled = true;
+      const username = document.getElementById("username").value.trim();
+      const password = document.getElementById("password").value;
+      try {
+        const result = await apiRequest({ action: "login", username, password });
+        if (typeof result.token !== "string" || !result.admin || !result.expires_at) {
+          throw new Error("Përgjigje e paplotë nga serveri.");
+        }
+        sessionToken = result.token;
+        document.getElementById("password").value = "";
+        showDashboard(result.admin, result.expires_at);
+      } catch (error) {
+        loginMessage.textContent = error.message || "Hyrja dështoi.";
+      } finally {
+        loginButton.disabled = false;
+      }
+    });
+
+    usersButton.addEventListener("click", async function () {
+      if (!sessionToken) {
+        showLogin();
+        return;
+      }
+      if (!usersView.classList.contains("hidden")) {
+        if (actionInProgress) return;
+        requestVersion++;
+        clearUsers();
+        return;
+      }
+      usersView.classList.remove("hidden");
+      mainPanel.classList.add("wide");
+      usersButton.disabled = true;
+      usersMessage.textContent = "Duke ngarkuar përdoruesit…";
+      const version = ++requestVersion;
+      const token = sessionToken;
+      try {
+        const response = await fetch(USERS_API, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + token
+          },
+          body: JSON.stringify({}),
+          cache: "no-store"
+        });
+        let result;
+        try { result = await response.json(); }
+        catch { throw new Error("Përgjigje e pavlefshme nga serveri."); }
+        if (version !== requestVersion || token !== sessionToken) return;
+        if (response.status === 401) {
+          showLogin();
+          loginMessage.textContent = "Sesioni ka skaduar. Hyr përsëri.";
+          return;
+        }
+        if (response.status === 403) throw new Error("Nuk ke leje për të parë përdoruesit.");
+        if (!response.ok) throw new Error("Lista e përdoruesve nuk u ngarkua.");
+        if (!Array.isArray(result.users) || !Array.isArray(result.pending_users)) {
+          throw new Error("Formati i listave është i pavlefshëm. Kontrollo versionin e admin-users.");
+        }
+        renderUsers(result.users, result.pending_users);
+        usersButton.textContent = "Mbyll listën e përdoruesve";
+      } catch (error) {
+        if (version === requestVersion && token === sessionToken) {
+          usersMessage.textContent = error.message || "Gabim gjatë ngarkimit.";
+        }
+      } finally {
+        if (version === requestVersion && token === sessionToken) usersButton.disabled = false;
+      }
+    });
+
+    logoutButton.addEventListener("click", async function () {
+      dashboardMessage.textContent = "";
+      logoutButton.disabled = true;
+      try {
+        if (sessionToken && chatAvailable) { try { await chatRequest("presence", {available:false}); } catch {} }
+        if (sessionToken) await apiRequest({ action: "logout", token: sessionToken });
+        showLogin();
+      } catch {
+        dashboardMessage.textContent = "Dalja në server dështoi. Mbyll faqen dhe provo përsëri.";
+      } finally {
+        logoutButton.disabled = false;
+      }
+    });
+
+
+    const chatEl = id => document.getElementById(id);
+    const chatAPI = API.replace(/admin-auth$/, 'ap-chat-admin');
+    let chatSelected=null, chatAvailable=false, chatBusy=false, chatEpoch=0, chatLastHeartbeat=0;
+    function chatReset(){chatEpoch++;chatSelected=null;chatAvailable=false;chatBusy=false;chatLastHeartbeat=0;chatEl('chatAdminView').classList.add('hidden');chatEl('chatDetail').classList.add('hidden');chatEl('chatAdminList').replaceChildren();chatEl('chatMessages').replaceChildren();chatEl('chatTools').replaceChildren();chatEl('chatText').value='';chatEl('chatTitle').textContent='';chatEl('chatAdminStatus').textContent='';chatEl('chatPresence').textContent='Aktivizo Online';chatEl('chatAdminButton').textContent='💬 Live Chat (test)';}
+    async function chatRequest(action, extra={}){
+      const token=sessionToken, epoch=chatEpoch;if(!token)throw Error('Hyr përsëri.');
+      const controller=new AbortController(), timer=setTimeout(()=>controller.abort(),15000);
+      try{const res=await fetch(chatAPI,{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+token},body:JSON.stringify({action,...extra}),cache:'no-store',signal:controller.signal});
+      const data=await res.json();if(token!==sessionToken||epoch!==chatEpoch)throw Error('Sesioni ndryshoi.');if(res.status===401){showLogin();throw Error('Sesioni ka skaduar.');}if(!res.ok||data.ok!==true)throw Error(data.error||'Veprimi dështoi.');return data;}finally{clearTimeout(timer)}
+    }
+    async function chatRun(fn){if(chatBusy||!sessionToken)return;const epoch=chatEpoch;chatBusy=true;try{await fn();if(epoch===chatEpoch)chatEl('chatAdminStatus').textContent='';}catch(e){if(epoch===chatEpoch)chatEl('chatAdminStatus').textContent=e.message;}finally{if(epoch===chatEpoch)chatBusy=false;}}
+    const chatModeLabels={automatic:'🟢 Automatike',waiting_admin:'🟠 Në pritje të administratorit',human:'🔵 Me administrator',resolved:'⚪ E përfunduar'};
+    function chatMode(c){return Object.hasOwn(chatModeLabels,c.support_mode)?c.support_mode:'unknown';}
+    function chatModeLabel(c){return chatModeLabels[chatMode(c)]||'Gjendje e pakonfirmuar';}
+    async function chatLoad(){
+      const filter=chatEl('chatFilter').value;
+      const result=await chatRequest('list',{status:filter==='needs_admin'?'open':'all',support_mode:filter});
+      if(chatEl('chatAdminView').classList.contains('hidden')||filter!==chatEl('chatFilter').value)return;
+      if(!Array.isArray(result.conversations))throw Error('Lista e bisedave është e pavlefshme.');
+      const all=result.conversations;
+      const needs=c=>['waiting_admin','human','unknown'].includes(chatMode(c))&&c.status==='open';
+      const visible=all.filter(c=>filter==='all'||(filter==='needs_admin'?needs(c):chatMode(c)===filter));
+      const waiting=all.filter(c=>chatMode(c)==='waiting_admin'&&c.status==='open').length;
+      const list=chatEl('chatAdminList');list.replaceChildren();let unread=0;
+      for(const c of all){if(needs(c))unread+=Number(c.unread_count)||0;}for(const c of visible){const b=document.createElement('button');b.type='button';b.className='secondary';b.textContent=(c.username||c.guest_name||'Përdorues')+' · '+chatModeLabel(c)+' · Tema: '+(c.support_topic||'Pa temë')+' · '+(c.assigned_admin||'Pa administrator')+' · '+(needs(c)?(Number(c.unread_count)||0)+' të palexuara':'');b.onclick=()=>chatRun(async()=>{chatSelected=c.id;chatEl('chatText').value='';await chatLoad();});list.append(b);}
+      chatEl('chatAdminButton').textContent='💬 Live Chat (test) · '+waiting+' në pritje · '+unread+' të palexuara (filtri aktual)';
+      const c=visible.find(x=>x.id===chatSelected);chatEl('chatDetail').classList.toggle('hidden',!c);if(!c){chatSelected=null;chatEl('chatMessages').replaceChildren();chatEl('chatText').value='';return;}
+      const detail=await chatRequest('messages',{conversation_id:c.id});const current=detail.conversation;if(chatEl('chatAdminView').classList.contains('hidden')||chatSelected!==c.id)return;
+      chatEl('chatTitle').textContent=(c.username||c.guest_name||'Biseda')+' · '+chatModeLabel(current)+' · Tema: '+(current.support_topic||'Pa temë');const box=chatEl('chatMessages');const near=box.scrollHeight-box.scrollTop-box.clientHeight<60;box.replaceChildren();for(const m of detail.messages){const a=document.createElement('article');a.className=m.sender_type==='admin'?'admin':m.sender_type==='bot'?'bot':'';const meta=document.createElement('div');meta.className='muted';meta.textContent=(m.sender_type==='admin'?'Administrator':m.sender_type==='bot'?'Asistenti automatik':m.sender_type==='user'?'Përdorues':'Vizitor')+' · '+new Date(m.created_at).toLocaleString('sq-AL');const text=document.createElement('div');text.textContent=m.message;a.append(meta,text);box.append(a);}if(near)box.scrollTop=box.scrollHeight;
+      const own=current.assigned_admin_id===result.admin.id, free=!current.assigned_admin_id, superRole=result.admin.role==='super_admin', open=current.status==='open';
+      chatEl('chatSendForm').classList.toggle('hidden',!open||!(own||free));const tools=chatEl('chatTools');tools.replaceChildren();
+      const choices=[];if(open&&free)choices.push(['assign','Merr bisedën']);if(!free&&(own||superRole))choices.push(['release','Liro bisedën']);if(free||own||superRole)choices.push(open?['close','Mbyll']:['reopen','Rihap']);if(!open&&superRole)choices.push(['delete','Fshi përgjithmonë']);if(c.unread_count)choices.push(['read','Shëno si të lexuara']);
+      for(const [action,label] of choices){const b=document.createElement('button');b.type='button';b.className='secondary';b.textContent=label;b.onclick=()=>chatRun(async()=>{if(action==='delete'&&!confirm('Fshi përgjithmonë këtë bisedë?'))return;await chatRequest(action,{conversation_id:c.id,confirm:action==='delete'});await chatLoad();});tools.append(b);}
+    }
+    chatEl('chatAdminButton').onclick=()=>{const v=chatEl('chatAdminView');v.classList.toggle('hidden');if(!v.classList.contains('hidden')){mainPanel.classList.add('wide');chatRun(chatLoad);}else{chatSelected=null;chatEl('chatMessages').replaceChildren();chatEl('chatText').value='';chatEl('chatDetail').classList.add('hidden');}};
+    chatEl('chatRefresh').onclick=()=>chatRun(chatLoad);chatEl('chatFilter').onchange=()=>{chatSelected=null;chatEl('chatDetail').classList.add('hidden');chatEl('chatText').value='';chatEl('chatAdminList').replaceChildren();chatRun(chatLoad);};
+    chatEl('chatPresence').onclick=()=>chatRun(async()=>{const next=!chatAvailable;await chatRequest('presence',{available:next});chatAvailable=next;chatLastHeartbeat=Date.now();chatEl('chatPresence').textContent=next?'Kalo Offline':'Aktivizo Online';});
+    chatEl('chatSendForm').onsubmit=e=>{e.preventDefault();chatRun(async()=>{const message=chatEl('chatText').value.trim();if(!message||!chatSelected)return;await chatRequest('send',{conversation_id:chatSelected,message});if(chatEl('chatText').value.trim()===message)chatEl('chatText').value='';await chatLoad();});};
+    setInterval(()=>{if(!sessionToken||document.hidden)return;chatRun(async()=>{if(chatAvailable&&Date.now()-chatLastHeartbeat>=30000){await chatRequest('presence',{available:true});chatLastHeartbeat=Date.now();}if(!chatEl('chatAdminView').classList.contains('hidden'))await chatLoad();});},15000);
+
+    // Kur mbyllet ose rifreskohet faqja, tokeni nuk ruhet.
+    showLogin();
+  </script>
+</body>
+</html>
